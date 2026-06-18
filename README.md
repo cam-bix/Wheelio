@@ -29,3 +29,4 @@ npm run build
 ## CI
 
 GitHub Actions runs on every push and pull request. The workflow installs frontend dependencies with `npm ci` and builds the React app.
+test branch protection
