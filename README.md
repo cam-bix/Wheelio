@@ -1,13 +1,13 @@
 # Wheelio
 
-Wheelio is organized as a full-stack project with a React Vite frontend, an empty backend placeholder, and project documentation.
+Wheelio is organized as a full-stack project with a React Vite frontend, a Spring Boot backend, and project documentation.
 
 ## Project Structure
 
 ```text
 Wheelio/
   frontend/   React Vite application
-  backend/    Backend placeholder
+  backend/    Spring Boot backend application
   docs/       Project documentation
 ```
 
@@ -28,4 +28,4 @@ npm run build
 
 ## CI
 
-GitHub Actions runs on every push and pull request. The workflow installs frontend dependencies with `npm ci` and builds the React app.
+GitHub Actions runs on pull requests and pushes to `main`. The workflow validates the frontend with npm and the backend with Maven.
