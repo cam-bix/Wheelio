@@ -25,3 +25,10 @@ Thumbs.db
 
 # Coverage
 coverage/
+
+# Backend build output - auto-generated, never commit
+backend/target/
+
+# Environment files
+.env
+*.env
