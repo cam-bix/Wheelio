@@ -1,0 +1,30 @@
+### Get all rentals
+GET http://localhost:8080/api/rentals
+
+###
+
+### Get rental by id
+GET http://localhost:8080/api/rentals/1
+
+###
+
+### Create rental
+POST http://localhost:8080/api/rentals
+Content-Type: application/json
+
+{
+  "userId": 4,
+  "vehicleId": 1,
+  "pickupDate": "2026-07-01T09:00:00-04:00",
+  "returnDate": "2026-07-05T09:00:00-04:00"
+}
+
+###
+
+### Complete rental
+PATCH http://localhost:8080/api/rentals/1/complete
+
+###
+
+### Cancel rental
+PATCH http://localhost:8080/api/rentals/1/cancel
