@@ -10,6 +10,11 @@ VALUES
     ('John', 'Doe', 'john.doe@example.com', 'placeholder_hash', '555-222-2222', 'CUSTOMER'),
     ('Jane', 'Smith', 'jane.smith@example.com', 'placeholder_hash', '555-333-3333', 'CUSTOMER');
 
+INSERT INTO transaction_log (user_id, rental_id, amount, currency, status)
+VALUES
+    (2, 1, 165.00, 'CAD', 'APPROVED'),
+    (3, 2, 84.55, 'USD', 'PENDING');
+
 INSERT INTO vehicle (make, model, year, license_plate, daily_rate, status)
 VALUES
     ('Toyota', 'Corolla', 2022, 'ABC1234', 55.00, 'AVAILABLE'),

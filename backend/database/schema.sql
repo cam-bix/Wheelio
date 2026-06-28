@@ -1,11 +1,13 @@
 /**
   Author:   Jayden Hunt
+  Editor:   Aiden Flannery, Braeden Klaehn, Brian Koehler
   Date:     27 June 2026
   Desc:     Wheelio Database Schema for sprint 1
  */
 
 -- Safety check statements (DELETE AFTER CLOUD MIGRATION)
 DROP TABLE IF EXISTS app_user CASCADE;
+DROP TABLE IF EXISTS transaction_log CASCADE;
 DROP TABLE IF EXISTS vehicle CASCADE;
 DROP TABLE IF EXISTS rental CASCADE;
 
@@ -18,6 +20,17 @@ CREATE TABLE app_user (
     password_hash VARCHAR(255) NOT NULL,
     phone VARCHAR(20),
     role VARCHAR(20) NOT NULL CHECK (role IN ('CUSTOMER', 'ADMIN')),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Transaction Log Table
+CREATE TABLE transaction_log (
+    transaction_id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL CHECK (user_id >= 1),
+    rental_id BIGINT NOT NULL CHECK (rental_id >= 1),
+    amount NUMERIC(10,2) NOT NULL CHECK (amount >= 0),
+    currency VARCHAR(3) NOT NULL,
+    status VARCHAR(20) NOT NULL CHECK (status IN ('DECLINED', 'APPROVED', 'PENDING', 'FAILED')),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -35,8 +48,8 @@ CREATE TABLE vehicle (
 -- Rentals Table
 CREATE TABLE rental (
     rental_id BIGSERIAL PRIMARY KEY,
-    user_id BIGINT NOT NULL,
-    vehicle_id BIGINT NOT NULL,
+    user_id BIGINT NOT NULL CHECK (user_id >= 1),
+    vehicle_id BIGINT NOT NULL CHECK (vehicle_id >= 1),
     pickup_date TIMESTAMPTZ NOT NULL,
     return_date TIMESTAMPTZ NOT NULL,
     status VARCHAR(50) NOT NULL CHECK (status IN ('BOOKED', 'ACTIVE', 'COMPLETED', 'CANCELLED')),
