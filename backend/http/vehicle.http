@@ -1,0 +1,42 @@
+### Get all vehicles
+GET http://localhost:8080/api/vehicles
+
+###
+
+### Get vehicle by id
+GET http://localhost:8080/api/vehicles/1
+
+###
+
+### Create vehicle
+POST http://localhost:8080/api/vehicles
+Content-Type: application/json
+
+{
+  "make": "Mazda",
+  "model": "CX-5",
+  "year": 2020,
+  "licensePlate": "MAZ2020",
+  "dailyRate": 75.00,
+  "status": "AVAILABLE"
+}
+
+###
+
+### Update vehicle
+PUT http://localhost:8080/api/vehicles/1
+Content-Type: application/json
+
+{
+  "make": "Toyota",
+  "model": "Corolla SE",
+  "year": 2022,
+  "licensePlate": "ABC1234",
+  "dailyRate": 65.00,
+  "status": "AVAILABLE"
+}
+
+###
+
+### Delete vehicle
+DELETE http://localhost:8080/api/vehicles/5
