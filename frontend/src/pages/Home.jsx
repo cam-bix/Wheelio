@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom'
 import carPlaceholder from '../assets/placeholder_image.jpg'
 import wheelioLogo from '../assets/Wheelio_logo.png'
 import './Home.css'
