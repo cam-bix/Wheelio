@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { loginUser } from '../api/auth'
 import './Login.css'
 
 
@@ -7,35 +9,30 @@ function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+    setSuccess('')
 
     if (!email || !password) {
       setError('Please fill in all fields.')
       return
     }
 
-    // TODO: Replace with API sndcall to the Spring Boot backend
-    // try {
-    //   const response = await fetch('/api/auth/login', {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify({ email, password }),
-    //   })
+    setLoading(true)
 
-    //   if (!response.ok) {
-    //     setError('Invalid email or password.')
-    //     return
-    //   }
-
-    //   const data = await response.json()
-    //   console.log('Logged in:', data)
-    //   // TODO: Save token, redirect to dashboard
-    // } catch (err) {
-    //   setError('Something went wrong. Please try again.')
-    // }
+    try {
+      const user = await loginUser({ email, password })
+      localStorage.setItem('wheelioUser', JSON.stringify(user))
+      setSuccess('Logged in successfully.')
+    } catch (err) {
+      setError(err.message || 'Invalid email or password.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -73,6 +70,7 @@ function Login() {
         <h1 className="login-title">Log in</h1>
 
         {error && <p className="login-error" role="alert">{error}</p>}
+        {success && <p className="login-success" role="status">{success}</p>}
 
         <form onSubmit={handleSubmit} className="login-form" noValidate>
           <div className="form-group">
@@ -99,14 +97,14 @@ function Login() {
             />
           </div>
 
-          <button type="submit" className="login-btn">
-            Log in
+          <button type="submit" className="login-btn" disabled={loading}>
+            {loading ? 'Logging in...' : 'Log in'}
           </button>
         </form>
 
         <p className="login-signup">
           Don&apos;t have an account?{' '}
-          <a href="/signup">Sign Up</a>
+          <Link to="/signup">Sign Up</Link>
         </p>
       </div>
     </div>
