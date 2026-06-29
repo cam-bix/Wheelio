@@ -86,6 +86,18 @@
   text-align: center;
 }
 
+.login-success {
+  width: 100%;
+  background: #effaf2;
+  border: 1px solid #a8ddb5;
+  color: #17652b;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.875rem;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
 /* ─── Form ───────────────────────────────────────────────────── */
 
 .login-form {
@@ -93,6 +105,12 @@
   display: flex;
   flex-direction: column;
   gap: 18px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
 }
 
 .form-group {
@@ -144,6 +162,11 @@
   background-color: #2a2a2a;
 }
 
+.login-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
 .login-btn:active {
   transform: scale(0.98);
 }
@@ -172,5 +195,9 @@
 @media (max-width: 480px) {
   .login-card {
     padding: 40px 24px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
   }
 }
