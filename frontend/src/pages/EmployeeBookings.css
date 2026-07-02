@@ -247,7 +247,7 @@
 
 /* ─── Status Badge ───────────────────────────────────────────── */
 
-.status-badge {
+.booking-status-badge {
   display: inline-block;
   padding: 4px 12px;
   border-radius: 999px;
@@ -255,17 +255,17 @@
   font-weight: 700;
 }
 
-.status-confirmed {
+.booking-status-confirmed {
   color: #17652b;
   background-color: #e8f7ec;
 }
 
-.status-pending {
+.booking-status-pending {
   color: #93690a;
   background-color: #fdf3df;
 }
 
-.status-cancelled {
+.booking-status-cancelled {
   color: #c0000a;
   background-color: #fdeaea;
 }

@@ -1,3 +1,5 @@
+import carPlaceholder from '../assets/placeholder_image.jpg'
+import logo from '../assets/Wheelio_logo.png'
 import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import './EmployeeBookings.css'
@@ -91,37 +93,18 @@ function EmployeeBookings() {
       {/* ─── Top Navigation Bar ─────────────────────────────── */}
       <nav className="navbar">
         <div className="navbar-logo">
-          <div className="logo-badge">
-            {/* Wheel icon (inline SVG) */}
-            <svg width="22" height="22" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-              <circle cx="14" cy="14" r="13" stroke="white" strokeWidth="2" />
-              <circle cx="14" cy="14" r="4" fill="white" />
-              <line x1="14" y1="1" x2="14" y2="9" stroke="white" strokeWidth="2" />
-              <line x1="14" y1="19" x2="14" y2="27" stroke="white" strokeWidth="2" />
-              <line x1="1" y1="14" x2="9" y2="14" stroke="white" strokeWidth="2" />
-              <line x1="19" y1="14" x2="27" y2="14" stroke="white" strokeWidth="2" />
-              <line x1="4" y1="4" x2="9.9" y2="9.9" stroke="white" strokeWidth="2" />
-              <line x1="18.1" y1="18.1" x2="24" y2="24" stroke="white" strokeWidth="2" />
-              <line x1="24" y1="4" x2="18.1" y2="9.9" stroke="white" strokeWidth="2" />
-              <line x1="9.9" y1="18.1" x2="4" y2="24" stroke="white" strokeWidth="2" />
-            </svg>
-            {/* Speed lines */}
-            <svg className="speed-lines" width="16" height="12" viewBox="0 0 20 14" fill="none" aria-hidden="true">
-              <path d="M0 3 H14" stroke="#e5212a" strokeWidth="2.5" strokeLinecap="round"/>
-              <path d="M0 7 H18" stroke="#e5212a" strokeWidth="2.5" strokeLinecap="round"/>
-              <path d="M0 11 H12" stroke="#e5212a" strokeWidth="2.5" strokeLinecap="round"/>
-            </svg>
-            <span className="logo-text">
-              Wheel<span className="logo-accent">io</span>
-            </span>
-          </div>
+          <Link to="/employee-home">
+            <img src={logo} alt="Wheelio Logo" className="navbar-logo-image" />
+          </Link>
         </div>
 
+
+        {/*Links to other pages */}
         <div className="navbar-links">
-          <Link to="/home">Home</Link>
-          <Link to="/inventory">Check Inventory</Link>
-          <Link to="/bookings" className="nav-active">Bookings</Link>
-          <Link to="/statistics">Statistics</Link>
+          <Link to="/employee-home">Home</Link>
+          <Link to="/employee-inventory">Check Inventory</Link>
+          <Link to="/employee-bookings" className="nav-active">Bookings</Link>
+          <Link to="/employee-stats">Statistics</Link>
           <Link to="/support">Customer Support</Link>
         </div>
 
@@ -188,15 +171,7 @@ function EmployeeBookings() {
 
                   {/* Vehicle thumbnail placeholder */}
                   <div className="booking-image col-image">
-                    {booking.image ? (
-                      <img src={booking.image} alt={booking.vehicle} />
-                    ) : (
-                      <svg width="40" height="40" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-                        <rect x="4" y="4" width="40" height="40" rx="6" stroke="#0f0f0f" strokeWidth="1.6" />
-                        <circle cx="17" cy="17" r="3.2" stroke="#0f0f0f" strokeWidth="1.6" />
-                        <path d="M6 34 L18 22 L26 30 L32 24 L42 34" stroke="#0f0f0f" strokeWidth="1.6" strokeLinejoin="round" strokeLinecap="round" />
-                      </svg>
-                    )}
+                    <img src={booking.image || carPlaceholder} alt={booking.vehicle}/>
                   </div>
 
                   {/* Booking number */}
@@ -218,8 +193,8 @@ function EmployeeBookings() {
                   <span className="col-cell" role="cell" data-label="Return Date">
                     {booking.returnDate}
                   </span>
-                  <span className="col-cell" role="cell" data-label="Status">
-                    <span className={`status-badge status-${booking.status?.toLowerCase()}`}>
+                  <span className="col-cell status-cell" role="cell" data-label="Status">
+                    <span className={`booking-status-badge booking-status-${booking.status?.toLowerCase()}`}>
                       {booking.status}
                     </span>
                   </span>
