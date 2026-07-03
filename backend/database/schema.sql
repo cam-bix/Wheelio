@@ -1,13 +1,14 @@
 /**
   Author:   Jayden Hunt & Sebastian Caro
   Date:     27 June 2026
-  Desc:     Wheelio Database Schema for sprint 1
+  Desc:     Wheelio Database Schema for sprint 2
  */
 
 -- Safety check statements (DELETE AFTER CLOUD MIGRATION)
 DROP TABLE IF EXISTS rental CASCADE;
 DROP TABLE IF EXISTS employee CASCADE;
 DROP TABLE IF EXISTS vehicle CASCADE;
+DROP TABLE IF EXISTS location CASCADE;
 DROP TABLE IF EXISTS app_user CASCADE;
 
 -- Users Table
@@ -36,10 +37,7 @@ CREATE TABLE app_user (
 CREATE TABLE employee (
     employee_id BIGSERIAL PRIMARY KEY,
     user_id BIGINT UNIQUE,
-    first_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    phone VARCHAR(20),
+    location_id BIGINT NOT NULL,
     position VARCHAR(50) NOT NULL
         CHECK (position IN ('MANAGER', 'CUSTOMER_SERVICE', 'MECHANIC', 'ADMIN_STAFF')),
     employment_status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE'
@@ -52,6 +50,11 @@ CREATE TABLE employee (
         REFERENCES app_user(user_id)
         ON DELETE SET NULL,
 
+    CONSTRAINT fk_employee_location
+        FOREIGN KEY (location_id)
+        REFERENCES location(location_id)
+        ON DELETE RESTRICT
+
     CONSTRAINT chk_employee_first_name_not_blank
         CHECK (TRIM(first_name) <> ''),
 
@@ -62,9 +65,31 @@ CREATE TABLE employee (
         CHECK (email LIKE '%_@_%._%')
 );
 
+-- Locations Table
+CREATE TABLE location (
+    location_id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    address_line VARCHAR(150) NOT NULL,
+    city VARCHAR(80) NOT NULL,
+    province VARCHAR(50) NOT NULL,
+    postal_code VARCHAR(20) NOT NULL,
+    phone VARCHAR(20),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT chk_location_name_not_blank
+        CHECK (TRIM(name) <> ''),
+
+    CONSTRAINT chk_location_address_not_blank
+        CHECK (TRIM(address_line) <> ''),
+
+    CONSTRAINT chk_location_city_not_blank
+        CHECK (TRIM(city) <> '')
+);
+
 -- Vehicles Table
 CREATE TABLE vehicle (
     vehicle_id BIGSERIAL PRIMARY KEY,
+    location_id BIGINT NOT NULL,
     make VARCHAR(50) NOT NULL,
     model VARCHAR(50) NOT NULL,
     year SMALLINT NOT NULL CHECK (year BETWEEN 1900 AND 2035),
@@ -72,6 +97,11 @@ CREATE TABLE vehicle (
     daily_rate NUMERIC(10,2) NOT NULL CHECK (daily_rate > 0),
     status VARCHAR(50) NOT NULL
         CHECK (status IN ('AVAILABLE', 'RENTED', 'MAINTENANCE', 'OUT_OF_SERVICE')),
+
+    CONSTRAINT fk_vehicle_location
+        FOREIGN KEY (location_id)
+        REFERENCES location(location_id)
+        ON DELETE RESTRICT
 
     CONSTRAINT chk_vehicle_make_not_blank
         CHECK (TRIM(make) <> ''),
@@ -89,6 +119,8 @@ CREATE TABLE rental (
     user_id BIGINT NOT NULL,
     vehicle_id BIGINT NOT NULL,
     employee_id BIGINT,
+    pickup_location_id BIGINT NOT NULL,
+    return_location_id BIGINT NOT NULL,
     pickup_date TIMESTAMPTZ NOT NULL,
     return_date TIMESTAMPTZ NOT NULL,
     status VARCHAR(50) NOT NULL DEFAULT 'BOOKED'
@@ -112,6 +144,16 @@ CREATE TABLE rental (
         REFERENCES employee(employee_id)
         ON DELETE SET NULL,
 
+    CONSTRAINT fk_rental_pickup_location
+        FOREIGN KEY (pickup_location_id)
+        REFERENCES location(location_id)
+        ON DELETE RESTRICT,
+
+    CONSTRAINT fk_rental_return_location
+        FOREIGN KEY (return_location_id)
+        REFERENCES location(location_id)
+        ON DELETE RESTRICT,
+
     CONSTRAINT chk_rental_dates
         CHECK (return_date > pickup_date)
 );
@@ -124,3 +166,6 @@ CREATE INDEX idx_rental_employee_id ON rental(employee_id);
 CREATE INDEX idx_rental_status ON rental(status);
 CREATE INDEX idx_employee_position ON employee(position);
 CREATE INDEX idx_employee_status ON employee(employment_status);
+CREATE INDEX idx_vehicle_location_id ON vehicle(location_id);
+CREATE INDEX idx_rental_pickup_location_id ON rental(pickup_location_id);
+CREATE INDEX idx_rental_return_location_id ON rental(return_location_id);
