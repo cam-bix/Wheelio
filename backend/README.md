@@ -8,44 +8,82 @@ Spring Boot backend service for Wheelio.
 - Maven
 - PostgreSQL for local `dev` and deployed `prod` profiles
 
-## Environment Variables
+## Wheelio Database Setup
 
-Copy `.env.example` into your local environment manager and provide real values:
+Wheelio uses PostgreSQL for persistent data storage. Database setup files are located in:
 
-```sh
-DB_HOST=localhost
+backend/database/
+
+## Files:
+
+schema.sql   - Creates tables, constraints, and indexes
+seed.sql     - Adds sample development data
+README.md    - Database setup instructions
+
+Run the files in this order:
+
+1. schema.sql
+2. seed.sql
+   Environment Variables
+
+The backend connects to PostgreSQL using environment variables. Do not commit real database credentials to GitHub.
+
+## Required variables (Environment variables):
+
+DB_HOST=wheelio-db.cxiysoa26mk6.ca-central-1.rds.amazonaws.com
 DB_PORT=5432
 DB_NAME=wheelio
-DB_USERNAME=wheelio
-DB_PASSWORD=change-me
+DB_USERNAME=your-database-username
+DB_PASSWORD=your-database-password
 SERVER_PORT=8080
 SPRING_PROFILES_ACTIVE=dev
-```
 
-Database credentials are loaded from environment variables. Do not commit real secrets.
+The real values should be stored locally in a .env file or in your local run configuration.
+Your real .env file should never be committed.
 
-## Run Locally
+Add this to .gitignore if not already present:
 
-Start PostgreSQL, export the required variables, then run:
+.env
 
-```sh
-cd backend
-mvn spring-boot:run
-```
+Commit only a safe example file:
 
-The backend starts at `http://localhost:8080` by default. The application health endpoint is:
+.env.example
 
-```text
-GET http://localhost:8080/api/health
-```
+Example .env.example:
 
-Expected response:
+DB_HOST=wheelio-db.cxiysoa26mk6.ca-central-1.rds.amazonaws.com
+DB_PORT=5432
+DB_NAME=wheelio
+DB_USERNAME=your-username
+DB_PASSWORD=your-password
+SERVER_PORT=8080
+SPRING_PROFILES_ACTIVE=dev
 
-```json
-{
-  "status": "ok"
-}
-```
+## To connect using pgAdmin:
+
+Host: wheelio-db.cxiysoa26mk6.ca-central-1.rds.amazonaws.com
+Port: 5432
+Database: wheelio
+Username: database username
+Password: database password
+
+After connecting to the wheelio database, open Query Tool and run:
+
+schema.sql
+seed.sql
+
+## To verify the setup:
+
+SELECT * FROM app_user;
+SELECT * FROM employee;
+SELECT * FROM vehicle;
+SELECT * FROM rental;
+
+Warning, Some development schema files may contain:
+
+DROP TABLE IF EXISTS
+
+Be careful running these against the shared AWS database because they can delete existing data.
 
 ## Run Tests
 
@@ -75,5 +113,3 @@ backend/
     application-prod.properties
   src/test/java/com/wheelio/
 ```
-
-The current backend setup is schema-neutral. It intentionally does not define production entities, tables, migrations, or business models.
