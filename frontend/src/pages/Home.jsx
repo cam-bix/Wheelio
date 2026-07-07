@@ -40,8 +40,8 @@ function Home() {
                 </div>
 
                 <nav className="dashboard-nav">
-                    <a href="/">Home</a>
-                    <a href="/">Book a Vehicle</a>
+                    <Link to="/" className="nav-active">Home</Link>
+                    <Link to="/book">Book a Vehicle</Link>
                     <a href="/">Modify Booking</a>
                     <a href="/">Change Location</a>
                     <a href="/">Settings</a>
