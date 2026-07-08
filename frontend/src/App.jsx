@@ -1,19 +1,14 @@
-<<<<<<< HEAD
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-=======
+
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Home from './pages/Home'
->>>>>>> origin/main
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import EmployeeBookings from './pages/EmployeeBookings'
+import EmployeeStatistics from './pages/EmployeeStatistics'
 
+// -v--Employee pages that are not yet implemented--v-
 //import EmployeeHome from './pages/EmployeeHome'
 //import EmployeeInventory from './pages/EmployeeInventory'
-
-
-import EmployeeStatistics from './pages/EmployeeStatistics'
-import Home from './pages/Home'
 
 function App() {
   return (
@@ -24,8 +19,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/employee-bookings" element={<EmployeeBookings />} />
         <Route path="/employee-stats" element={<EmployeeStatistics />} />
-
-        {/* 
+        {/* -v--Employee pages that are not yet implemented--v-
         <Route path="/employee-inventory" element={<EmployeeInventory />} />
         <Route path="/employee-home" element={<EmployeeHome />} />
         */}

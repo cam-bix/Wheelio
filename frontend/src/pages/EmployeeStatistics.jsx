@@ -2,30 +2,7 @@ import { useState, useEffect, useMemo } from 'react'
 import logo from '../assets/Wheelio_logo.png'
 import { Link } from 'react-router-dom'
 import './EmployeeStatistics.css'
-
-
-// Placeholder statistics data, covering a full trailing year so the
-// range toggle (6M / 12M) has real data to switch between. Swap this
-// out for a real API call (e.g. import { getStatistics } from
-// '../api/statistics') once the statistics endpoint is ready.
-const MOCK_STATS = {
-  vehiclesRented: { value: 84, trendPct: 8 },
-  vehicleIncidents: { value: 3, trendPct: -25 },
-  months: ['Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-  bookingsOverTime: [9, 11, 10, 13, 12, 15, 14, 18, 22, 19, 27, 28],
-  revenueOverview: [3200, 3800, 3500, 4200, 4000, 4700, 5200, 6100, 7400, 6800, 8300, 8500],
-  mostRentedVehicles: [
-    { label: 'Toyota Corolla', value: 22 },
-    { label: 'Honda CR-V', value: 18 },
-    { label: 'Ford Mustang', value: 15 },
-    { label: 'Jeep Wrangler', value: 11 },
-  ],
-  bookingsByStatus: [
-    { label: 'Confirmed', value: 64, color: '#17652b' },
-    { label: 'Pending', value: 22, color: '#b8860b' },
-    { label: 'Cancelled', value: 14, color: '#c0000a' },
-  ],
-}
+import { getStatistics } from '../api/statistics'
 
 // How many trailing months each range toggle shows
 const RANGE_OPTIONS = [
@@ -72,9 +49,7 @@ function EmployeeStatistics() {
       setLoading(true)
       setError('')
       try {
-        // TODO: replace with a real API call once the statistics
-        // endpoint exists, e.g. const data = await getStatistics()
-        const data = MOCK_STATS
+        const data = await getStatistics()
         setStats(data)
       } catch (err) {
         setError(err.message || 'Unable to load statistics.')
