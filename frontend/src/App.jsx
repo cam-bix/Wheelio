@@ -3,6 +3,7 @@ import Home from './pages/Home'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Settings from './pages/Settings'
+import Book from './pages/Book'
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/book/:vehicleId" element={<Book />} />
       </Routes>
     </BrowserRouter>
   )
