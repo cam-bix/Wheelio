@@ -4,39 +4,38 @@ import wheelioLogo from '../assets/Wheelio_logo.png'
 import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 
-const [vehicles, setVehicles] = useState([])
-const [loading, setLoading] = useState(true)
-const [error, setError] = useState('')
-
-useEffect(() => {
-    async function loadVehicles() {
-        try {
-            setLoading(true)
-            setError('')
-            const response = await fetch('http://localhost:8080/api/vehicles')
-            if (!response.ok) {
-                throw new Error('Failed to load vehicles')
-            }
-
-            const data = await response.json()
-
-            const availableVehicles = data.filter(
-                (vehicle) => vehicle.status == 'AVAILABLE'
-            )
-
-            setVehicles(availableVehicles)
-        } catch (err) {
-            setError('Could not load available vehicles')
-        } finally {
-            setLoading(false)
-        }
-    }
-
-    loadVehicles()
-}, [])
-
-
 function ReserveVehicles() {
+    const [vehicles, setVehicles] = useState([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState('')
+
+    useEffect(() => {
+        async function loadVehicles() {
+            try {
+                setLoading(true)
+                setError('')
+                const response = await fetch('http://localhost:8080/api/vehicles')
+                if (!response.ok) {
+                    throw new Error('Failed to load vehicles')
+                }
+
+                const data = await response.json()
+
+                const availableVehicles = data.filter(
+                    (vehicle) => vehicle.status == 'AVAILABLE'
+                )
+
+                setVehicles(availableVehicles)
+            } catch (err) {
+                setError('Could not load available vehicles')
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        loadVehicles()
+    }, [])
+
     return (
         <div className="reserve-page">
             <header className="dashboard-topbar">
@@ -45,7 +44,7 @@ function ReserveVehicles() {
                 </div>
                 <nav className="dashboard-nav">
                     <Link to="/">Home</Link>
-                    <Link to="/book" className="nav-activate">Book a Vehicle</Link>
+                    <Link to="/book" className="nav-active">Book a Vehicle</Link>
                     <a href="/">Modify Booking</a>
                     <a href="/">Change Location</a>
                     <a href="/">Settings</a>
@@ -67,7 +66,7 @@ function ReserveVehicles() {
                 </section>
 
                 {loading && <p className="reserve-message">Loading vehicles...</p>}
-                {error && <p className="reserve-message reserve-message--error"></p>}
+                {error && <p className="reserve-message reserve-message--error">{error}</p>}
                 {!loading && !error && vehicles.length === 0 && (
                     <p className="reserve-message">No available vehicles found.</p>
                 )}
@@ -100,3 +99,5 @@ function ReserveVehicles() {
 
     )
 }
+
+export default ReserveVehicles
