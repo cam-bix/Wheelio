@@ -1,0 +1,721 @@
+/* ─── Page ────────────────────────────────────────────────────── */
+
+.employee-inventory-page {
+  min-height: 100vh;
+  background-color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* ─── Top Navigation Bar ─────────────────────────────────────── */
+/* Identical to EmployeeBookings.css so both pages share one navbar
+   look — only the active link differs (set via .nav-active in JSX). */
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #0f0f0f;
+  padding: 14px 32px;
+  border-bottom: 4px solid #e5212a;
+}
+
+.navbar-logo .logo-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.speed-lines {
+  margin-right: -2px;
+}
+
+.logo-text {
+  color: #ffffff;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.logo-accent {
+  color: #e5212a;
+}
+
+/* ─── Nav Links ──────────────────────────────────────────────── */
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.navbar-links a {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding-bottom: 4px;
+  transition: color 0.15s ease;
+}
+
+.navbar-links a:hover {
+  color: #e5212a;
+}
+
+.navbar-links a.nav-active {
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: #e5212a;
+  text-underline-offset: 5px;
+}
+
+/* ─── Navbar User ────────────────────────────────────────────── */
+
+.navbar-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.username {
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+/* ─── Page Content ───────────────────────────────────────────── */
+
+.inventory-content {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 40px 32px 80px;
+}
+
+.inventory-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.inventory-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.inventory-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #0f0f0f;
+}
+
+.inventory-location {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f0f0f;
+}
+
+/* Styled to read like a link even though it's a <button> under the
+   hood — see handleChangeLocation in the JSX for the TODO on wiring
+   this up to a real location picker. */
+.change-location-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #0f0f0f;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.change-location-link:hover {
+  color: #e5212a;
+}
+
+/* ─── Filters + Search Controls ──────────────────────────────── */
+
+.inventory-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.control-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  border: 1.5px solid #0f0f0f;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #0f0f0f;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.control-btn:hover {
+  background-color: #f5f5f5;
+}
+
+/* Brand-red active state once at least one status filter is checked,
+   so staff can see at a glance that the list is currently filtered. */
+.control-btn-active {
+  border-color: #e5212a;
+  background-color: #fdecec;
+  color: #e5212a;
+}
+
+.control-btn-active:hover {
+  background-color: #fce0e0;
+}
+
+/* Small pill showing how many statuses are currently checked. */
+.filters-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background-color: #e5212a;
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.filters-chevron {
+  color: currentColor;
+  transition: transform 0.15s ease;
+}
+
+.filters-chevron-open {
+  transform: rotate(180deg);
+}
+
+.filters-wrapper {
+  position: relative;
+}
+
+/* ─── Filters Dropdown ───────────────────────────────────────── */
+/* Redesigned to feel like part of the Wheelio brand: a clear header
+   row, status options as colored chips with a matching status dot,
+   and a red "Clear" action that only appears once filters are set. */
+
+.filters-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  z-index: 10;
+  min-width: 220px;
+  background: #ffffff;
+  border: 1.5px solid #ececec;
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: 0 12px 28px rgba(15, 15, 15, 0.12);
+  animation: filters-fade-in 0.12s ease;
+}
+
+@keyframes filters-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.filters-dropdown-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px 10px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #0f0f0f;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.filters-clear-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #e5212a;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: normal;
+  cursor: pointer;
+}
+
+.filters-clear-btn:hover {
+  text-decoration: underline;
+}
+
+.filters-options {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Each status option is a full-width chip-style row so the whole row
+   is clickable, not just the tiny native checkbox. */
+.filter-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #0f0f0f;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.filter-option:hover {
+  background-color: #f7f7f7;
+}
+
+.filter-option-active {
+  background-color: #fdecec;
+}
+
+.filter-option-active:hover {
+  background-color: #fce0e0;
+}
+
+.filter-option input[type='checkbox'] {
+  width: 15px;
+  height: 15px;
+  accent-color: #e5212a;
+  cursor: pointer;
+}
+
+/* Small colored dot echoing the status badge colors, so the filter
+   list visually matches the badges shown on each vehicle card. */
+.status-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.status-dot-available {
+  background-color: #1f9d46;
+}
+
+.status-dot-rented {
+  background-color: #d9950f;
+}
+
+.status-dot-maintenance {
+  background-color: #e5212a;
+}
+
+.inventory-search {
+  width: 240px;
+  max-width: 100%;
+  padding: 10px 18px;
+  border: 1.5px solid #d0d0d0;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  color: #0f0f0f;
+  background: #ffffff;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.inventory-search:focus {
+  border-color: #0f0f0f;
+}
+
+.inventory-loading,
+.inventory-empty {
+  color: #555;
+  font-size: 1rem;
+}
+
+.inventory-error {
+  background: #fff0f0;
+  border: 1px solid #ffbcbc;
+  color: #c0000a;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.875rem;
+  margin-bottom: 20px;
+}
+
+/* ─── Inventory Grid ─────────────────────────────────────────── */
+
+.inventory-grid {
+  display: grid;
+  /* Maximum of 3 columns, auto-shrinking gracefully down on smaller layouts */
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 28px 24px;
+}
+
+/* Outer Card Layout */
+.vehicle-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 16px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.vehicle-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 28px rgba(0,0,0,.12);
+}
+
+/* Vehicle thumbnail box. Status badge is positioned absolutely so it
+   overlaps the top-left corner, same as the mockup. */
+.vehicle-image {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border: 1.6px solid #0f0f0f;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.vehicle-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.vehicle-name {
+  margin: 14px 0 6px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f0f0f;
+  text-align: left;
+  width: 100%;
+}
+
+/* ─── Vehicle Details Box ────────────────────────────────────── */
+
+.vehicle-details-box {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: auto; /* Pushes up matching bottom alignments gracefully */
+  font-size: 0.85rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.details-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px; /* Creates extra width and space separation between details */
+  margin-bottom: 6px;
+}
+
+.details-row:last-child {
+  margin-bottom: 0;
+}
+
+.details-label {
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.details-value {
+  color: #212529;
+  font-weight: 600;
+  text-align: right;
+}
+
+/* ─── Status Badge ───────────────────────────────────────────── */
+/* Positioned to sit on top of the vehicle image, overlapping its
+   top-left corner. Color is picked by matching class name to
+   vehicle.status (lower-cased) in the JSX — add a new
+   .status-<value> rule here if a new status gets added later. */
+
+.status-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1;
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.status-available {
+  color: #17652b;
+  background-color: #e8f7ec;
+}
+
+.status-rented {
+  color: #93690a;
+  background-color: #fdf3df;
+}
+
+.status-maintenance {
+  color: #c0000a;
+  background-color: #fdeaea;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  .inventory-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .inventory-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .inventory-page-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .inventory-controls {
+    flex-wrap: wrap;
+  }
+
+  .inventory-search {
+    width: 100%;
+  }
+
+  .filters-dropdown {
+    left: auto;
+    right: 0;
+  }
+
+  .navbar {
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 14px 20px;
+  }
+
+  .navbar-links {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+}
+
+
+/* ===== Fleet Statistics ===== */
+
+.stat-counter-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin-bottom: 32px;
+}
+
+.stat-badge-item {
+  position: relative;
+  background: #ffffff;
+  border: 1px solid #ececec;
+  border-radius: 16px;
+  padding: 22px 18px;
+  box-shadow: 0 8px 18px rgba(0,0,0,.06);
+  transition: all .2s ease;
+  overflow: hidden;
+}
+
+.stat-badge-item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 5px;
+}
+
+.stat-badge-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 28px rgba(0,0,0,.12);
+}
+
+.stat-count {
+  display: block;
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.stat-label {
+  display: block;
+  font-size: .78rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-weight: 700;
+  color: #666;
+}
+
+/* Individual Colors */
+
+.stat-badge-item.total::before {
+  background: #111;
+}
+
+.stat-badge-item.available::before {
+  background: #2fb344;
+}
+
+.stat-badge-item.rented::before {
+  background: #f59f00;
+}
+
+.stat-badge-item.maintenance::before {
+  background: #e03131;
+}
+
+.stat-badge-item.total .stat-count {
+  color: #111;
+}
+
+.stat-badge-item.available .stat-count {
+  color: #2fb344;
+}
+
+.stat-badge-item.rented .stat-count {
+  color: #f59f00;
+}
+
+.stat-badge-item.maintenance .stat-count {
+  color: #e03131;
+}
+
+/* Mobile */
+
+@media (max-width: 900px) {
+  .stat-counter-bar {
+    grid-template-columns: repeat(2,1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .stat-counter-bar {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ===== Pagination ===== */
+
+.inventory-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  margin-top: 42px;
+  padding: 18px 24px;
+  background: #ffffff;
+  border: 1px solid #ececec;
+  border-radius: 18px;
+  box-shadow: 0 8px 20px rgba(0,0,0,.05);
+}
+
+.pagination-arrow-btn {
+  width: 46px;
+  height: 46px;
+  border: none;
+  border-radius: 50%;
+  background: #111;
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .2s ease;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pagination-arrow-btn:hover:not(:disabled) {
+  background: #e5212a;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(229,33,42,.25);
+}
+
+.pagination-arrow-btn:disabled {
+  background: #d8d8d8;
+  color: #888;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.pagination-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 170px;
+  color: #111;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.pagination-text::before {
+  content: "Inventory";
+  font-size: .72rem;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #888;
+  margin-bottom: 4px;
+}
+
+@media (max-width: 600px) {
+  .inventory-pagination {
+    gap: 14px;
+    padding: 14px;
+  }
+
+  .pagination-arrow-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .pagination-text {
+    min-width: auto;
+    font-size: .9rem;
+  }
+}
