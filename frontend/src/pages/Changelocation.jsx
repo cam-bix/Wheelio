@@ -2,7 +2,7 @@ import { useState } from 'react'
 import wheelioLogo from '../assets/Wheelio_logo.png'
 import './Home.css'
 import './Settings.css'
-import './ChangeLocation.css'
+import './Changelocation.css'
 import { Link } from 'react-router-dom'
 
 const locations = [
