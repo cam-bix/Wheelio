@@ -2,8 +2,10 @@ import carPlaceholder from '../assets/placeholder_image.jpg'
 import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import './EmployeeInventory.css'
+import { getVehicles } from '../api/vehicles'
 
-// Updated mock inventory data with metadata fields.
+/*
+//Mock vehicle data for use in testing. Use this if you cannot connect to the backend.
 const MOCK_VEHICLES = [
   { id: '2201', make: 'Toyota', model: 'Corolla', year: '2024', status: 'Available', location: 'Waterloo', image: '', plate: 'CXBT 882', fuel: 92, type: 'Gas', odometer: 14500 },
   { id: '2202', make: 'Honda', model: 'CR-V', year: '2023', status: 'Rented', location: 'Waterloo', image: '', plate: 'BVLL 401', fuel: 45, type: 'Gas', odometer: 32120 },
@@ -17,9 +19,21 @@ const MOCK_VEHICLES = [
   { id: '2210', make: 'BMW', model: '3 Series', year: '2023', status: 'Maintenance', location: 'Waterloo', image: '', plate: 'BMMW 330', fuel: 100, type: 'Gas', odometer: 35000 },
   { id: '2211', make: 'Audi', model: 'Q5', year: '2024', status: 'Available', location: 'Waterloo', image: '', plate: 'AUUD 441', fuel: 95, type: 'Gas', odometer: 8100 }
 ]
+*/
 
 const STATUS_OPTIONS = ['Available', 'Rented', 'Maintenance']
 const ITEMS_PER_PAGE = 10
+
+function formatVehicleStatus(status) {
+  const statusLabels = {
+    AVAILABLE: 'Available',
+    RENTED: 'Rented',
+    MAINTENANCE: 'Maintenance',
+    OUT_OF_SERVICE: 'Maintenance',
+  }
+
+  return statusLabels[status] || status
+}
 
 function EmployeeInventory() {
   const [vehicles, setVehicles] = useState([])
@@ -32,20 +46,41 @@ function EmployeeInventory() {
   const [currentPage, setCurrentPage] = useState(1)
   const [location, setLocation] = useState('Waterloo, ON')
 
-  useEffect(() => {
-    const fetchInventory = async () => {
-      setLoading(true)
-      setError('')
-      try {
-        setVehicles(MOCK_VEHICLES)
-      } catch (err) {
-        setError(err.message || 'Unable to load inventory.')
-      } finally {
-        setLoading(false)
-      }
+useEffect(() => {
+  const fetchInventory = async () => {
+    setLoading(true)
+    setError('')
+
+    try {
+      const data = await getVehicles()
+
+      const formattedVehicles = data.map((vehicle) => ({
+        id: String(vehicle.vehicleId),
+        make: vehicle.make,
+        model: vehicle.model,
+        year: String(vehicle.year),
+        status: formatVehicleStatus(vehicle.status),
+        plate: vehicle.licensePlate,
+        dailyRate: Number(vehicle.dailyRate),
+        image: '',
+
+        // These fields do not currently exist in the backend. remove these and usages asap.
+        location,
+        fuel: 100,
+        type: 'Uknown',
+        odometer: 0,
+      }))
+
+      setVehicles(formattedVehicles)
+    } catch (err) {
+      setError(err.message || 'Unable to load inventory.')
+    } finally {
+      setLoading(false)
     }
-    fetchInventory()
-  }, [location])
+  }
+
+  fetchInventory()
+}, [])
 
   // Reset pagination to page 1 whenever search filters alter the results pool
   useEffect(() => {

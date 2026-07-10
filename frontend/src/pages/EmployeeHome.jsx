@@ -3,11 +3,9 @@ import logo from '../assets/Wheelio_logo.png'
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import './EmployeeHome.css'
+import { getBookings } from '../api/bookings'
+import { getStatistics } from '../api/statistics'
 
-
-// Placeholder support ticket data. Swap this out for a real API call
-// (e.g. import { getSupportTickets } from '../api/support') once the
-// support endpoint is ready.
 const MOCK_TICKETS = [
   {
     id: '2041',
@@ -18,34 +16,20 @@ const MOCK_TICKETS = [
     summary: 'Billing dispute — customer was charged twice for a one-day rental in Waterloo.',
   },
 ]
-
-// Placeholder KPI summary — same three stats shown on the Statistics
-// page, so this preview should stay in sync with whatever
-// getStatistics() eventually returns there. trendPct is the percent
-// change vs. the prior period, and goodDirection tells the card
-// whether a rising or falling number counts as "good" so the trend
-// badge below turns green/red appropriately (e.g. incidents going
-// down is good, so goodDirection: 'down').
-// Swap this out for a real API call (e.g. import { getStatistics }
-// from '../api/statistics') once the statistics endpoint is ready.
+/*
 const MOCK_SUMMARY = [
   { label: 'Total Bookings', value: 128, trendPct: 8, goodDirection: 'up' },
   { label: 'Vehicles Rented', value: 84, trendPct: 8, goodDirection: 'up' },
   { label: 'Vehicle Incidents', value: 3, trendPct: -25, goodDirection: 'down' },
 ]
+*/
 
-// Maps each summary card's label to the icon shown in its top-left
-// corner, matching the icon set used on the Statistics page's KPI
-// cards. Add an entry here if a new stat card gets added later.
 const SUMMARY_ICONS = {
   'Total Bookings': <IconCalendar />,
   'Vehicles Rented': <IconCar />,
   'Vehicle Incidents': <IconWarning />,
 }
-
-// Placeholder bookings preview. Swap this out for a real API call
-// (e.g. import { getBookings } from '../api/bookings') once the
-// bookings endpoint is ready.
+/*
 const MOCK_BOOKINGS = [
   {
     id: '1042',
@@ -66,7 +50,7 @@ const MOCK_BOOKINGS = [
     image: '',
   },
 ]
-
+*/
 
 //The following is the employee home page — the first thing staff see
 //when logging in, giving a quick view of tickets, stats, and bookings.
@@ -77,25 +61,50 @@ function EmployeeHome() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
-  useEffect(() => {
-    const fetchHomeData = async () => {
-      setLoading(true)
-      setError('')
-      try {
-        // TODO: replace with real API calls once the endpoints exist,
-        // e.g. Promise.all([getSupportTickets(), getStatistics(), getBookings()])
-        setTickets(MOCK_TICKETS)
-        setSummary(MOCK_SUMMARY)
-        setBookings(MOCK_BOOKINGS)
-      } catch (err) {
-        setError(err.message || 'Unable to load your dashboard.')
-      } finally {
-        setLoading(false)
-      }
-    }
+useEffect(() => {
+  const fetchHomeData = async () => {
+    setLoading(true)
+    setError('')
 
-    fetchHomeData()
-  }, [])
+    try {
+      const [bookingData, statisticsData] = await Promise.all([
+        getBookings(),
+        getStatistics(),
+      ])
+
+      setTickets(MOCK_TICKETS)
+
+      setBookings(bookingData.slice(0, 2))
+
+      setSummary([
+        {
+          label: 'Total Bookings',
+          value: bookingData.length,
+          trendPct: 0,
+          goodDirection: 'up',
+        },
+        {
+          label: 'Vehicles Rented',
+          value: statisticsData.vehiclesRented.value,
+          trendPct: statisticsData.vehiclesRented.trendPct,
+          goodDirection: 'up',
+        },
+        {
+          label: 'Vehicle Incidents',
+          value: statisticsData.vehicleIncidents.value,
+          trendPct: statisticsData.vehicleIncidents.trendPct,
+          goodDirection: 'down',
+        },
+      ])
+    } catch (err) {
+      setError(err.message || 'Unable to load your dashboard.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  fetchHomeData()
+}, [])
 
   // Removes a ticket from the outstanding list once resolved.
   // TODO: replace with a real API call, e.g. await resolveTicket(id)
