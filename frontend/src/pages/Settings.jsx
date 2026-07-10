@@ -58,7 +58,7 @@ function Settings() {
 
                 <nav className="dashboard-nav">
                     <Link to="/">Home</Link>
-                    <Link to="/book">Book a Vehicle</Link>
+                    <Link to="/book/:vehicleId">Book a Vehicle</Link>
                     <Link to="/modify-booking">Modify Booking</Link>
                     <Link to="/change-location">Change Location</Link>
                     <Link to="/settings">Settings</Link>
