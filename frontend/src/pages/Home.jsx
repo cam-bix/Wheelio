@@ -33,6 +33,34 @@ function PlaceholderImage() {
 }
 
 function Home() {
+    const [currentUser, setCurrentUser] = useState(null)
+    const [rentals, setRentals] = useState([])
+    const [rentalsLoading, setRentalsLoading] = useState(true)
+    const [rentalsError, setRentalsError] = useState('')
+
+    async function loadRentals(userId) {
+        try {
+            setRentalsLoading(true)
+            setRentalsError('')
+            const data = await getActiveRentalsForUser(userId)
+            setRentals(data)
+        } catch (err) {
+            setRentalsError(err.message)
+        } finally {
+            setRentalsLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        const storedUser = JSON.parse(localStorage.getItem('wheeliouser') || 'null')
+        if (!storedUser) {
+            setRentalsLoading(false)
+            return
+        }
+
+        setCurrentUser(storedUser)
+        loadRentals(storedUser.userId)
+    }, [])
     return (
         <div className="dashboard-page">
             <header className="dashboard-topbar">
@@ -41,11 +69,11 @@ function Home() {
                 </div>
 
                 <nav className="dashboard-nav">
-                    <Link to="/" className="nav-active">Home</Link>
+                    <Link to="/">Home</Link>
                     <Link to="/book">Book a Vehicle</Link>
-                    <a href="/">Modify Booking</a>
-                    <a href="/">Change Location</a>
-                    <a href="/">Settings</a>
+                    <Link to="/">Modify Booking</Link>
+                    <Link to="/">Change Location</Link>
+                    <Link to="/Settings">Settings</Link>
                 </nav>
 
                 <div className="dashboard-user">

@@ -45,9 +45,9 @@ function ReserveVehicles() {
                 <nav className="dashboard-nav">
                     <Link to="/">Home</Link>
                     <Link to="/book" className="nav-active">Book a Vehicle</Link>
-                    <a href="/">Modify Booking</a>
-                    <a href="/">Change Location</a>
-                    <a href="/">Settings</a>
+                    <Link to="/">Modify Booking</Link>
+                    <Link to="/">Change Location</Link>
+                    <Link to="/settings">Settings</Link>
                 </nav>
 
                 <div className="dashboard-user">
