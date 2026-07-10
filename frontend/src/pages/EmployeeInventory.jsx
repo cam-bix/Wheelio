@@ -1,4 +1,5 @@
 import carPlaceholder from '../assets/placeholder_image.jpg'
+import logo from '../assets/Wheelio_logo.png'
 import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import './EmployeeInventory.css'
@@ -132,28 +133,38 @@ useEffect(() => {
       {/* ─── Top Navigation Bar ─────────────────────────────── */}
       <nav className="navbar">
         <div className="navbar-logo">
-          <div className="logo-badge">
-            <svg width="22" height="22" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-              <circle cx="14" cy="14" r="13" stroke="white" strokeWidth="2" />
-              <circle cx="14" cy="14" r="4" fill="white" />
-              <line x1="14" y1="1" x2="14" y2="9" stroke="white" strokeWidth="2" />
-              <line x1="14" y1="19" x2="14" y2="27" stroke="white" strokeWidth="2" />
-              <line x1="1" y1="14" x2="9" y2="14" stroke="white" strokeWidth="2" />
-              <line x1="19" y1="14" x2="27" y2="14" stroke="white" strokeWidth="2" />
-            </svg>
-            <span className="logo-text">Wheel<span className="logo-accent">io</span></span>
-          </div>
+          <Link to="/employee-home">
+            <img src={logo} alt="Wheelio Logo" className="navbar-logo-image" />
+          </Link>
         </div>
+
         <div className="navbar-links">
-          <Link to="/home">Home</Link>
-          <Link to="/inventory" className="nav-active">Check Inventory</Link>
-          <Link to="/bookings">Bookings</Link>
-          <Link to="/statistics">Statistics</Link>
+          <Link to="/employee-home">Home</Link>
+          <Link to="/employee-inventory" className="nav-active">
+            Check Inventory
+          </Link>
+          <Link to="/employee-bookings">Bookings</Link>
+          <Link to="/employee-stats">Statistics</Link>
           <Link to="/support">Customer Support</Link>
         </div>
+
         <div className="navbar-user">
           <div className="user-icon" aria-hidden="true">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#0f0f0f" strokeWidth="1.6" /></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <circle
+                cx="12"
+                cy="8"
+                r="4"
+                stroke="#0f0f0f"
+                strokeWidth="1.6"
+              />
+              <path
+                d="M4 20c1.5-4 5-6 8-6s6.5 2 8 6"
+                stroke="#0f0f0f"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+              />
+            </svg>
           </div>
           <span className="username">Username</span>
         </div>
