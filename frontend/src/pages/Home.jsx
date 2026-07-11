@@ -88,9 +88,9 @@ function Home() {
                 <nav className="dashboard-nav">
                     <Link to="/">Home</Link>
                     <Link to="/book">Book a Vehicle</Link>
-                    <Link to="/">Modify Booking</Link>
-                    <Link to="/">Change Location</Link>
-                    <Link to="/Settings">Settings</Link>
+                    <Link to="/modify-booking">Modify Booking</Link>
+                    <Link to="/change-location">Change Location</Link>
+                    <Link to="/settings">Settings</Link>
                 </nav>
 
                 <div className="dashboard-user">
@@ -126,10 +126,10 @@ function Home() {
                             <p>Total: ${rental.totalCost}</p>
                             </div>
 
-                            <button className="outline-button" type="button">
+                            <Link className="outline-button" to="/modify-booking">
                             Modify Booking
                             <span className="button-arrow">›</span>
-                            </button>
+                            </Link>
 
                             <button
                             className="outline-button"
@@ -147,7 +147,7 @@ function Home() {
                 <section className="dashboard-panel dashboard-panel--right">
                     <h2>Featured Available Inventory</h2>
                     <p className="panel-subtitle">
-                        Inventory for "Location" <span>Change Location</span>
+                        Inventory for "Location" <span><Link to="/change-location">Change Location</Link></span>
                     </p>
 
                     <div className="inventory-grid">

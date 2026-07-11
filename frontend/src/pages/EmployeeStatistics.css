@@ -1,0 +1,656 @@
+/* ─── Page ────────────────────────────────────────────────────── */
+
+.employee-statistics-page {
+  min-height: 100vh;
+  background-color: #f7f7f8;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* ─── Top Navigation Bar ─────────────────────────────────────── */
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #0f0f0f;
+  padding: 14px 32px;
+  border-bottom: 4px solid #e5212a;
+}
+
+.navbar-logo-image {
+  height: 34px;
+  display: block;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.navbar-links a {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding-bottom: 4px;
+  transition: color 0.15s ease;
+}
+
+.navbar-links a:hover {
+  color: #e5212a;
+}
+
+.navbar-links a.nav-active {
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: #e5212a;
+  text-underline-offset: 5px;
+}
+
+.navbar-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.username {
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+/* ─── Page Content ───────────────────────────────────────────── */
+
+.statistics-content {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 36px 32px 80px;
+}
+
+.statistics-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.statistics-title {
+  font-size: 2.1rem;
+  font-weight: 800;
+  color: #0f0f0f;
+  margin: 0;
+  letter-spacing: -0.03em;
+}
+
+.statistics-subtitle {
+  margin: 5px 0 0 0;
+  font-size: 0.92rem;
+  color: #8a8a8a;
+  font-weight: 500;
+}
+
+/* ─── Date Controls ──────────────────────────────────────────── */
+
+.date-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 9px;
+  flex-shrink: 0;
+}
+
+.range-presets {
+  display: flex;
+  gap: 6px;
+}
+
+.preset-btn {
+  border: 1.5px solid #e2e2e2;
+  background-color: #ffffff;
+  border-radius: 999px;
+  padding: 5px 13px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #6b6b6b;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+}
+
+.preset-btn:hover {
+  border-color: #0f0f0f;
+  color: #0f0f0f;
+}
+
+.preset-btn:active {
+  transform: scale(0.97);
+}
+
+.date-range-calendars {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ─── Calendar Dropdown ───────────────────────────────────────── */
+
+.calendar-dropdown {
+  position: relative;
+}
+
+.calendar-trigger {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  border: 1.5px solid #0f0f0f;
+  border-radius: 12px;
+  padding: 7px 14px;
+  background-color: #ffffff;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  min-width: 128px;
+}
+
+.calendar-trigger:hover {
+  border-color: #e5212a;
+  box-shadow: 0 2px 8px rgba(15, 15, 15, 0.06);
+}
+
+.calendar-trigger-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #a3a3a3;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.calendar-trigger-value {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #0f0f0f;
+}
+
+.date-range-arrow {
+  flex-shrink: 0;
+  margin-top: 12px;
+}
+
+.calendar-popup {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 20;
+  width: 268px;
+  background-color: #ffffff;
+  border: 1px solid #ececec;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 16px 40px rgba(15, 15, 15, 0.16);
+}
+
+.calendar-popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.calendar-popup-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #0f0f0f;
+}
+
+.calendar-nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: none;
+  background-color: #f6f6f6;
+  color: #0f0f0f;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.calendar-nav-btn:hover {
+  background-color: #eeeeee;
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 4px;
+}
+
+.calendar-weekdays span {
+  text-align: center;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #b8b8b8;
+}
+
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.calendar-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #0f0f0f;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.calendar-day:hover:not(.calendar-day-disabled) {
+  background-color: #f6f6f6;
+}
+
+.calendar-day-muted {
+  color: #d8d8d8;
+}
+
+.calendar-day-today {
+  box-shadow: inset 0 0 0 1.5px #e5212a;
+  font-weight: 700;
+}
+
+.calendar-day-selected {
+  background-color: #0f0f0f;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.calendar-day-selected:hover {
+  background-color: #0f0f0f;
+}
+
+.calendar-day-disabled {
+  color: #e8e8e8;
+  cursor: not-allowed;
+}
+
+/* ─── Summary / KPI Cards ────────────────────────────────────── */
+
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.summary-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border: 1px solid #ececec;
+  border-radius: 14px;
+  padding: 20px 22px;
+  background-color: #ffffff;
+  box-shadow: 0 1px 3px rgba(15, 15, 15, 0.04);
+  transition: box-shadow 0.18s ease, transform 0.15s ease, border-color 0.18s ease;
+}
+
+.summary-card:hover {
+  box-shadow: 0 10px 24px rgba(15, 15, 15, 0.09);
+  transform: translateY(-2px);
+  border-color: #e2e2e2;
+}
+
+.summary-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  min-height: 22px;
+  gap: 8px;
+}
+
+.summary-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.summary-icon-bookings { background-color: #fdeceb; }
+.summary-icon-vehicles { background-color: #eaf1fc; }
+.summary-icon-revenue { background-color: #eaf7ee; }
+.summary-icon-maintenance { background-color: #fdf3e2; }
+
+.trend-badge {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 3px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 999px;
+  white-space: nowrap;
+  text-align: right;
+}
+
+.trend-badge-sub {
+  flex-basis: 100%;
+  font-size: 0.64rem;
+  font-weight: 500;
+  opacity: 0.8;
+  text-align: right;
+}
+
+.trend-good {
+  color: #17652b;
+  background-color: #e8f7ec;
+}
+
+.trend-bad {
+  color: #c0000a;
+  background-color: #fdeaea;
+}
+
+.trend-flat {
+  color: #777;
+  background-color: #f2f2f2;
+}
+
+.trend-new {
+  color: #1d5fae;
+  background-color: #e8f1fb;
+  font-size: 0.72rem;
+  padding: 4px 9px;
+}
+
+.summary-value {
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: #0f0f0f;
+  letter-spacing: -0.01em;
+}
+
+.summary-label {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #444;
+}
+
+.summary-sublabel {
+  font-size: 0.78rem;
+  color: #a3a3a3;
+}
+
+/* ─── Chart Grid ──────────────────────────────────────────────── */
+
+.chart-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.chart-panel {
+  border: 1px solid #ececec;
+  border-radius: 14px;
+  padding: 22px 24px;
+  background-color: #ffffff;
+  box-shadow: 0 1px 3px rgba(15, 15, 15, 0.04);
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.18s ease, transform 0.15s ease, border-color 0.18s ease;
+}
+
+.chart-panel:hover {
+  box-shadow: 0 10px 24px rgba(15, 15, 15, 0.09);
+  transform: translateY(-2px);
+  border-color: #e2e2e2;
+}
+
+.chart-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f0f0f;
+  margin: 0 0 18px 0;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #f2f2f2;
+}
+
+.chart-empty {
+  flex: 1;
+  min-height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #b8b8b8;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+/* SVG line / bar charts */
+
+.chart-svg {
+  width: 100%;
+  height: 180px;
+}
+
+.chart-gridline {
+  stroke: #f2f2f2;
+  stroke-width: 1;
+}
+
+.chart-axis-label {
+  font-size: 9px;
+  fill: #a3a3a3;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.vbar-rect {
+  transition: opacity 0.15s ease;
+}
+
+.vbar-rect:hover {
+  opacity: 0.75;
+}
+
+/* ─── Horizontal Bar Chart (Most Rented Vehicles) ────────────── */
+
+.hbar-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  justify-content: center;
+  flex: 1;
+}
+
+.hbar-row {
+  display: grid;
+  grid-template-columns: 120px 1fr 32px;
+  align-items: center;
+  gap: 12px;
+}
+
+.hbar-label {
+  font-size: 0.85rem;
+  color: #0f0f0f;
+  font-weight: 600;
+}
+
+.hbar-track {
+  height: 10px;
+  border-radius: 999px;
+  background-color: #f2f2f2;
+  overflow: hidden;
+}
+
+.hbar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background-color: #e5212a;
+  transition: opacity 0.15s ease;
+}
+
+.hbar-row:hover .hbar-fill {
+  opacity: 0.82;
+}
+
+.hbar-value {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #0f0f0f;
+  text-align: right;
+}
+
+/* ─── Donut Chart (Fleet Status) ─────────────────────────────── */
+
+.donut-chart {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex: 1;
+}
+
+.donut-segment {
+  transition: opacity 0.15s ease;
+}
+
+.donut-segment:hover {
+  opacity: 0.75;
+}
+
+.donut-total {
+  font-size: 20px;
+  font-weight: 800;
+  fill: #0f0f0f;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.donut-total-label {
+  font-size: 9px;
+  fill: #a3a3a3;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.donut-legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  font-size: 0.85rem;
+  color: #0f0f0f;
+  flex: 1;
+}
+
+.donut-legend li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend-label {
+  flex: 1;
+  font-weight: 500;
+}
+
+.legend-value {
+  font-weight: 700;
+  color: #777;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  .summary-cards {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .chart-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .statistics-page-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .date-controls {
+    align-items: stretch;
+  }
+
+  .range-presets {
+    justify-content: flex-end;
+  }
+
+  .summary-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .navbar {
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 14px 20px;
+  }
+
+  .navbar-links {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .hbar-row {
+    grid-template-columns: 90px 1fr 28px;
+  }
+
+  .donut-chart {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .calendar-popup {
+    right: auto;
+    left: 0;
+  }
+}
