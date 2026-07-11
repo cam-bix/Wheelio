@@ -1,8 +1,9 @@
 import './ReserveVehicles.css'
 import carPlaceholder from '../assets/placeholder_image.jpg'
 import wheelioLogo from '../assets/Wheelio_logo.png'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
+import { createRental } from '../api/rentals'
 
 function ReserveVehicles() {
     const [vehicles, setVehicles] = useState([])

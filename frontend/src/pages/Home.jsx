@@ -1,7 +1,9 @@
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import carPlaceholder from '../assets/placeholder_image.jpg'
 import wheelioLogo from '../assets/Wheelio_logo.png'
+import { getActiveRentalsForUser, cancelRental } from '../api/rentals'
 import './Home.css'
-import { Link } from 'react-router-dom'
 
 const featuredVehicles = [
   {
@@ -32,6 +34,10 @@ function PlaceholderImage() {
     )
 }
 
+function formatDate(dateString) {
+  return new Date(dateString).toLocaleString()
+}
+
 function Home() {
     const [currentUser, setCurrentUser] = useState(null)
     const [rentals, setRentals] = useState([])
@@ -45,14 +51,25 @@ function Home() {
             const data = await getActiveRentalsForUser(userId)
             setRentals(data)
         } catch (err) {
-            setRentalsError(err.message)
+            setRentalsError(err.message || 'Could not load rentals.') 
         } finally {
             setRentalsLoading(false)
         }
     }
 
+    async function handleCancelRental(rentalId) {
+        if (!currentUser) return
+
+        try {
+        await cancelRental(rentalId)
+        await loadRentals(currentUser.userId)
+        } catch (err) {
+        setRentalsError(err.message || 'Could not cancel rental.')
+        }
+    }
+
     useEffect(() => {
-        const storedUser = JSON.parse(localStorage.getItem('wheeliouser') || 'null')
+        const storedUser = JSON.parse(localStorage.getItem('wheelioUser') || 'null')
         if (!storedUser) {
             setRentalsLoading(false)
             return
@@ -78,7 +95,7 @@ function Home() {
 
                 <div className="dashboard-user">
                     <div className="dashboard-user__icon"></div>
-                    <span>Username</span>
+                    <span>{currentUser ? currentUser.firstName : 'Guest'}</span>
                 </div>
             </header>
 
@@ -86,19 +103,45 @@ function Home() {
                 <section className="dashboard-panel dashboard-panel--left">
                     <h2>Your Current Bookings</h2>
 
-                    <div className="booking-card">
-                        <PlaceholderImage />
-                        <h3>Car Make &amp; Model</h3>
+                    {rentalsLoading && <p className="empty-text">Loading your rentals...</p>}
 
-                        <div className="booking-info-box">Booking Information</div>
+                    {!rentalsLoading && rentalsError && (
+                        <p className="empty-text">{rentalsError}</p>
+                    )}
 
-                        <button className="outline-button" type="button">
-                            Modify Booking 
+                    {!rentalsLoading && !rentalsError && rentals.length === 0 && (
+                        <p className="empty-text">You have no active rentals.</p>
+                    )}
+
+                    {!rentalsLoading && !rentalsError && rentals.length > 0 && (
+                        rentals.map((rental) => (
+                        <div className="booking-card" key={rental.rentalId}>
+                            <PlaceholderImage />
+                            <h3>{rental.vehicleName}</h3>
+
+                            <div className="booking-info-box">
+                            <p>Pickup: {formatDate(rental.pickupDate)}</p>
+                            <p>Return: {formatDate(rental.returnDate)}</p>
+                            <p>Status: {rental.status}</p>
+                            <p>Total: ${rental.totalCost}</p>
+                            </div>
+
+                            <button className="outline-button" type="button">
+                            Modify Booking
                             <span className="button-arrow">›</span>
-                        </button>
+                            </button>
 
-                        <p className="empty-text">No More Bookings</p>
-                    </div>
+                            <button
+                            className="outline-button"
+                            type="button"
+                            onClick={() => handleCancelRental(rental.rentalId)}
+                            >
+                            Cancel Booking
+                            <span className="button-arrow">›</span>
+                            </button>
+                        </div>
+                        ))
+                    )}
                 </section>
 
                 <section className="dashboard-panel dashboard-panel--right">
@@ -110,17 +153,17 @@ function Home() {
                     <div className="inventory-grid">
                         {featuredVehicles.map((vehicle) => (
                             <article className="inventory-card" key={vehicle.vehicle_id}>
-                            <PlaceholderImage />
+                                <PlaceholderImage />
 
-                            <h3>
-                                {vehicle.year} {vehicle.make} {vehicle.model}
-                            </h3>
+                                <h3>
+                                    {vehicle.year} {vehicle.make} {vehicle.model}
+                                </h3>
 
-                            <div className="inventory-details">
-                                <p>Vehicle ID: {vehicle.vehicle_id}</p>
-                                <p>Daily Rate: ${vehicle.daily_rate}</p>
-                                <p>Status: {vehicle.status}</p>
-                            </div>
+                                <div className="inventory-details">
+                                    <p>Vehicle ID: {vehicle.vehicle_id}</p>
+                                    <p>Daily Rate: ${vehicle.daily_rate}</p>
+                                    <p>Status: {vehicle.status}</p>
+                                </div>
                             </article>
                         ))}
                     </div>
