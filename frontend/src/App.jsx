@@ -4,6 +4,8 @@ import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Settings from './pages/Settings'
 import Book from './pages/Book'
+import ChangeLocation from './pages/Changelocation'
+import ModifyBooking from './pages/ModifyBooking'
 
 function App() {
   return (
@@ -15,6 +17,8 @@ function App() {
         <Route path="/settings" element={<Settings />} />
         <Route path="/home" element={<Home />} />
         <Route path="/book/:vehicleId" element={<Book />} />
+        <Route path="/change-location" element={<ChangeLocation />} />
+        <Route path="/modify-booking" element={<ModifyBooking />} />
       </Routes>
     </BrowserRouter>
   )
