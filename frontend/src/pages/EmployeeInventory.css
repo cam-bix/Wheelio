@@ -540,55 +540,40 @@
 /* ===== Fleet Statistics ===== */
 
 .stat-counter-bar {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 18px;
-  margin-bottom: 32px;
+
+  margin-bottom: 22px;
+  padding: 12px 20px;
+
+  background: #fafafa;
+  border: 1px solid #e6e6e6;
+  border-radius: 10px;
 }
 
 .stat-badge-item {
-  position: relative;
-  background: #ffffff;
-  border: 1px solid #ececec;
-  border-radius: 16px;
-  padding: 22px 18px;
-  box-shadow: 0 8px 18px rgba(0,0,0,.06);
-  transition: all .2s ease;
-  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
 .stat-badge-item::before {
   content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 5px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
 
-.stat-badge-item:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 14px 28px rgba(0,0,0,.12);
-}
-
-.stat-count {
-  display: block;
-  font-size: 2.2rem;
-  font-weight: 800;
-  line-height: 1;
-  margin-bottom: 8px;
-}
-
-.stat-label {
-  display: block;
-  font-size: .78rem;
-  text-transform: uppercase;
-  letter-spacing: .08em;
-  font-weight: 700;
-  color: #666;
-}
-
-/* Individual Colors */
+/* Dot Colors */
 
 .stat-badge-item.total::before {
   background: #111;
@@ -606,36 +591,31 @@
   background: #e03131;
 }
 
-.stat-badge-item.total .stat-count {
+.stat-count {
+  font-size: 1rem;
+  font-weight: 700;
   color: #111;
 }
 
-.stat-badge-item.available .stat-count {
-  color: #2fb344;
+.stat-label {
+  font-size: .78rem;
+  color: #666;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
 }
 
-.stat-badge-item.rented .stat-count {
-  color: #f59f00;
-}
-
-.stat-badge-item.maintenance .stat-count {
-  color: #e03131;
-}
-
-/* Mobile */
-
-@media (max-width: 900px) {
+@media (max-width: 700px) {
   .stat-counter-bar {
-    grid-template-columns: repeat(2,1fr);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .stat-badge-item {
+    width: 100%;
   }
 }
-
-@media (max-width: 600px) {
-  .stat-counter-bar {
-    grid-template-columns: 1fr;
-  }
-}
-
 
 /* ===== Pagination ===== */
 

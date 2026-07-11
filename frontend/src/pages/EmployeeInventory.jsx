@@ -64,12 +64,6 @@ useEffect(() => {
         plate: vehicle.licensePlate,
         dailyRate: Number(vehicle.dailyRate),
         image: '',
-
-        // These fields do not currently exist in the backend. remove these and usages asap.
-        location,
-        fuel: 100,
-        type: 'Uknown',
-        odometer: 0,
       }))
 
       setVehicles(formattedVehicles)
