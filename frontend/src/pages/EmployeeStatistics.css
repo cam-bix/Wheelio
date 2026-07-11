@@ -2,13 +2,11 @@
 
 .employee-statistics-page {
   min-height: 100vh;
-  background-color: #ffffff;
+  background-color: #f7f7f8;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 /* ─── Top Navigation Bar ─────────────────────────────────────── */
-/* Shared styling with the bookings page navbar for a consistent
-   header across employee pages. */
 
 .navbar {
   display: flex;
@@ -19,29 +17,11 @@
   border-bottom: 4px solid #e5212a;
 }
 
-.navbar-logo .logo-badge {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+.navbar-logo-image {
+  height: 34px;
+  display: block;
 }
 
-.speed-lines {
-  margin-right: -2px;
-}
-
-.logo-text {
-  color: #ffffff;
-  font-size: 1.25rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-}
-
-.logo-accent {
-  color: #e5212a;
-}
-
-
-/* ─── Nav bar link ─────────────────────────────────────── */
 .navbar-links {
   display: flex;
   align-items: center;
@@ -93,71 +73,228 @@
 /* ─── Page Content ───────────────────────────────────────────── */
 
 .statistics-content {
-  max-width: 1080px;
+  max-width: 1120px;
   margin: 0 auto;
-  padding: 40px 32px 80px;
+  padding: 36px 32px 80px;
 }
 
 .statistics-page-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
 .statistics-title {
-  font-size: 2rem;
-  font-weight: 700;
+  font-size: 2.1rem;
+  font-weight: 800;
   color: #0f0f0f;
   margin: 0;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
 }
 
-.statistics-loading {
-  color: #555;
-  font-size: 1rem;
+.statistics-subtitle {
+  margin: 5px 0 0 0;
+  font-size: 0.92rem;
+  color: #8a8a8a;
+  font-weight: 500;
 }
 
-.statistics-error {
-  background: #fff0f0;
-  border: 1px solid #ffbcbc;
-  color: #c0000a;
-  border-radius: 8px;
-  padding: 10px 14px;
-  font-size: 0.875rem;
-  margin-bottom: 20px;
-}
+/* ─── Date Controls ──────────────────────────────────────────── */
 
-/* ─── Range Toggle ───────────────────────────────────────────── */
-
-.range-toggle {
+.date-controls {
   display: flex;
-  border: 1.5px solid #0f0f0f;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 9px;
+  flex-shrink: 0;
+}
+
+.range-presets {
+  display: flex;
+  gap: 6px;
+}
+
+.preset-btn {
+  border: 1.5px solid #e2e2e2;
+  background-color: #ffffff;
   border-radius: 999px;
-  padding: 3px;
+  padding: 5px 13px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #6b6b6b;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+}
+
+.preset-btn:hover {
+  border-color: #0f0f0f;
+  color: #0f0f0f;
+}
+
+.preset-btn:active {
+  transform: scale(0.97);
+}
+
+.date-range-calendars {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ─── Calendar Dropdown ───────────────────────────────────────── */
+
+.calendar-dropdown {
+  position: relative;
+}
+
+.calendar-trigger {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  border: 1.5px solid #0f0f0f;
+  border-radius: 12px;
+  padding: 7px 14px;
+  background-color: #ffffff;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  min-width: 128px;
+}
+
+.calendar-trigger:hover {
+  border-color: #e5212a;
+  box-shadow: 0 2px 8px rgba(15, 15, 15, 0.06);
+}
+
+.calendar-trigger-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #a3a3a3;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.calendar-trigger-value {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #0f0f0f;
+}
+
+.date-range-arrow {
+  flex-shrink: 0;
+  margin-top: 12px;
+}
+
+.calendar-popup {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 20;
+  width: 268px;
+  background-color: #ffffff;
+  border: 1px solid #ececec;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 16px 40px rgba(15, 15, 15, 0.16);
+}
+
+.calendar-popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.calendar-popup-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #0f0f0f;
+}
+
+.calendar-nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: none;
+  background-color: #f6f6f6;
+  color: #0f0f0f;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.calendar-nav-btn:hover {
+  background-color: #eeeeee;
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 4px;
+}
+
+.calendar-weekdays span {
+  text-align: center;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #b8b8b8;
+}
+
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
   gap: 2px;
 }
 
-.range-btn {
+.calendar-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: none;
-  background: transparent;
-  padding: 6px 16px;
-  border-radius: 999px;
-  font-size: 0.85rem;
-  font-weight: 600;
+  border-radius: 8px;
+  background: none;
+  font-size: 0.8rem;
+  font-weight: 500;
   color: #0f0f0f;
   cursor: pointer;
   transition: background-color 0.15s ease, color 0.15s ease;
 }
 
-.range-btn:hover {
-  color: #e5212a;
+.calendar-day:hover:not(.calendar-day-disabled) {
+  background-color: #f6f6f6;
 }
 
-.range-btn-active,
-.range-btn-active:hover {
+.calendar-day-muted {
+  color: #d8d8d8;
+}
+
+.calendar-day-today {
+  box-shadow: inset 0 0 0 1.5px #e5212a;
+  font-weight: 700;
+}
+
+.calendar-day-selected {
   background-color: #0f0f0f;
   color: #ffffff;
+  font-weight: 700;
+}
+
+.calendar-day-selected:hover {
+  background-color: #0f0f0f;
+}
+
+.calendar-day-disabled {
+  color: #e8e8e8;
+  cursor: not-allowed;
 }
 
 /* ─── Summary / KPI Cards ────────────────────────────────────── */
@@ -165,48 +302,72 @@
 .summary-cards {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  margin-bottom: 24px;
+  gap: 16px;
+  margin-bottom: 28px;
 }
 
 .summary-card {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  border: 1.5px solid #0f0f0f;
-  border-radius: 10px;
-  padding: 18px 20px;
+  border: 1px solid #ececec;
+  border-radius: 14px;
+  padding: 20px 22px;
   background-color: #ffffff;
-  transition: box-shadow 0.15s ease, transform 0.1s ease;
+  box-shadow: 0 1px 3px rgba(15, 15, 15, 0.04);
+  transition: box-shadow 0.18s ease, transform 0.15s ease, border-color 0.18s ease;
 }
 
 .summary-card:hover {
-  box-shadow: 0 6px 18px rgba(15, 15, 15, 0.08);
-  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(15, 15, 15, 0.09);
+  transform: translateY(-2px);
+  border-color: #e2e2e2;
 }
 
 .summary-card-top {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
+  min-height: 22px;
+  gap: 8px;
 }
 
 .summary-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
-  background-color: #f6f6f6;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  flex-shrink: 0;
 }
 
+.summary-icon-bookings { background-color: #fdeceb; }
+.summary-icon-vehicles { background-color: #eaf1fc; }
+.summary-icon-revenue { background-color: #eaf7ee; }
+.summary-icon-maintenance { background-color: #fdf3e2; }
+
 .trend-badge {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 3px;
   font-size: 0.75rem;
   font-weight: 700;
-  padding: 3px 8px;
+  padding: 3px 9px;
   border-radius: 999px;
+  white-space: nowrap;
+  text-align: right;
+}
+
+.trend-badge-sub {
+  flex-basis: 100%;
+  font-size: 0.64rem;
+  font-weight: 500;
+  opacity: 0.8;
+  text-align: right;
 }
 
 .trend-good {
@@ -219,16 +380,34 @@
   background-color: #fdeaea;
 }
 
+.trend-flat {
+  color: #777;
+  background-color: #f2f2f2;
+}
+
+.trend-new {
+  color: #1d5fae;
+  background-color: #e8f1fb;
+  font-size: 0.72rem;
+  padding: 4px 9px;
+}
+
 .summary-value {
-  font-size: 1.7rem;
-  font-weight: 700;
+  font-size: 1.85rem;
+  font-weight: 800;
   color: #0f0f0f;
+  letter-spacing: -0.01em;
 }
 
 .summary-label {
   font-size: 0.88rem;
-  font-weight: 600;
-  color: #777;
+  font-weight: 700;
+  color: #444;
+}
+
+.summary-sublabel {
+  font-size: 0.78rem;
+  color: #a3a3a3;
 }
 
 /* ─── Chart Grid ──────────────────────────────────────────────── */
@@ -236,46 +415,61 @@
 .chart-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 16px;
 }
 
 .chart-panel {
-  border: 1.5px solid #0f0f0f;
-  border-radius: 10px;
-  padding: 20px 24px;
+  border: 1px solid #ececec;
+  border-radius: 14px;
+  padding: 22px 24px;
   background-color: #ffffff;
+  box-shadow: 0 1px 3px rgba(15, 15, 15, 0.04);
   display: flex;
   flex-direction: column;
-  transition: box-shadow 0.15s ease, transform 0.1s ease;
+  transition: box-shadow 0.18s ease, transform 0.15s ease, border-color 0.18s ease;
 }
 
 .chart-panel:hover {
-  box-shadow: 0 6px 18px rgba(15, 15, 15, 0.08);
-  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(15, 15, 15, 0.09);
+  transform: translateY(-2px);
+  border-color: #e2e2e2;
 }
 
 .chart-title {
   font-size: 1rem;
   font-weight: 700;
   color: #0f0f0f;
-  margin: 0 0 16px 0;
+  margin: 0 0 18px 0;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #f2f2f2;
+}
+
+.chart-empty {
+  flex: 1;
+  min-height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #b8b8b8;
+  font-size: 0.85rem;
+  text-align: center;
 }
 
 /* SVG line / bar charts */
 
 .chart-svg {
   width: 100%;
-  height: 160px;
+  height: 180px;
 }
 
 .chart-gridline {
-  stroke: #f0f0f0;
+  stroke: #f2f2f2;
   stroke-width: 1;
 }
 
 .chart-axis-label {
-  font-size: 8px;
-  fill: #888;
+  font-size: 9px;
+  fill: #a3a3a3;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
@@ -307,13 +501,13 @@
 .hbar-label {
   font-size: 0.85rem;
   color: #0f0f0f;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .hbar-track {
   height: 10px;
   border-radius: 999px;
-  background-color: #f0f0f0;
+  background-color: #f2f2f2;
   overflow: hidden;
 }
 
@@ -325,7 +519,7 @@
 }
 
 .hbar-row:hover .hbar-fill {
-  opacity: 0.8;
+  opacity: 0.82;
 }
 
 .hbar-value {
@@ -335,7 +529,7 @@
   text-align: right;
 }
 
-/* ─── Donut Chart (Bookings by Status) ───────────────────────── */
+/* ─── Donut Chart (Fleet Status) ─────────────────────────────── */
 
 .donut-chart {
   display: flex;
@@ -354,16 +548,16 @@
 
 .donut-total {
   font-size: 20px;
-  font-weight: 700;
+  font-weight: 800;
   fill: #0f0f0f;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 .donut-total-label {
   font-size: 9px;
-  fill: #888;
+  fill: #a3a3a3;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
@@ -373,7 +567,7 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 11px;
   font-size: 0.85rem;
   color: #0f0f0f;
   flex: 1;
@@ -394,6 +588,7 @@
 
 .legend-label {
   flex: 1;
+  font-weight: 500;
 }
 
 .legend-value {
@@ -413,11 +608,18 @@
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 640px) {
   .statistics-page-header {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 14px;
+    align-items: stretch;
+  }
+
+  .date-controls {
+    align-items: stretch;
+  }
+
+  .range-presets {
+    justify-content: flex-end;
   }
 
   .summary-cards {
@@ -445,5 +647,10 @@
   .donut-chart {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .calendar-popup {
+    right: auto;
+    left: 0;
   }
 }
