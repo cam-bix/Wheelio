@@ -59,6 +59,14 @@ public class RentalService {
                 .toList();
     }
 
+    public List<RentalResponse> getActiveRentalsForUser(Long userId) {
+        return rentalRepository
+                .findByUserUserIdAndStatusInOrderByPickupDateAsc(userId, RentalStatus.BOOKED)
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
     public RentalResponse getRentalById(Long id) {
         Rental rental = getRentalEntityById(id);
         return toResponse(rental);
