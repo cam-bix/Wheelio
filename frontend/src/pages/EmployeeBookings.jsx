@@ -3,11 +3,8 @@ import logo from '../assets/Wheelio_logo.png'
 import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import './EmployeeBookings.css'
-
-
-// Placeholder booking data. Swap this out for a real API call
-// (e.g. import { getBookings } from '../api/bookings') once the
-// bookings endpoint is ready.
+import { getBookings } from '../api/bookings'
+/*
 const MOCK_BOOKINGS = [
   {
     id: '1042',
@@ -37,6 +34,7 @@ const MOCK_BOOKINGS = [
     image: '',
   },
 ]
+*/
 
 // Column labels shown once in the header row, and reused as
 // per-cell labels on mobile where the grid collapses to a stack.
@@ -61,9 +59,7 @@ function EmployeeBookings() {
       setLoading(true)
       setError('')
       try {
-        // TODO: replace with a real API call once the bookings
-        // endpoint exists, e.g. const data = await getBookings()
-        const data = MOCK_BOOKINGS
+        const data = await getBookings()
         setBookings(data)
       } catch (err) {
         setError(err.message || 'Unable to load bookings.')

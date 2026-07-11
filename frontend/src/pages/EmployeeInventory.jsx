@@ -247,7 +247,7 @@ useEffect(() => {
                     <div className="details-row"><span className="details-label">Year:</span><span className="details-value">{vehicle.year}</span></div>
                     <div className="details-row"><span className="details-label">ID:</span><span className="details-value">#{vehicle.id}</span></div>
                     <div className="details-row"><span className="details-label">Plate:</span><span className="details-value">{vehicle.plate}</span></div>
-                    <div className="details-row"><span className="details-label">Odometer:</span><span className="details-value">{vehicle.odometer.toLocaleString()} km</span></div>
+                    <div className="details-row"><span className="details-label">Daily Rate:</span><span className="details-value">${vehicle.dailyRate.toFixed(2)}</span></div>
                   </div>
                 </div>
               ))}
