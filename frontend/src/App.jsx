@@ -1,8 +1,8 @@
-
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
+import Calendar from './pages/Calendar'
 import EmployeeBookings from './pages/EmployeeBookings'
 import EmployeeStatistics from './pages/EmployeeStatistics'
 import EmployeeHome from './pages/EmployeeHome'
@@ -28,6 +28,7 @@ function App() {
         <Route path="/book/:vehicleId" element={<Book />} />
         <Route path="/change-location" element={<ChangeLocation />} />
         <Route path="/modify-booking" element={<ModifyBooking />} />
+        <Route path="/calendar" element={<Calendar />} />
       </Routes>
     </BrowserRouter>
   )

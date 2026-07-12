@@ -33,6 +33,33 @@ CREATE TABLE app_user (
         CHECK (email LIKE '%_@_%._%')
 );
 
+-- Locations Table
+CREATE TABLE location (
+    location_id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    address_line VARCHAR(150) NOT NULL,
+    city VARCHAR(80) NOT NULL,
+    province VARCHAR(50) NOT NULL,
+    postal_code VARCHAR(20) NOT NULL,
+    phone VARCHAR(20),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT chk_location_name_not_blank
+        CHECK (TRIM(name) <> ''),
+
+    CONSTRAINT chk_location_address_not_blank
+        CHECK (TRIM(address_line) <> ''),
+
+    CONSTRAINT chk_location_city_not_blank
+        CHECK (TRIM(city) <> ''),
+
+    CONSTRAINT chk_location_province_not_blank
+        CHECK (TRIM(province) <> ''),
+
+    CONSTRAINT chk_location_postal_code_not_blank
+        CHECK (TRIM(postal_code) <> '')
+);
+
 -- Employees Table
 CREATE TABLE employee (
     employee_id BIGSERIAL PRIMARY KEY,
@@ -128,7 +155,6 @@ CREATE TABLE rental (
     total_cost NUMERIC(10,2) NOT NULL CHECK (total_cost >= 0),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    -- Constraints & Foreign Keys
     CONSTRAINT fk_rental_user
         FOREIGN KEY (user_id)
         REFERENCES app_user(user_id)
@@ -160,12 +186,19 @@ CREATE TABLE rental (
 
 -- Indexes for faster searching/filtering
 CREATE INDEX idx_vehicle_status ON vehicle(status);
+CREATE INDEX idx_vehicle_location_id ON vehicle(location_id);
 CREATE INDEX idx_rental_user_id ON rental(user_id);
 CREATE INDEX idx_rental_vehicle_id ON rental(vehicle_id);
 CREATE INDEX idx_rental_employee_id ON rental(employee_id);
 CREATE INDEX idx_rental_status ON rental(status);
+CREATE INDEX idx_rental_pickup_location_id ON rental(pickup_location_id);
+CREATE INDEX idx_rental_return_location_id ON rental(return_location_id);
+CREATE INDEX idx_rental_pickup_date ON rental(pickup_date);
+CREATE INDEX idx_rental_return_date ON rental(return_date);
+CREATE INDEX idx_rental_vehicle_dates ON rental(vehicle_id, pickup_date, return_date);
 CREATE INDEX idx_employee_position ON employee(position);
 CREATE INDEX idx_employee_status ON employee(employment_status);
+CREATE INDEX idx_employee_location_id ON employee(location_id);
 CREATE INDEX idx_vehicle_location_id ON vehicle(location_id);
 CREATE INDEX idx_rental_pickup_location_id ON rental(pickup_location_id);
 CREATE INDEX idx_rental_return_location_id ON rental(return_location_id);
