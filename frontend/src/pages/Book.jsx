@@ -4,6 +4,7 @@ import { getVehicleById } from '../api/vehicles'
 import './Book.css'
 import carPlaceholder from '../assets/placeholder_image.jpg'
 import wheelioLogo from '../assets/Wheelio_logo.png'
+import { createCheckoutSession } from '../api/checkout'
 
 function Book() {
     const { vehicleId } = useParams()
@@ -23,7 +24,13 @@ function Book() {
             })
     }, [vehicleId])
     function handleBook() {
-        console.log('Book Vehicle clicked') /* Placeholder until Stripe*/
+        createCheckoutSession(vehicleId, Number(days))
+            .then(result => {
+                window.location.href = result.url
+            })
+            .catch(err => {
+                setError(err.message)
+            })
     }
     if (loading) {
         return <p>Loading...</p>
