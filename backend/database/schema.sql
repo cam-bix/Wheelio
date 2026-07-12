@@ -6,8 +6,8 @@
 
 -- Safety check statements (DELETE AFTER CLOUD MIGRATION)
 DROP TABLE IF EXISTS rental CASCADE;
-DROP TABLE IF EXISTS vehicle CASCADE;
 DROP TABLE IF EXISTS employee CASCADE;
+DROP TABLE IF EXISTS vehicle CASCADE;
 DROP TABLE IF EXISTS location CASCADE;
 DROP TABLE IF EXISTS app_user CASCADE;
 
@@ -81,6 +81,36 @@ CREATE TABLE employee (
         FOREIGN KEY (location_id)
         REFERENCES location(location_id)
         ON DELETE RESTRICT
+
+    CONSTRAINT chk_employee_first_name_not_blank
+        CHECK (TRIM(first_name) <> ''),
+
+    CONSTRAINT chk_employee_last_name_not_blank
+        CHECK (TRIM(last_name) <> ''),
+
+    CONSTRAINT chk_employee_email_format
+        CHECK (email LIKE '%_@_%._%')
+);
+
+-- Locations Table
+CREATE TABLE location (
+    location_id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    address_line VARCHAR(150) NOT NULL,
+    city VARCHAR(80) NOT NULL,
+    province VARCHAR(50) NOT NULL,
+    postal_code VARCHAR(20) NOT NULL,
+    phone VARCHAR(20),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT chk_location_name_not_blank
+        CHECK (TRIM(name) <> ''),
+
+    CONSTRAINT chk_location_address_not_blank
+        CHECK (TRIM(address_line) <> ''),
+
+    CONSTRAINT chk_location_city_not_blank
+        CHECK (TRIM(city) <> '')
 );
 
 -- Vehicles Table
@@ -98,7 +128,7 @@ CREATE TABLE vehicle (
     CONSTRAINT fk_vehicle_location
         FOREIGN KEY (location_id)
         REFERENCES location(location_id)
-        ON DELETE RESTRICT,
+        ON DELETE RESTRICT
 
     CONSTRAINT chk_vehicle_make_not_blank
         CHECK (TRIM(make) <> ''),
@@ -157,7 +187,6 @@ CREATE TABLE rental (
 -- Indexes for faster searching/filtering
 CREATE INDEX idx_vehicle_status ON vehicle(status);
 CREATE INDEX idx_vehicle_location_id ON vehicle(location_id);
-
 CREATE INDEX idx_rental_user_id ON rental(user_id);
 CREATE INDEX idx_rental_vehicle_id ON rental(vehicle_id);
 CREATE INDEX idx_rental_employee_id ON rental(employee_id);
@@ -167,7 +196,9 @@ CREATE INDEX idx_rental_return_location_id ON rental(return_location_id);
 CREATE INDEX idx_rental_pickup_date ON rental(pickup_date);
 CREATE INDEX idx_rental_return_date ON rental(return_date);
 CREATE INDEX idx_rental_vehicle_dates ON rental(vehicle_id, pickup_date, return_date);
-
 CREATE INDEX idx_employee_position ON employee(position);
 CREATE INDEX idx_employee_status ON employee(employment_status);
 CREATE INDEX idx_employee_location_id ON employee(location_id);
+CREATE INDEX idx_vehicle_location_id ON vehicle(location_id);
+CREATE INDEX idx_rental_pickup_location_id ON rental(pickup_location_id);
+CREATE INDEX idx_rental_return_location_id ON rental(return_location_id);

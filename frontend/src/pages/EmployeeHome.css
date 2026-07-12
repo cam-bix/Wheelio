@@ -1,0 +1,472 @@
+/* ─── Page ────────────────────────────────────────────────────── */
+
+.employee-home-page {
+  min-height: 100vh;
+  background-color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* ─── Top Navigation Bar ─────────────────────────────────────── */
+/* Shared styling with the bookings/statistics/inventory navbar for
+   a consistent header across employee pages. */
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #0f0f0f;
+  padding: 14px 32px;
+  border-bottom: 4px solid #e5212a;
+}
+
+.navbar-logo .logo-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.speed-lines {
+  margin-right: -2px;
+}
+
+.logo-text {
+  color: #ffffff;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.logo-accent {
+  color: #e5212a;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.navbar-links a {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding-bottom: 4px;
+  transition: color 0.15s ease;
+}
+
+.navbar-links a:hover {
+  color: #e5212a;
+}
+
+.navbar-links a.nav-active {
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: #e5212a;
+  text-underline-offset: 5px;
+}
+
+.navbar-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.username {
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+/* ─── Page Content ───────────────────────────────────────────── */
+
+.home-loading {
+  padding: 40px 32px;
+  color: #555;
+  font-size: 1rem;
+}
+
+.home-error {
+  margin: 20px 32px 0;
+  background: #fff0f0;
+  border: 1px solid #ffbcbc;
+  color: #c0000a;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.875rem;
+}
+
+.home-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+/* ─── Left Column: Support Tickets ───────────────────────────── */
+
+.tickets-column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tickets-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f0f0f;
+  margin: 0 0 4px 0;
+}
+
+.ticket-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ticket-number {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f0f0f;
+  margin: 0;
+}
+
+.ticket-box {
+  border: 1.5px solid #0f0f0f;
+  border-radius: 10px;
+  padding: 16px;
+  min-height: 96px;
+  font-size: 0.88rem;
+  color: #444;
+  line-height: 1.4;
+}
+
+.resolve-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  border-radius: 999px;
+  background-color: #e2e2e2;
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f0f0f;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.resolve-btn:hover {
+  background-color: #d2d2d2;
+}
+
+.resolve-btn:active {
+  transform: scale(0.98);
+}
+
+.tickets-empty {
+  text-align: center;
+  color: #909090;
+  font-size: 0.85rem;
+  margin: 8px 0 0 0;
+}
+
+/* ─── Right Column ────────────────────────────────────────────── */
+
+.main-column {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* Locate Vehicles */
+
+.locate-vehicles-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1.5px solid #0f0f0f;
+  border-radius: 10px;
+  padding: 22px 28px;
+  text-decoration: none;
+  color: #0f0f0f;
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+}
+
+.locate-vehicles-btn:hover {
+  background-color: #f8f8f8;
+  box-shadow: 0 6px 18px rgba(15, 15, 15, 0.08);
+  transform: translateY(-1px);
+}
+
+/* Shared section heading style */
+
+.home-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.home-section-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.home-section-title a {
+  color: #0f0f0f;
+  text-decoration: none;
+}
+
+.home-section-title a:hover {
+  color: #e5212a;
+}
+
+/* ─── Statistics preview ─────────────────────────────────────── */
+/* Matches the .summary-card KPI cards on the Statistics page
+   (icon top-left, trend badge top-right, big value, label below)
+   so the home preview and full stats page look like the same
+   component. Keep these in sync with EmployeeStatistics.css if
+   that card style changes. */
+
+.home-stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.home-stat-card {
+  display: flex;
+  flex-direction: column;
+  border: 1.5px solid #0f0f0f;
+  border-radius: 10px;
+  padding: 18px 20px;
+  text-decoration: none;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+}
+
+.home-stat-card:hover {
+  background-color: #f8f8f8;
+  box-shadow: 0 6px 18px rgba(15, 15, 15, 0.08);
+  transform: translateY(-1px);
+}
+
+.home-stat-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.home-stat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Trend badge — green when the change is in the "good" direction
+   for that stat, red when it isn't. goodDirection is set per-card
+   in MOCK_SUMMARY (e.g. incidents going down is good, so it uses
+   goodDirection: 'down' instead of 'up'). */
+.trend-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.trend-good {
+  color: #17652b;
+  background-color: #e8f7ec;
+}
+
+.trend-bad {
+  color: #c0000a;
+  background-color: #fdeaea;
+}
+
+.home-stat-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #0f0f0f;
+  line-height: 1.1;
+  text-align: left;
+}
+
+.home-stat-label {
+  margin-top: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #6c757d;
+  text-align: left;
+}
+
+/* ─── Bookings preview ───────────────────────────────────────── */
+
+.home-bookings-list { 
+  display: flex; 
+  flex-direction: column;
+  gap: 16px; 
+} 
+
+.home-booking-card { display: flex; 
+  align-items: center; 
+  gap: 20px; 
+  border: 1.5px solid #0f0f0f; 
+  border-radius: 10px; 
+  padding: 16px 22px; 
+  transition: box-shadow 0.15s ease, transform 0.1s ease; 
+}
+
+
+.home-booking-card {
+  display: grid;
+  grid-template-columns: 68px 1fr;
+  align-items: center;
+  gap: 22px;
+  border: 1.5px solid #0f0f0f;
+  border-radius: 10px;
+  padding: 18px 22px;
+  transition: box-shadow 0.15s ease, transform 0.1s ease;
+}
+
+.home-booking-details {
+  min-width: 0;
+}
+
+.home-booking-number {
+  text-align: center;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f0f0f;
+  margin: 0 0 14px 0;
+}
+
+.home-booking-fields {
+  display: grid;
+  grid-template-columns: 1.25fr 1.15fr 1fr 1fr 0.9fr;
+  align-items: center;
+  gap: 18px;
+}
+
+.home-booking-field {
+  min-width: 0;
+}
+
+.field-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #909090;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.field-value {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #0f0f0f;
+  white-space: nowrap;
+}
+
+.status-field {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/*---------- Status badge ------------*/
+
+.booking-status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.booking-status-confirmed {
+  color: #17652b;
+  background-color: #e8f7ec;
+}
+
+.booking-status-pending {
+  color: #93690a;
+  background-color: #fdf3df;
+}
+
+.booking-status-cancelled {
+  color: #c0000a;
+  background-color: #fdeaea;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  .home-content {
+    grid-template-columns: 1fr;
+  }
+
+  .home-stats-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .navbar {
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 14px 20px;
+  }
+
+  .navbar-links {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .home-content {
+    padding: 20px;
+  }
+
+  .locate-vehicles-btn {
+    font-size: 1.2rem;
+    padding: 18px 20px;
+  }
+
+  .home-stats-row {
+    grid-template-columns: 1fr;
+  }
+
+  .home-booking-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  
+}

@@ -1,6 +1,7 @@
 import carPlaceholder from '../assets/placeholder_image.jpg'
 import wheelioLogo from '../assets/Wheelio_logo.png'
 import './Home.css'
+import { Link } from 'react-router-dom'
 
 const featuredVehicles = [
   {
@@ -40,11 +41,11 @@ function Home() {
                 </div>
 
                 <nav className="dashboard-nav">
-                    <a href="/">Home</a>
-                    <a href="/">Book a Vehicle</a>
-                    <a href="/">Modify Booking</a>
-                    <a href="/">Change Location</a>
-                    <a href="/">Settings</a>
+                    <Link to="/">Home</Link>
+                    <Link to="/book/:vehicleId">Book a Vehicle</Link>
+                    <Link to="/modify-booking">Modify Booking</Link>
+                    <Link to="/change-location">Change Location</Link>
+                    <Link to="/Settings">Settings</Link>
                 </nav>
 
                 <div className="dashboard-user">
@@ -64,8 +65,8 @@ function Home() {
                         <div className="booking-info-box">Booking Information</div>
 
                         <button className="outline-button" type="button">
-                            Modify Booking 
-                            <span className="button-arrow">›</span>
+                            <Link to="/modify-booking">Modify Booking</Link> 
+                            <span className="button-arrow"></span>
                         </button>
 
                         <p className="empty-text">No More Bookings</p>
@@ -75,7 +76,7 @@ function Home() {
                 <section className="dashboard-panel dashboard-panel--right">
                     <h2>Featured Available Inventory</h2>
                     <p className="panel-subtitle">
-                        Inventory for "Location" <span>Change Location</span>
+                        Inventory for "Location" <span><Link to="/change-location">Change Location</Link></span>
                     </p>
 
                     <div className="inventory-grid">
