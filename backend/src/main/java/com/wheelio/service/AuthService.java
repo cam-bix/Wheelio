@@ -3,6 +3,7 @@ package com.wheelio.service;
 import com.wheelio.dto.AuthResponse;
 import com.wheelio.dto.LoginRequest;
 import com.wheelio.dto.RegisterRequest;
+import com.wheelio.dto.VerifyTwoFactorRequest;
 import com.wheelio.entity.AppUser;
 import com.wheelio.entity.UserRole;
 import com.wheelio.repository.AppUserRepository;
@@ -17,10 +18,16 @@ public class AuthService {
 
     private final AppUserRepository appUserRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailTwoFactorService emailTwoFactorService;
 
-    public AuthService(AppUserRepository appUserRepository, PasswordEncoder passwordEncoder) {
+    public AuthService(
+            AppUserRepository appUserRepository,
+            PasswordEncoder passwordEncoder,
+            EmailTwoFactorService emailTwoFactorService
+    ) {
         this.appUserRepository = appUserRepository;
         this.passwordEncoder = passwordEncoder;
+        this.emailTwoFactorService = emailTwoFactorService;
     }
 
     @Transactional
@@ -54,7 +61,28 @@ public class AuthService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
         }
 
-        // TODO: Add JWT issuance here once the project has Spring Security/JWT support.
+        emailTwoFactorService.sendLoginCode(user);
+        return new AuthResponse(
+                null,
+                null,
+                null,
+                user.getEmail(),
+                null,
+                null,
+                "Verification code sent",
+                true
+        );
+    }
+
+    public AuthResponse verifyTwoFactorLogin(VerifyTwoFactorRequest request) {
+        String email = normalizeEmail(request.getEmail());
+        AppUser user = appUserRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.UNAUTHORIZED,
+                        "Invalid or expired verification code"
+                ));
+
+        emailTwoFactorService.verifyLoginCode(user, request.getCode());
         return toResponse(user, "Login successful");
     }
 

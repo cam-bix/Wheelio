@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
+import VerifyTwoFactor from './pages/VerifyTwoFactor'
 import EmployeeBookings from './pages/EmployeeBookings'
 import EmployeeStatistics from './pages/EmployeeStatistics'
 import EmployeeHome from './pages/EmployeeHome'
@@ -18,6 +19,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/verify-2fa" element={<VerifyTwoFactor />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/employee-bookings" element={<EmployeeBookings />} />
         <Route path="/employee-stats" element={<EmployeeStatistics />} />
