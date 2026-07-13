@@ -27,6 +27,9 @@ public class Vehicle {
     @Column(name = "daily_rate", nullable = false, precision = 10, scale = 2)
     private BigDecimal dailyRate;
 
+    @Column(name = "location_id", nullable = false)
+    private Long locationId;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 50)
     private VehicleStatus status;
@@ -60,6 +63,10 @@ public class Vehicle {
         return dailyRate;
     }
 
+    public Long getLocationId() {
+        return locationId;
+    }
+
     public VehicleStatus getStatus() {
         return status;
     }
@@ -86,6 +93,10 @@ public class Vehicle {
 
     public void setDailyRate(BigDecimal dailyRate) {
         this.dailyRate = dailyRate;
+    }
+
+    public void setLocationId(Long locationId) {
+        this.locationId = locationId;
     }
 
     public void setStatus(VehicleStatus status) {

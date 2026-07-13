@@ -73,6 +73,7 @@ class HttpEndpointSecurityTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
+                                  "locationId": 1,
                                   "make": "Mazda",
                                   "model": "CX-5",
                                   "year": 2020,
@@ -88,6 +89,7 @@ class HttpEndpointSecurityTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
+                                  "locationId": 1,
                                   "make": "Toyota",
                                   "model": "Corolla SE",
                                   "year": 2022,
@@ -176,6 +178,8 @@ class HttpEndpointSecurityTest {
                                 {
                                   "userId": 4,
                                   "vehicleId": 1,
+                                  "pickupLocationId": 1,
+                                  "returnLocationId": 1,
                                   "pickupDate": "2026-07-01T09:00:00-04:00",
                                   "returnDate": "2026-07-05T09:00:00-04:00"
                                 }
@@ -198,6 +202,7 @@ class HttpEndpointSecurityTest {
         vehicle.setYear((short) 2020);
         vehicle.setLicensePlate("MAZ2020");
         vehicle.setDailyRate(new BigDecimal("75.00"));
+        vehicle.setLocationId(1L);
         vehicle.setStatus(VehicleStatus.AVAILABLE);
         return vehicle;
     }

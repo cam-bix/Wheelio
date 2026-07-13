@@ -1,8 +1,10 @@
 package com.wheelio.controller;
 
+import com.wheelio.dto.RentalResponse;
 import com.wheelio.entity.AppUser;
 import com.wheelio.service.AppUserService;
 import org.springframework.web.bind.annotation.*;
+import com.wheelio.service.RentalService;
 
 import java.util.List;
 
@@ -11,9 +13,11 @@ import java.util.List;
 public class AppUserController {
 
     private final AppUserService appUserService;
+    private final RentalService rentalService;
 
-    public AppUserController(AppUserService appUserService) {
+    public AppUserController(AppUserService appUserService, RentalService rentalService) {
         this.appUserService = appUserService;
+        this.rentalService = rentalService;
     }
 
     @GetMapping
@@ -39,5 +43,10 @@ public class AppUserController {
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Long id) {
         appUserService.deleteUser(id);
+    }
+
+    @GetMapping("/{id}/rentals/active")
+    public List<RentalResponse> getActiveRentalsForUser(@PathVariable Long id) {
+        return rentalService.getActiveRentalsForUser(id);
     }
 }

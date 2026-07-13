@@ -8,6 +8,8 @@ import com.wheelio.repository.RentalRepository;
 import com.wheelio.repository.VehicleRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -59,6 +61,13 @@ public class RentalService {
                 .toList();
     }
 
+    public List<RentalResponse> getActiveRentalsForUser(Long userId) {
+        return rentalRepository
+                .findByUserUserIdAndStatusOrderByPickupDateAsc(userId, RentalStatus.BOOKED)                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
     public RentalResponse getRentalById(Long id) {
         Rental rental = getRentalEntityById(id);
         return toResponse(rental);
@@ -67,17 +76,24 @@ public class RentalService {
     @Transactional
     public RentalResponse createRental(CreateRentalRequest request) {
         AppUser user = appUserRepository.findById(request.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
         Vehicle vehicle = vehicleRepository.findById(request.getVehicleId())
-                .orElseThrow(() -> new RuntimeException("Vehicle not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Vehicle not found"));
 
         if (vehicle.getStatus() != VehicleStatus.AVAILABLE) {
-            throw new RuntimeException("Vehicle is not available");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Vehicle is not available");
+        }
+
+        if (request.getPickupLocationId() == null || request.getReturnLocationId() == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Pickup and return locations are required"
+            );
         }
 
         if (!request.getReturnDate().isAfter(request.getPickupDate())) {
-            throw new RuntimeException("Return date must be after pickup date");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Return date must be after pickup date");
         }
 
         long days = Math.max(1, Duration.between(
@@ -91,6 +107,8 @@ public class RentalService {
         Rental rental = new Rental();
         rental.setUser(user);
         rental.setVehicle(vehicle);
+        rental.setPickupLocationId(request.getPickupLocationId());
+        rental.setReturnLocationId(request.getReturnLocationId());
         rental.setPickupDate(request.getPickupDate());
         rental.setReturnDate(request.getReturnDate());
         rental.setStatus(RentalStatus.BOOKED);
