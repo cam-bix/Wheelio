@@ -11,5 +11,5 @@ import java.util.List;
 public interface RentalRepository extends JpaRepository<Rental, Long> {
     List<Rental> findByUser(AppUser user);
     List<Rental> findByVehicle(Vehicle vehicle);
-    List<Rental> findByUserUserIdAndStatusInOrderByPickupDateAsc(Long userId, RentalStatus status);
+    List<Rental> findByUserUserIdAndStatusOrderByPickupDateAsc(Long userId, RentalStatus status);
 }

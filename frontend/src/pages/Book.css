@@ -22,9 +22,9 @@
 }
 
 .brand-logo {
-    height: 42px;
-    width: auto;
-    display: block;
+  height: 42px;
+  width: auto;
+  display: block;
 }
 
 .dashboard-nav {
@@ -43,6 +43,11 @@
 
 .dashboard-nav a:hover {
   text-decoration: underline;
+}
+
+.nav-active {
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 
 .dashboard-user {
@@ -90,67 +95,203 @@
 
 .dashboard-layout {
   display: grid;
-  grid-template-columns: 1fr 2fr;
-  border-top: 1px solid #d6d6d6;
-  min-height: calc(100vh - 59px);
+  grid-template-columns: minmax(280px, 1fr) minmax(320px, 1fr);
+  gap: 24px;
+  padding: 28px 24px 36px;
 }
 
 .dashboard-panel {
-  padding: 10px 12px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .dashboard-panel--left {
-  border-right: 1px solid #cfcfcf;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: flex-start;
 }
 
-
 .dashboard-panel--right {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   justify-content: flex-start;
+  width: 100%;
+  max-width: 460px;
+  margin: 0 auto;
 }
 
 .vehicle-image {
-  width: 180px;
-  height: 130px;
+  width: 100%;
+  max-width: 360px;
+  aspect-ratio: 4 / 3;
   border: 2px solid #222222;
   object-fit: cover;
-  border-radius: 12px;
+  border-radius: 18px;
   background: #ffffff;
 }
 
 .vehicle-title {
-    text-align: center;
-    font-size: 1rem;
-    font-weight: 700;
-    margin: 12px 0 0;
+  margin: 16px 0 0;
+  text-align: center;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #111111;
 }
 
 .inventory-details {
   width: 100%;
-  max-width: 210px;
-  padding: 10px 8px;
+  padding: 18px 20px;
   border: 1px solid #bcbcbc;
-  border-radius: 6px;
+  border-radius: 10px;
   background: #ffffff;
-  text-align: center;
-  font-size: 0.72rem;
+  box-sizing: border-box;
+}
+
+.inventory-details h2 {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.inventory-details p {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: 8px;
+  margin: 0 0 10px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.inventory-details span {
+  color: #6b6b6b;
+  font-weight: 700;
+  min-width: 0;
+}
+
+.inventory-details p:last-child {
+  margin-bottom: 0;
+}
+
+.booking-form {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.booking-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: #222222;
+}
+
+.booking-form input {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid #bcbcbc;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: #111111;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+.booking-form input:focus {
+  outline: none;
+  border-color: #d60000;
+  box-shadow: 0 0 0 3px rgba(214, 0, 0, 0.12);
+}
+
+.booking-estimate {
+  margin: 4px 0 0;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #111111;
+}
+
+.booking-error {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #c40000;
 }
 
 .outline-button {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  padding: 6px 12px;
+  min-height: 42px;
+  padding: 10px 16px;
   border: 1px solid #9f9f9f;
   border-radius: 999px;
   background: #efefef;
   color: #111111;
-  font-size: 0.78rem;
+  font-size: 0.88rem;
+  font-weight: 600;
   cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+.outline-button:hover:not(:disabled) {
+  background: #e4e4e4;
+  border-color: #7f7f7f;
+}
+
+.outline-button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.outline-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.dashboard-user__link {
+  color: #ffffff;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.dashboard-user__link:hover {
+  opacity: 0.85;
+}
+
+@media (max-width: 900px) {
+  .dashboard-topbar {
+    flex-wrap: wrap;
+  }
+
+  .dashboard-nav {
+    order: 3;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .dashboard-layout {
+    grid-template-columns: 1fr;
+    padding: 20px 18px 28px;
+  }
+
+  .dashboard-panel--right {
+    max-width: 560px;
+    width: 100%;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .vehicle-title {
+    font-size: 1.1rem;
+  }
+
+  .inventory-details {
+    padding: 16px;
+  }
+
+  .booking-form input {
+    font-size: 0.9rem;
+  }
 }

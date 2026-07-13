@@ -21,6 +21,12 @@ public class Rental {
     @JoinColumn(name = "vehicle_id", nullable = false)
     private Vehicle vehicle;
 
+    @Column(name = "pickup_location_id", nullable = false)
+    private Long pickupLocationId;
+
+    @Column(name = "return_location_id", nullable = false)
+    private Long returnLocationId;
+
     @Column(name = "pickup_date", nullable = false)
     private OffsetDateTime pickupDate;
 
@@ -65,8 +71,16 @@ public class Rental {
         return pickupDate;
     }
 
+    public Long getPickupLocationId() {
+        return pickupLocationId;
+    }
+
     public OffsetDateTime getReturnDate() {
         return returnDate;
+    }
+
+    public Long getReturnLocationId() {
+        return returnLocationId;
     }
 
     public RentalStatus getStatus() {
@@ -97,8 +111,16 @@ public class Rental {
         this.pickupDate = pickupDate;
     }
 
+    public void setPickupLocationId(Long pickupLocationId) {
+        this.pickupLocationId = pickupLocationId;
+    }
+
     public void setReturnDate(OffsetDateTime returnDate) {
         this.returnDate = returnDate;
+    }
+
+    public void setReturnLocationId(Long returnLocationId) {
+        this.returnLocationId = returnLocationId;
     }
 
     public void setStatus(RentalStatus status) {
