@@ -1,15 +1,16 @@
 /**
-  Author:   Jayden Hunt & Sebastian Caro
-  Date:     27 June 2026
-  Desc:     Wheelio Database Schema for sprint 2
- */
+    Author:   Jayden Hunt & Sebastian Caro
+    Date:     27 June 2026
+    Desc:     Wheelio Database Schema for sprint 2
+*/
 
--- Safety check statements (DELETE AFTER CLOUD MIGRATION)
+-- Safety check statements
 DROP TABLE IF EXISTS rental CASCADE;
 DROP TABLE IF EXISTS employee CASCADE;
 DROP TABLE IF EXISTS vehicle CASCADE;
 DROP TABLE IF EXISTS location CASCADE;
 DROP TABLE IF EXISTS app_user CASCADE;
+DROP TABLE IF EXISTS email_2fa_codes CASCADE;
 
 -- Users Table
 CREATE TABLE app_user (
@@ -33,6 +34,33 @@ CREATE TABLE app_user (
         CHECK (email LIKE '%_@_%._%')
 );
 
+-- Locations Table
+CREATE TABLE location (
+    location_id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    address_line VARCHAR(150) NOT NULL,
+    city VARCHAR(80) NOT NULL,
+    province VARCHAR(50) NOT NULL,
+    postal_code VARCHAR(20) NOT NULL,
+    phone VARCHAR(20),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT chk_location_name_not_blank
+        CHECK (TRIM(name) <> ''),
+
+    CONSTRAINT chk_location_address_not_blank
+        CHECK (TRIM(address_line) <> ''),
+
+    CONSTRAINT chk_location_city_not_blank
+        CHECK (TRIM(city) <> ''),
+
+    CONSTRAINT chk_location_province_not_blank
+        CHECK (TRIM(province) <> ''),
+
+    CONSTRAINT chk_location_postal_code_not_blank
+        CHECK (TRIM(postal_code) <> '')
+);
+
 -- Employees Table
 CREATE TABLE employee (
     employee_id BIGSERIAL PRIMARY KEY,
@@ -54,36 +82,6 @@ CREATE TABLE employee (
         FOREIGN KEY (location_id)
         REFERENCES location(location_id)
         ON DELETE RESTRICT
-
-    CONSTRAINT chk_employee_first_name_not_blank
-        CHECK (TRIM(first_name) <> ''),
-
-    CONSTRAINT chk_employee_last_name_not_blank
-        CHECK (TRIM(last_name) <> ''),
-
-    CONSTRAINT chk_employee_email_format
-        CHECK (email LIKE '%_@_%._%')
-);
-
--- Locations Table
-CREATE TABLE location (
-    location_id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    address_line VARCHAR(150) NOT NULL,
-    city VARCHAR(80) NOT NULL,
-    province VARCHAR(50) NOT NULL,
-    postal_code VARCHAR(20) NOT NULL,
-    phone VARCHAR(20),
-    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT chk_location_name_not_blank
-        CHECK (TRIM(name) <> ''),
-
-    CONSTRAINT chk_location_address_not_blank
-        CHECK (TRIM(address_line) <> ''),
-
-    CONSTRAINT chk_location_city_not_blank
-        CHECK (TRIM(city) <> '')
 );
 
 -- Vehicles Table
@@ -95,13 +93,14 @@ CREATE TABLE vehicle (
     year SMALLINT NOT NULL CHECK (year BETWEEN 1900 AND 2035),
     license_plate VARCHAR(15) NOT NULL UNIQUE,
     daily_rate NUMERIC(10,2) NOT NULL CHECK (daily_rate > 0),
-    status VARCHAR(50) NOT NULL
-        CHECK (status IN ('AVAILABLE', 'RENTED', 'MAINTENANCE', 'OUT_OF_SERVICE')),
+    status VARCHAR(50) NOT NULL DEFAULT 'AVAILABLE'
+    CHECK (status IN ('AVAILABLE', 'RENTED', 'MAINTENANCE', 'OUT_OF_SERVICE')),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_vehicle_location
         FOREIGN KEY (location_id)
         REFERENCES location(location_id)
-        ON DELETE RESTRICT
+        ON DELETE RESTRICT,
 
     CONSTRAINT chk_vehicle_make_not_blank
         CHECK (TRIM(make) <> ''),
@@ -158,6 +157,22 @@ CREATE TABLE rental (
         CHECK (return_date > pickup_date)
 );
 
+-- 2FA Table
+CREATE TABLE email_2fa_codes (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    code_hash VARCHAR(255) NOT NULL,
+    expires_at TIMESTAMP NOT NULL,
+    used BOOLEAN NOT NULL DEFAULT FALSE,
+    attempt_count INTEGER NOT NULL DEFAULT 0,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_email_2fa_codes_user
+        FOREIGN KEY (user_id)
+        REFERENCES app_user(user_id)
+        ON DELETE RESTRICT
+);
+
 -- Indexes for faster searching/filtering
 CREATE INDEX idx_vehicle_status ON vehicle(status);
 CREATE INDEX idx_rental_user_id ON rental(user_id);
@@ -169,3 +184,4 @@ CREATE INDEX idx_employee_status ON employee(employment_status);
 CREATE INDEX idx_vehicle_location_id ON vehicle(location_id);
 CREATE INDEX idx_rental_pickup_location_id ON rental(pickup_location_id);
 CREATE INDEX idx_rental_return_location_id ON rental(return_location_id);
+CREATE INDEX idx_email_2fa_codes_user_valid ON email_2fa_codes(user_id, used, expires_at);
