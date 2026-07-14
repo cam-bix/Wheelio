@@ -11,6 +11,7 @@ public class AuthResponse {
     private String phone;
     private UserRole role;
     private String message;
+    private boolean twoFactorRequired;
 
     public AuthResponse() {
     }
@@ -31,6 +32,20 @@ public class AuthResponse {
         this.phone = phone;
         this.role = role;
         this.message = message;
+    }
+
+    public AuthResponse(
+            Long userId,
+            String firstName,
+            String lastName,
+            String email,
+            String phone,
+            UserRole role,
+            String message,
+            boolean twoFactorRequired
+    ) {
+        this(userId, firstName, lastName, email, phone, role, message);
+        this.twoFactorRequired = twoFactorRequired;
     }
 
     public Long getUserId() {
@@ -87,5 +102,13 @@ public class AuthResponse {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public boolean isTwoFactorRequired() {
+        return twoFactorRequired;
+    }
+
+    public void setTwoFactorRequired(boolean twoFactorRequired) {
+        this.twoFactorRequired = twoFactorRequired;
     }
 }

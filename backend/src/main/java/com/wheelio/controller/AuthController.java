@@ -3,6 +3,7 @@ package com.wheelio.controller;
 import com.wheelio.dto.AuthResponse;
 import com.wheelio.dto.LoginRequest;
 import com.wheelio.dto.RegisterRequest;
+import com.wheelio.dto.VerifyTwoFactorRequest;
 import com.wheelio.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -30,5 +31,10 @@ public class AuthController {
     @PostMapping("/login")
     public AuthResponse login(@Valid @RequestBody LoginRequest request) {
         return authService.login(request);
+    }
+
+    @PostMapping("/verify-2fa")
+    public AuthResponse verifyTwoFactorLogin(@Valid @RequestBody VerifyTwoFactorRequest request) {
+        return authService.verifyTwoFactorLogin(request);
     }
 }

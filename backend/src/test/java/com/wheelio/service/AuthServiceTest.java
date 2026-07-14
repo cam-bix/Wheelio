@@ -29,11 +29,14 @@ class AuthServiceTest {
     @Mock
     private AppUserRepository appUserRepository;
 
+    @Mock
+    private EmailTwoFactorService emailTwoFactorService;
+
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Test
     void registerHashesPasswordAndCreatesCustomer() {
-        AuthService authService = new AuthService(appUserRepository, passwordEncoder);
+        AuthService authService = new AuthService(appUserRepository, passwordEncoder, emailTwoFactorService);
 
         RegisterRequest request = new RegisterRequest();
         request.setFirstName(" Sam ");
@@ -68,7 +71,7 @@ class AuthServiceTest {
 
     @Test
     void registerRejectsDuplicateEmail() {
-        AuthService authService = new AuthService(appUserRepository, passwordEncoder);
+        AuthService authService = new AuthService(appUserRepository, passwordEncoder, emailTwoFactorService);
 
         RegisterRequest request = new RegisterRequest();
         request.setFirstName("Sam");
@@ -84,8 +87,8 @@ class AuthServiceTest {
     }
 
     @Test
-    void loginReturnsUserWhenPasswordMatches() {
-        AuthService authService = new AuthService(appUserRepository, passwordEncoder);
+    void loginSendsVerificationCodeWhenPasswordMatches() {
+        AuthService authService = new AuthService(appUserRepository, passwordEncoder, emailTwoFactorService);
 
         AppUser user = new AppUser();
         user.setUserId(7L);
@@ -103,14 +106,16 @@ class AuthServiceTest {
 
         AuthResponse response = authService.login(request);
 
-        assertThat(response.getUserId()).isEqualTo(7L);
+        verify(emailTwoFactorService).sendLoginCode(user);
+        assertThat(response.isTwoFactorRequired()).isTrue();
+        assertThat(response.getUserId()).isNull();
         assertThat(response.getEmail()).isEqualTo("sam@example.com");
-        assertThat(response.getMessage()).isEqualTo("Login successful");
+        assertThat(response.getMessage()).isEqualTo("Verification code sent");
     }
 
     @Test
     void loginRejectsInvalidPassword() {
-        AuthService authService = new AuthService(appUserRepository, passwordEncoder);
+        AuthService authService = new AuthService(appUserRepository, passwordEncoder, emailTwoFactorService);
 
         AppUser user = new AppUser();
         user.setEmail("sam@example.com");
@@ -125,5 +130,31 @@ class AuthServiceTest {
         assertThatThrownBy(() -> authService.login(request))
                 .isInstanceOf(ResponseStatusException.class)
                 .hasMessageContaining("401 UNAUTHORIZED");
+    }
+
+    @Test
+    void verifyTwoFactorLoginReturnsUserWhenCodeMatches() {
+        AuthService authService = new AuthService(appUserRepository, passwordEncoder, emailTwoFactorService);
+
+        AppUser user = new AppUser();
+        user.setUserId(7L);
+        user.setFirstName("Sam");
+        user.setLastName("Driver");
+        user.setEmail("sam@example.com");
+        user.setRole(UserRole.CUSTOMER);
+
+        com.wheelio.dto.VerifyTwoFactorRequest request = new com.wheelio.dto.VerifyTwoFactorRequest();
+        request.setEmail("SAM@example.com");
+        request.setCode("123456");
+
+        when(appUserRepository.findByEmail("sam@example.com")).thenReturn(Optional.of(user));
+
+        AuthResponse response = authService.verifyTwoFactorLogin(request);
+
+        verify(emailTwoFactorService).verifyLoginCode(user, "123456");
+        assertThat(response.getUserId()).isEqualTo(7L);
+        assertThat(response.getEmail()).isEqualTo("sam@example.com");
+        assertThat(response.getMessage()).isEqualTo("Login successful");
+        assertThat(response.isTwoFactorRequired()).isFalse();
     }
 }

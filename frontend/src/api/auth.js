@@ -20,6 +20,10 @@ export function loginUser(credentials) {
   return postAuth('/api/auth/login', credentials)
 }
 
+export function verifyTwoFactorLogin(payload) {
+  return postAuth('/api/auth/verify-2fa', payload)
+}
+
 export function registerUser(user) {
   return postAuth('/api/auth/register', user)
 }
