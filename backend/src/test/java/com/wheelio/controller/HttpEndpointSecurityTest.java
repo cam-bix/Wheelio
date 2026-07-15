@@ -163,6 +163,7 @@ class HttpEndpointSecurityTest {
         when(rentalService.createRental(any())).thenReturn(rental);
         when(rentalService.completeRental(1L)).thenReturn(rental);
         when(rentalService.cancelRental(1L)).thenReturn(rental);
+        when(rentalService.updateRentalDates(eq(1L), any())).thenReturn(rental);
 
         mockMvc.perform(get("/api/rentals"))
                 .andExpect(status().isOk())
@@ -191,6 +192,16 @@ class HttpEndpointSecurityTest {
                 .andExpect(status().isOk());
 
         mockMvc.perform(patch("/api/rentals/1/cancel"))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(patch("/api/rentals/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "pickupDate": "2026-07-02T11:00:00-04:00",
+                                  "returnDate": "2026-07-06T11:00:00-04:00"
+                                }
+                                """))
                 .andExpect(status().isOk());
     }
 
