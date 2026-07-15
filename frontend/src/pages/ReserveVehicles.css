@@ -166,6 +166,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+  box-sizing: border-box;
 }
 
 .tool-button:hover {
@@ -207,11 +208,13 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
+  min-width: 0;
   padding: 18px;
   border: 1px solid #dbdbdb;
   border-radius: 20px;
   background: linear-gradient(180deg, #ffffff 0%, #f8f8f8 100%);
   box-shadow: 0 14px 30px rgba(23, 23, 23, 0.08);
+  box-sizing: border-box;
 }
 
 .reserve-image {
@@ -221,12 +224,16 @@
   border-radius: 16px;
   object-fit: cover;
   background: #ffffff;
+  box-sizing: border-box;
 }
 
 .reserve-card__copy {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .reserve-card__badge {
@@ -254,6 +261,7 @@
 
 .details-button {
   width: 100%;
+  max-width: 100%;
   min-height: 0;
   padding: 12px 14px;
   border: 1px solid #d7d7d7;
@@ -262,6 +270,8 @@
   text-align: left;
   font-size: 0.83rem;
   line-height: 1.45;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .details-button p {
