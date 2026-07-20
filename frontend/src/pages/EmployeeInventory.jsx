@@ -139,7 +139,7 @@ useEffect(() => {
           </Link>
           <Link to="/employee-bookings">Bookings</Link>
           <Link to="/employee-stats">Statistics</Link>
-          <Link to="/support">Customer Support</Link>
+          <Link to="/customer-support">Customer Support</Link>
         </div>
 
         <div className="navbar-user">

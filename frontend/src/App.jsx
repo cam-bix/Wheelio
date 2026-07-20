@@ -13,6 +13,7 @@ import ReserveVehicles from './pages/ReserveVehicles'
 import Book from './pages/Book'
 import ChangeLocation from './pages/Changelocation'
 import ModifyBooking from './pages/ModifyBooking'
+import CustomerSupport from './pages/CustomerSupport'
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
         <Route path="/employee-stats" element={<EmployeeStatistics />} />
         <Route path="/employee-inventory" element={<EmployeeInventory />} />
         <Route path="/employee-home" element={<EmployeeHome />} />
+        <Route path="/customer-support" element={<CustomerSupport />} /> 
       </Routes>
     </BrowserRouter>
   )
