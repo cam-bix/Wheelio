@@ -66,11 +66,14 @@ function EmployeeBookings() {
 
         {/*Links to other pages */}
         <div className="navbar-links">
-          <Link to="/employee-home">Home</Link>
-          <Link to="/employee-inventory">Check Inventory</Link>
-          <Link to="/employee-bookings" className="nav-active">Bookings</Link>
-          <Link to="/employee-stats">Statistics</Link>
-          <Link to="/customer-support">Customer Support</Link>
+        <Link to="/employee-home">Home</Link>
+        <Link to="/employee-inventory">Check Inventory</Link>
+        <Link to="/employee-bookings" className="nav-active">
+          Bookings
+        </Link>
+        <Link to="/employee-calendar">Calendar</Link>
+        <Link to="/employee-stats">Statistics</Link>
+        <Link to="/customer-support">Customer Support</Link>
         </div>
 
         <div className="navbar-user">

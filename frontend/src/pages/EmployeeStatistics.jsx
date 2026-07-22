@@ -1,8 +1,10 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { getStatisticsData } from '../api/statistics'
 import logo from '../assets/Wheelio_logo.png'
 import './EmployeeStatistics.css'
 
+/*
 // ─── Temporary Data ──────────────────────────────────────────────
 // Replace these arrays with API data later.
 const RAW_RENTALS = [
@@ -34,6 +36,7 @@ const RAW_VEHICLES = [
   { vehicle_id: 13, name: 'BMW 330i', status: 'MAINTENANCE' },
   { vehicle_id: 14, name: 'Audi A4', status: 'AVAILABLE' },
 ]
+*/
 
 // Every non-All range compares with the immediately preceding period.
 const RANGE_OPTIONS = [
@@ -57,12 +60,6 @@ const RANGE_OPTIONS = [
   },
 ]
 
-const PICKUP_DATES = RAW_RENTALS
-  .map((rental) => rental.pickup_date)
-  .sort()
-
-const DEFAULT_START = PICKUP_DATES[0]
-const DEFAULT_END = PICKUP_DATES[PICKUP_DATES.length - 1]
 const DAY_MS = 86400000
 
 // ─── General Helpers ─────────────────────────────────────────────
@@ -387,19 +384,61 @@ const computeStatistics = (
 
 // ─── Main Page ───────────────────────────────────────────────────
 
-function EmployeeStatistics() {
-  const [selectedRange, setSelectedRange] = useState('all')
+  function EmployeeStatistics() {
+    const [selectedRange, setSelectedRange] = useState('all')
+    const [rentals, setRentals] = useState([])
+    const [vehicles, setVehicles] = useState([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState('')
+
+    useEffect(() => {
+      const loadStatisticsData = async () => {
+        setLoading(true)
+        setError('')
+
+        try {
+          const data = await getStatisticsData()
+
+          setRentals(data.rentals)
+          setVehicles(data.vehicles)
+        } catch (err) {
+          setError(err.message || 'Unable to load statistics.')
+        } finally {
+          setLoading(false)
+        }
+      }
+
+      loadStatisticsData()
+    }, [])
 
   const activeRange =
     RANGE_OPTIONS.find((range) => range.key === selectedRange) ||
     RANGE_OPTIONS[RANGE_OPTIONS.length - 1]
 
+  const rentalDateRange = useMemo(() => {
+    const pickupDates = rentals
+    .map((rental) => rental.pickup_date)
+    .filter(Boolean)
+    .sort()
+
+    if (pickupDates.length === 0) {
+      const today = getTodayString()
+
+      return {
+        startDate: today,
+        endDate: today,
+      }
+    }
+
+    return {
+      startDate: pickupDates[0],
+      endDate: pickupDates[pickupDates.length - 1],
+    }
+  }, [rentals])
+
   const rangeDates = useMemo(() => {
     if (activeRange.days === null) {
-      return {
-        startDate: DEFAULT_START,
-        endDate: DEFAULT_END,
-      }
+      return rentalDateRange
     }
 
     const endDate = getTodayString()
@@ -410,18 +449,18 @@ function EmployeeStatistics() {
       ),
       endDate,
     }
-  }, [activeRange])
+  }, [activeRange, rentalDateRange])
 
   const stats = useMemo(
     () =>
-      computeStatistics(
-        RAW_RENTALS,
-        RAW_VEHICLES,
-        rangeDates.startDate,
-        rangeDates.endDate,
-        activeRange.days !== null
-      ),
-    [rangeDates, activeRange]
+    computeStatistics(
+      rentals,
+      vehicles,
+      rangeDates.startDate,
+      rangeDates.endDate,
+      activeRange.days !== null
+    ),
+    [rentals, vehicles, rangeDates, activeRange]
   )
 
   const summaryCards = [
@@ -493,15 +532,14 @@ function EmployeeStatistics() {
         </div>
 
         <div className="navbar-links">
-          <Link to="/employee-home">Home</Link>
-          <Link to="/employee-inventory">Check Inventory</Link>
-          <Link to="/employee-bookings">Bookings</Link>
-
-          <Link to="/employee-stats" className="nav-active">
-            Statistics
-          </Link>
-
-          <Link to="/customer-support">Customer Support</Link>
+        <Link to="/employee-home">Home</Link>
+        <Link to="/employee-inventory">Check Inventory</Link>
+        <Link to="/employee-bookings">Bookings</Link>
+        <Link to="/employee-calendar">Calendar</Link>
+        <Link to="/employee-stats" className="nav-active">
+          Statistics
+        </Link>
+        <Link to="/customer-support">Customer Support</Link>
         </div>
 
         <div className="navbar-user">
@@ -515,6 +553,17 @@ function EmployeeStatistics() {
 
       {/* ─── Page Content ───────────────────────────────────── */}
       <main className="statistics-content">
+        {loading && (
+          <p className="statistics-message">
+          Loading statistics...
+          </p>
+        )}
+
+        {error && (
+          <p className="statistics-message statistics-error">
+          {error}
+          </p>
+        )}
         <div className="statistics-page-header">
           <div>
             <h1 className="statistics-title">Statistics</h1>

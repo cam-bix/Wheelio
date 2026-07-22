@@ -124,11 +124,14 @@ useEffect(() => {
         </div>
 
         <div className="navbar-links">
-          <Link to="/employee-home" className="nav-active">Home</Link>
-          <Link to="/employee-inventory">Check Inventory</Link>
-          <Link to="/employee-bookings">Bookings</Link>
-          <Link to="/employee-stats">Statistics</Link>
-          <Link to="/customer-support">Customer Support</Link>
+        <Link to="/employee-home" className="nav-active">
+          Home
+        </Link>
+        <Link to="/employee-inventory">Check Inventory</Link>
+        <Link to="/employee-bookings">Bookings</Link>
+        <Link to="/employee-calendar">Calendar</Link>
+        <Link to="/employee-stats">Statistics</Link>
+        <Link to="/customer-support">Customer Support</Link>
         </div>
 
         <div className="navbar-user">
