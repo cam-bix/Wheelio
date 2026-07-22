@@ -90,7 +90,7 @@
 
 .home-page .dashboard-layout {
   display: grid;
-  grid-template-columns: minmax(280px, 0.78fr) minmax(0, 2.22fr);
+  grid-template-columns: 320px minmax(0, 1fr);
   gap: 0;
   min-height: calc(100vh - 59px);
   background:
@@ -109,7 +109,10 @@
 
 .home-page .dashboard-panel--right {
   width: 100%;
-  box-sizing:  border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
 }
 
 .home-page .dashboard-panel h2 {
@@ -119,6 +122,15 @@
   font-size: 1.15rem;
   font-weight: 700;
   letter-spacing: -0.02em;
+}
+
+.home-page .dashboard-panel--right > h2,
+.home-page .dashboard-panel--right > .panel-subtitle,
+.home-page .dashboard-panel--right > .empty-text {
+  width: 100%;
+  max-width: 934px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .home-page .panel-subtitle {
@@ -137,7 +149,7 @@
   flex-direction: column;
   gap: 14px;
   width: 100%;
-  max-width: 340px;
+  max-width: 380px;
   margin: 0 auto 16px;
   padding: 18px;
   border: 1px solid #d8d8d8;
@@ -148,23 +160,25 @@
 }
 
 .home-page .inventory-grid {
-  display: flex;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
   display: grid;
-  grid-template-columns: repeat(3, 240px);
+  grid-template-columns: repeat(4, 220px);
+  gap: 18px;
+  width: 100%;
+  max-width: 934px;
+  margin: 0 auto;
+  align-items: start;
   justify-content: center;
-  gap: 24px;
 }
 
 .home-page .inventory-card {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: auto auto auto 1fr;
   gap: 12px;
   align-items: flex-start;
   min-width: 0;
   border: 1px solid #d8d8d8;
   border-radius: 16px;
-  padding: 16px;
+  padding: 18px;
   background: linear-gradient(180deg, #ffffff 0%, #f8f8f8 100%);
   box-shadow: 0 10px 24px rgba(23, 23, 23, 0.06);
   box-sizing: border-box;
@@ -185,7 +199,7 @@
 }
 
 .home-page .inventory-card .vehicle-image {
-  height: 152px;
+  height: 180px;
   border-radius: 14px;
 }
 
@@ -194,6 +208,7 @@
   flex-direction: column;
   gap: 6px;
   width: 100%;
+  min-height: 88px;
   box-sizing: border-box;
 }
 
@@ -221,8 +236,8 @@
 }
 
 .home-page .inventory-card h3 {
-  font-size: 0.98rem;
-  line-height: 1.28;
+  font-size: 1.05rem;
+  line-height: 1.3;
 }
 
 .home-page .booking-info-box,
@@ -244,9 +259,10 @@
 
 .home-page .inventory-details {
   display: grid;
-  gap: 10px;
-  padding: 12px 14px;
-  font-size: 0.84rem;
+  gap: 8px;
+  padding: 14px 16px;
+  font-size: 0.88rem;
+  min-height: 108px;
 }
 
 .home-page .booking-info-box p {
@@ -260,12 +276,12 @@
 
 .home-page .inventory-details p {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 2px;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
   margin: 0;
   color: #252525;
-  font-size: 0.87rem;
+  font-size: 0.92rem;
   line-height: 1.25;
 }
 
@@ -308,6 +324,7 @@
   justify-content: center;
   padding: 10px 14px;
   font-size: 0.82rem;
+  align-self: end;
 }
 
 .home-page .outline-button:hover {
@@ -364,7 +381,8 @@
 
 @media (max-width: 1180px) {
   .home-page .inventory-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(280px, 1fr));
+    max-width: 100%;
   }
 }
 
