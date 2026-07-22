@@ -14,6 +14,7 @@ import Book from './pages/Book'
 import ChangeLocation from './pages/Changelocation'
 import ModifyBooking from './pages/ModifyBooking'
 import CustomerSupport from './pages/CustomerSupport'
+import EmployeeCalendar from './pages/EmployeeCalendar'
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
         <Route path="/employee-inventory" element={<EmployeeInventory />} />
         <Route path="/employee-home" element={<EmployeeHome />} />
         <Route path="/customer-support" element={<CustomerSupport />} /> 
+        <Route path="/employee-calendar" element={<EmployeeCalendar />} /> 
       </Routes>
     </BrowserRouter>
   )

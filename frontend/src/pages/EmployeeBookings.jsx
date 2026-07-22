@@ -4,37 +4,6 @@ import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import './EmployeeBookings.css'
 import { getBookings } from '../api/bookings'
-/*
-const MOCK_BOOKINGS = [
-  {
-    id: '1042',
-    customer: 'Jordan Lee',
-    vehicle: 'Toyota Corolla',
-    pickupDate: 'Jul 3, 2026',
-    returnDate: 'Jul 8, 2026',
-    status: 'Confirmed',
-    image: '',
-  },
-  {
-    id: '1043',
-    customer: 'Priya Nair',
-    vehicle: 'Honda CR-V',
-    pickupDate: 'Jul 5, 2026',
-    returnDate: 'Jul 12, 2026',
-    status: 'Pending',
-    image: '',
-  },
-  {
-    id: '1044',
-    customer: 'Marcus Ontiveros',
-    vehicle: 'Ford Mustang',
-    pickupDate: 'Jul 9, 2026',
-    returnDate: 'Jul 10, 2026',
-    status: 'Cancelled',
-    image: '',
-  },
-]
-*/
 
 // Column labels shown once in the header row, and reused as
 // per-cell labels on mobile where the grid collapses to a stack.
@@ -129,14 +98,40 @@ function EmployeeBookings() {
             )}
           </div>
 
-          <input
-            type="text"
-            className="bookings-search"
-            placeholder="Search by customer, vehicle, or booking #"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            aria-label="Search bookings"
-          />
+          <div className="bookings-header-actions">
+            <input
+              type="text"
+              className="bookings-search"
+              placeholder="Search by customer, vehicle, or booking #"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              aria-label="Search bookings"
+            />
+
+            <Link
+              to="/employee-calendar"
+              className="calendar-button"
+              aria-label="Employee Calendar"
+              title="Employee Calendar"
+            >
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <rect x="3" y="4" width="18" height="18" rx="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+                <rect x="7" y="13" width="3" height="3" fill="currentColor" stroke="none" />
+              </svg>
+            </Link>
+          </div>
         </div>
 
         {error && <p className="bookings-error" role="alert">{error}</p>}
@@ -167,7 +162,7 @@ function EmployeeBookings() {
 
                   {/* Vehicle thumbnail placeholder */}
                   <div className="booking-image col-image">
-                    <img src={booking.image || carPlaceholder} alt={booking.vehicle}/>
+                    <img src={booking.image || carPlaceholder} alt={booking.vehicle} />
                   </div>
 
                   {/* Booking number */}
