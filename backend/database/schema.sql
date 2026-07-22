@@ -11,6 +11,7 @@ DROP TABLE IF EXISTS vehicle CASCADE;
 DROP TABLE IF EXISTS location CASCADE;
 DROP TABLE IF EXISTS app_user CASCADE;
 DROP TABLE IF EXISTS email_2fa_codes CASCADE;
+DROP TABLE IF EXISTS ticket CASCADE;
 
 -- Users Table
 CREATE TABLE app_user (
@@ -171,6 +172,42 @@ CREATE TABLE email_2fa_codes (
         FOREIGN KEY (user_id)
         REFERENCES app_user(user_id)
         ON DELETE RESTRICT
+);
+
+CREATE TABLE ticket (
+    ticket_id BIGSERIAL PRIMARY KEY,
+    created_by_employee_id BIGINT NOT NULL,
+    customer_id BIGINT,
+    rental_id BIGINT,
+    subject VARCHAR(150) NOT NULL,
+    description TEXT NOT NULL,
+
+    status VARCHAR(20) NOT NULL DEFAULT 'OPEN'
+        CHECK (status IN (
+            'OPEN', 'IN_PROGRESS', 'RESOLVED', 'CLOSED'
+        )),
+
+    priority VARCHAR(20) NOT NULL DEFAULT 'NORMAL'
+        CHECK (priority IN (
+            'LOW', 'NORMAL', 'HIGH', 'URGENT'
+        )),
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_ticket_employee
+        FOREIGN KEY (created_by_employee_id)
+        REFERENCES employee(employee_id)
+        ON DELETE RESTRICT,
+
+    CONSTRAINT fk_ticket_customer
+        FOREIGN KEY (customer_id)
+        REFERENCES app_user(user_id)
+        ON DELETE SET NULL,
+
+    CONSTRAINT fk_ticket_rental
+        FOREIGN KEY (rental_id)
+        REFERENCES rental(rental_id)
+        ON DELETE SET NULL
 );
 
 -- Indexes for faster searching/filtering
