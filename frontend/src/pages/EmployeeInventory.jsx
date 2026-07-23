@@ -45,42 +45,37 @@ function EmployeeInventory() {
   const [showFilters, setShowFilters] = useState(false)
   const [activeStatuses, setActiveStatuses] = useState([])
   const [currentPage, setCurrentPage] = useState(1)
-  const [location, setLocation] = useState('Waterloo, ON')
+  const location = 'Waterloo, ON'
 
-useEffect(() => {
-  const fetchInventory = async () => {
-    setLoading(true)
-    setError('')
-
-    try {
-      const data = await getVehicles()
-
-      const formattedVehicles = data.map((vehicle) => ({
-        id: String(vehicle.vehicleId),
-        make: vehicle.make,
-        model: vehicle.model,
-        year: String(vehicle.year),
-        status: formatVehicleStatus(vehicle.status),
-        plate: vehicle.licensePlate,
-        dailyRate: Number(vehicle.dailyRate),
-        image: '',
-      }))
-
-      setVehicles(formattedVehicles)
-    } catch (err) {
-      setError(err.message || 'Unable to load inventory.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  fetchInventory()
-}, [])
-
-  // Reset pagination to page 1 whenever search filters alter the results pool
   useEffect(() => {
-    setCurrentPage(1)
-  }, [search, activeStatuses])
+    const fetchInventory = async () => {
+      setLoading(true)
+      setError('')
+
+      try {
+        const data = await getVehicles()
+
+        const formattedVehicles = data.map((vehicle) => ({
+          id: String(vehicle.vehicleId),
+          make: vehicle.make,
+          model: vehicle.model,
+          year: String(vehicle.year),
+          status: formatVehicleStatus(vehicle.status),
+          plate: vehicle.licensePlate,
+          dailyRate: Number(vehicle.dailyRate),
+          image: '',
+        }))
+
+        setVehicles(formattedVehicles)
+      } catch (err) {
+        setError(err.message || 'Unable to load inventory.')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchInventory()
+  }, [])
 
   // Calculate high-level summary statistics across the active branch
   const stats = useMemo(() => {
@@ -117,9 +112,15 @@ useEffect(() => {
   }, [filteredVehicles, currentPage])
 
   const toggleStatus = (status) => {
+    setCurrentPage(1)
     setActiveStatuses((current) =>
       current.includes(status) ? current.filter((item) => item !== status) : [...current, status]
     )
+  }
+
+  const handleSearchChange = (value) => {
+    setSearch(value)
+    setCurrentPage(1)
   }
 
   return (
@@ -195,7 +196,7 @@ useEffect(() => {
                 placeholder="Search make, model, plate, ID"
                 value={search}
                 maxLength="50"
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e) => handleSearchChange(e.target.value)}
                 onBlur={() => !search && setShowSearch(false)}
                 autoFocus
               />

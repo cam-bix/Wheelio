@@ -732,35 +732,40 @@ function DonutChart({ data, centerLabel }) {
   const strokeWidth = 18
   const circumference = 2 * Math.PI * radius
   const total = data.reduce((sum, d) => sum + d.value, 0)
+  const segments = data.map((d, index) => {
+    const fraction = d.value / total
+    const cumulative = data
+      .slice(0, index)
+      .reduce((sum, item) => sum + item.value / total, 0)
 
-  let cumulative = 0
+    return {
+      ...d,
+      dashArray: `${fraction * circumference} ${circumference}`,
+      dashOffset: -cumulative * circumference,
+      fraction,
+    }
+  })
 
   return (
     <div className="donut-chart">
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
         <g transform={`rotate(-90 ${size / 2} ${size / 2})`}>
-          {data.map((d) => {
-            const fraction = d.value / total
-            const dashArray = `${fraction * circumference} ${circumference}`
-            const dashOffset = -cumulative * circumference
-            cumulative += fraction
-            return (
-              <circle
-                key={d.label}
-                cx={size / 2}
-                cy={size / 2}
-                r={radius}
-                fill="none"
-                stroke={d.color}
-                strokeWidth={strokeWidth}
-                strokeDasharray={dashArray}
-                strokeDashoffset={dashOffset}
-                className="donut-segment"
-              >
-                <title>{d.label}: {d.value} ({Math.round(fraction * 100)}%)</title>
-              </circle>
-            )
-          })}
+          {segments.map((d) => (
+            <circle
+              key={d.label}
+              cx={size / 2}
+              cy={size / 2}
+              r={radius}
+              fill="none"
+              stroke={d.color}
+              strokeWidth={strokeWidth}
+              strokeDasharray={d.dashArray}
+              strokeDashoffset={d.dashOffset}
+              className="donut-segment"
+            >
+              <title>{d.label}: {d.value} ({Math.round(d.fraction * 100)}%)</title>
+            </circle>
+          ))}
         </g>
         <text x={size / 2} y={size / 2 - 6} textAnchor="middle" className="donut-total">
           {total}

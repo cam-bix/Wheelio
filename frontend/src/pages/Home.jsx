@@ -72,6 +72,7 @@ function Home() {
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem('wheelioUser') || 'null')
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadInventory()
 
     if (!storedUser) {

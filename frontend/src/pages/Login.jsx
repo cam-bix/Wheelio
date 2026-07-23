@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { loginUser } from '../api/auth'
+import { getRoleHomePath, storeUser } from '../auth/session'
 import './Login.css'
 
 
@@ -34,8 +35,9 @@ function Login() {
         return
       }
 
-      localStorage.setItem('wheelioUser', JSON.stringify(user))
+      storeUser(user)
       setSuccess('Logged in successfully.')
+      navigate(getRoleHomePath(user))
     } catch (err) {
       setError(err.message || 'Invalid email or password.')
     } finally {

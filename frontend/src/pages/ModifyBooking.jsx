@@ -63,6 +63,7 @@ function ModifyBooking() {
     const storedUser = JSON.parse(localStorage.getItem('wheelioUser') || 'null')
 
     if (!storedUser) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLoading(false)
       return
     }
