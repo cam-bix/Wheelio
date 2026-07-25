@@ -1,6 +1,9 @@
 ### Get all vehicles
 GET http://localhost:8080/api/vehicles
+###
 
+###
+GET http://localhost:8080/api/health
 ###
 
 ### Get vehicle by id

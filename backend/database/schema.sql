@@ -4,13 +4,15 @@
     Desc:     Wheelio Database Schema for sprint 2
 */
 
+BEGIN;
+
 -- Safety check statements
 DROP TABLE IF EXISTS rental CASCADE;
 DROP TABLE IF EXISTS employee CASCADE;
 DROP TABLE IF EXISTS vehicle CASCADE;
 DROP TABLE IF EXISTS location CASCADE;
-DROP TABLE IF EXISTS app_user CASCADE;
 DROP TABLE IF EXISTS email_2fa_codes CASCADE;
+DROP TABLE IF EXISTS app_user CASCADE;
 
 -- Users Table
 CREATE TABLE app_user (
@@ -31,7 +33,18 @@ CREATE TABLE app_user (
         CHECK (TRIM(last_name) <> ''),
 
     CONSTRAINT chk_user_email_format
-        CHECK (email LIKE '%_@_%._%')
+        CHECK (
+        email = LOWER(TRIM(email))
+        AND email ~ '^[^[:space:]@]+@[^[:space:]@]+\.[^[:space:]@]+$'),
+
+    CONSTRAINT chk_user_password_hash_not_blank
+        CHECK (TRIM(password_hash) <> ''),
+
+    CONSTRAINT chk_user_phone_format
+        CHECK (
+            phone IS NULL
+            OR phone ~ '^[0-9+(). -]{7,20}$'
+        )
 );
 
 -- Locations Table
@@ -58,13 +71,24 @@ CREATE TABLE location (
         CHECK (TRIM(province) <> ''),
 
     CONSTRAINT chk_location_postal_code_not_blank
-        CHECK (TRIM(postal_code) <> '')
+        CHECK (TRIM(postal_code) <> ''),
+
+    CONSTRAINT chk_location_postal_code_format
+        CHECK (
+        postal_code = UPPER(TRIM(postal_code))
+        AND postal_code ~ '^[A-Z][0-9][A-Z][ -]?[0-9][A-Z][0-9]$'),
+
+    CONSTRAINT chk_location_phone_format
+        CHECK (
+            phone IS NULL
+            OR phone ~ '^[0-9+(). -]{7,20}$'
+        )
 );
 
 -- Employees Table
 CREATE TABLE employee (
     employee_id BIGSERIAL PRIMARY KEY,
-    user_id BIGINT UNIQUE,
+    user_id BIGINT UNIQUE NOT NULL,
     location_id BIGINT NOT NULL,
     position VARCHAR(50) NOT NULL
         CHECK (position IN ('MANAGER', 'CUSTOMER_SERVICE', 'MECHANIC', 'ADMIN_STAFF')),
@@ -76,7 +100,7 @@ CREATE TABLE employee (
     CONSTRAINT fk_employee_user
         FOREIGN KEY (user_id)
         REFERENCES app_user(user_id)
-        ON DELETE SET NULL,
+        ON DELETE RESTRICT,
 
     CONSTRAINT fk_employee_location
         FOREIGN KEY (location_id)
@@ -91,6 +115,7 @@ CREATE TABLE vehicle (
     make VARCHAR(50) NOT NULL,
     model VARCHAR(50) NOT NULL,
     year SMALLINT NOT NULL CHECK (year BETWEEN 1900 AND 2035),
+    image_key VARCHAR(500),
     license_plate VARCHAR(15) NOT NULL UNIQUE,
     daily_rate NUMERIC(10,2) NOT NULL CHECK (daily_rate > 0),
     status VARCHAR(50) NOT NULL DEFAULT 'AVAILABLE'
@@ -109,7 +134,19 @@ CREATE TABLE vehicle (
         CHECK (TRIM(model) <> ''),
 
     CONSTRAINT chk_vehicle_license_plate_not_blank
-        CHECK (TRIM(license_plate) <> '')
+        CHECK (TRIM(license_plate) <> ''),
+
+    CONSTRAINT chk_vehicle_license_plate_format
+        CHECK (license_plate = UPPER(TRIM(license_plate))),
+
+    CONSTRAINT chk_vehicle_image_key_valid
+        CHECK (
+            image_key IS NULL
+            OR (
+                image_key = TRIM(image_key)
+                AND image_key LIKE 'vehicles/%'
+            )
+        )
 );
 
 -- Rentals Table
@@ -162,15 +199,24 @@ CREATE TABLE email_2fa_codes (
     id BIGSERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL,
     code_hash VARCHAR(255) NOT NULL,
-    expires_at TIMESTAMP NOT NULL,
+    expires_at TIMESTAMPTZ NOT NULL,
     used BOOLEAN NOT NULL DEFAULT FALSE,
     attempt_count INTEGER NOT NULL DEFAULT 0,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_email_2fa_codes_user
         FOREIGN KEY (user_id)
         REFERENCES app_user(user_id)
-        ON DELETE RESTRICT
+        ON DELETE CASCADE,
+
+    CONSTRAINT chk_email_2fa_code_hash_not_blank
+        CHECK (TRIM(code_hash) <> ''),
+
+    CONSTRAINT chk_email_2fa_attempt_count
+        CHECK (attempt_count BETWEEN 0 AND 5),
+
+    CONSTRAINT chk_email_2fa_expiry
+        CHECK (expires_at > created_at)
 );
 
 -- Indexes for faster searching/filtering
@@ -185,3 +231,7 @@ CREATE INDEX idx_vehicle_location_id ON vehicle(location_id);
 CREATE INDEX idx_rental_pickup_location_id ON rental(pickup_location_id);
 CREATE INDEX idx_rental_return_location_id ON rental(return_location_id);
 CREATE INDEX idx_email_2fa_codes_user_valid ON email_2fa_codes(user_id, used, expires_at);
+CREATE INDEX idx_rental_vehicle_dates ON rental(vehicle_id, pickup_date, return_date);
+CREATE INDEX idx_email_2fa_codes_expires_at ON email_2fa_codes(expires_at);
+
+COMMIT;
