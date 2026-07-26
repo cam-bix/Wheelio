@@ -5,6 +5,8 @@
   Desc:     Creates and injects combined sample data for team testing purposes by explicit id.
  */
 
+BEGIN;
+
 -- App Users
 INSERT INTO app_user (user_id, first_name, last_name, email, password_hash, phone, role)
 VALUES
@@ -63,7 +65,8 @@ VALUES
     (53, 'Dylan', 'Cooper', 'dylan.cooper@example.com', 'placeholder_hash', '555-900-0053', 'CUSTOMER'),
     (54, 'Paisley', 'Richardson', 'paisley.richardson@example.com', 'placeholder_hash', '555-900-0054', 'CUSTOMER'),
     (55, 'Caleb', 'Cox', 'caleb.cox@example.com', 'placeholder_hash', '555-900-0055', 'CUSTOMER'),
-    (56, 'Stella', 'Howard', 'stella.howard@example.com', 'placeholder_hash', '555-900-0056', 'CUSTOMER');
+    (56, 'Stella', 'Howard', 'stella.howard@example.com', 'placeholder_hash', '555-900-0056', 'CUSTOMER')
+ON CONFLICT DO NOTHING;
 
 -- Locations
 INSERT INTO location (location_id, name, address_line, city, province, postal_code, phone)
@@ -71,7 +74,8 @@ VALUES
     (1, 'Wheelio Waterloo', '75 University Avenue West', 'Waterloo', 'Ontario', 'N2L 3C5', '519-111-0001'),
     (2, 'Wheelio Toronto Downtown', '100 King Street West', 'Toronto', 'Ontario', 'M5X 1A9', '416-222-0002'),
     (3, 'Wheelio London', '300 Richmond Street', 'London', 'Ontario', 'N6B 2H1', '519-333-0003'),
-    (4, 'Wheelio Ottawa', '200 Elgin Street', 'Ottawa', 'Ontario', 'K2P 1L5', '613-444-0004');
+    (4, 'Wheelio Ottawa', '200 Elgin Street', 'Ottawa', 'Ontario', 'K2P 1L5', '613-444-0004')
+ON CONFLICT DO NOTHING;
 
 -- Employees
 INSERT INTO employee (employee_id, user_id, location_id, "position", employment_status, hire_date)
@@ -80,7 +84,8 @@ VALUES
     (2, 9, 1, 'CUSTOMER_SERVICE', 'ACTIVE', '2025-06-15'),
     (3, 10, 2, 'MANAGER', 'ACTIVE', '2025-04-10'),
     (4, 11, 3, 'MECHANIC', 'ACTIVE', '2025-07-20'),
-    (5, 12, 4, 'ADMIN_STAFF', 'ACTIVE', '2025-08-05');
+    (5, 12, 4, 'ADMIN_STAFF', 'ACTIVE', '2025-08-05')
+ON CONFLICT DO NOTHING;
 
 -- Vehicles
 INSERT INTO vehicle (vehicle_id, location_id, make, model, year, license_plate, daily_rate, status)
@@ -150,7 +155,8 @@ VALUES
     (63, 4, 'Nissan', 'Murano', 2022, 'OTT6009', 93.00, 'AVAILABLE'),
     (64, 4, 'Jeep', 'Gladiator', 2023, 'OTT6010', 162.00, 'AVAILABLE'),
     (65, 4, 'BMW', 'i4', 2024, 'OTT6011', 180.00, 'AVAILABLE'),
-    (66, 4, 'Volkswagen', 'ID.4', 2023, 'OTT6012', 128.00, 'AVAILABLE');
+    (66, 4, 'Volkswagen', 'ID.4', 2023, 'OTT6012', 128.00, 'AVAILABLE')
+ON CONFLICT DO NOTHING;
 
 -- Rentals
 INSERT INTO rental (rental_id, user_id, vehicle_id, employee_id, pickup_location_id, return_location_id, pickup_date, return_date, status, total_cost)
@@ -244,20 +250,22 @@ VALUES
     (87, 43, 33, 1, 2, 2, '2026-04-25 14:00:00+00', '2026-04-27 14:00:00+00', 'COMPLETED', 158.00),
     (88, 22, 34, 5, 2, 3, '2026-01-30 13:00:00+00', '2026-02-01 13:00:00+00', 'COMPLETED', 194.00),
     (89, 33, 34, 1, 2, 2, '2026-03-16 14:30:00+00', '2026-03-19 14:30:00+00', 'COMPLETED', 291.00),
-    (90, 44, 34, 2, 2, 4, '2026-04-28 12:00:00+00', '2026-05-03 12:00:00+00', 'COMPLETED', 485.00);
+    (90, 44, 34, 2, 2, 4, '2026-04-28 12:00:00+00', '2026-05-03 12:00:00+00', 'COMPLETED', 485.00)
+ON CONFLICT DO NOTHING;
 
 -- Email 2FA Codes
 INSERT INTO email_2fa_codes (id, user_id, code_hash, expires_at, used, attempt_count)
 VALUES
     (1, 1, 'placeholder_2fa_hash_admin', '2026-07-27 12:00:00', FALSE, 0),
     (2, 2, 'placeholder_2fa_hash_john', '2026-07-27 12:15:00', FALSE, 1),
-    (3, 3, 'placeholder_2fa_hash_jane_used', '2026-07-20 09:00:00', TRUE, 2);
+    (3, 3, 'placeholder_2fa_hash_jane_used', '2026-07-20 09:00:00', TRUE, 2)
+ON CONFLICT DO NOTHING;
 
--- Tickets
 INSERT INTO ticket (ticket_id, created_by_employee_id, customer_id, rental_id, subject, description, status, priority)
 VALUES
     (1, 4, 4, 3, 'Rental broken down on highway', 'During the rental''s use on the highway 401,  customer reports pulling over after witnessing fumes from under the hood', 'OPEN', 'HIGH'),
-    (3, 5, 2, 7, 'Vomit on centre console', 'Toddler vomited over centre console while parked at Square One shopping centre.', 'IN_PROGRESS', 'LOW');
+    (3, 5, 2, 7, 'Vomit on centre console', 'Toddler vomited over centre console while parked at Square One shopping centre.', 'IN_PROGRESS', 'LOW')
+ON CONFLICT DO NOTHING;
 
 -- Reset sequences after explicit ID inserts
 SELECT setval(pg_get_serial_sequence('app_user', 'user_id'), (SELECT MAX(user_id) FROM app_user));
@@ -266,4 +274,6 @@ SELECT setval(pg_get_serial_sequence('employee', 'employee_id'), (SELECT MAX(emp
 SELECT setval(pg_get_serial_sequence('vehicle', 'vehicle_id'), (SELECT MAX(vehicle_id) FROM vehicle));
 SELECT setval(pg_get_serial_sequence('rental', 'rental_id'), (SELECT MAX(rental_id) FROM rental));
 SELECT setval(pg_get_serial_sequence('email_2fa_codes', 'id'), (SELECT MAX(id) FROM email_2fa_codes));
-SELECT setval(pg_get_serial_sequence('ticket', 'ticket_id'), (SELECT MAX(ticket_id) FROM ticket));
+SELECT setval(pg_get_serial_sequence('ticket', 'ticket_id'), (SELECT MAX(ticket_id) FROM ticket));'' ||
+                                                                                                  '' ||
+COMMIT;

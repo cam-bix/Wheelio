@@ -34,6 +34,9 @@ public class Vehicle {
     @Column(name = "status", nullable = false, length = 50)
     private VehicleStatus status;
 
+    @Column(name = "image_key", length = 500)
+    private String imageKey;
+
     // Public Constructor
     public Vehicle() {
     }
@@ -54,6 +57,8 @@ public class Vehicle {
     public Short getYear() {
         return year;
     }
+
+    public String getImageKey() { return imageKey; }
 
     public String getLicensePlate() {
         return licensePlate;
@@ -85,6 +90,10 @@ public class Vehicle {
 
     public void setYear(Short year) {
         this.year = year;
+    }
+
+    public void setImageKey(String imageKey) {
+        this.imageKey = imageKey;
     }
 
     public void setLicensePlate(String licensePlate) {
