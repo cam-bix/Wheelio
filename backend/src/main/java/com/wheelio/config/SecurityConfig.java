@@ -1,21 +1,21 @@
 package com.wheelio.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
@@ -30,16 +30,38 @@ public class SecurityConfig {
                 .httpBasic(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
 
-                        // Only employees and admins can modify vehicle images
+                        // Only employees and admins can upload vehicle images
                         .requestMatchers(
                                 HttpMethod.POST,
                                 "/api/vehicles/*/image"
                         )
                         .hasAnyRole("ADMIN", "EMPLOYEE")
 
+                        // Only employees and admins can delete vehicle images
                         .requestMatchers(
                                 HttpMethod.DELETE,
                                 "/api/vehicles/*/image"
+                        )
+                        .hasAnyRole("ADMIN", "EMPLOYEE")
+
+                        // Only employees and admins can create vehicles
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/api/vehicles"
+                        )
+                        .hasAnyRole("ADMIN", "EMPLOYEE")
+
+                        // Only employees and admins can update vehicles
+                        .requestMatchers(
+                                HttpMethod.PUT,
+                                "/api/vehicles/*"
+                        )
+                        .hasAnyRole("ADMIN", "EMPLOYEE")
+
+                        // Only employees and admins can delete vehicles
+                        .requestMatchers(
+                                HttpMethod.DELETE,
+                                "/api/vehicles/*"
                         )
                         .hasAnyRole("ADMIN", "EMPLOYEE")
 
@@ -51,6 +73,7 @@ public class SecurityConfig {
                         )
                         .permitAll()
 
+                        // Existing public endpoints
                         .requestMatchers(
                                 "/api/auth/register",
                                 "/api/auth/login",
@@ -65,7 +88,8 @@ public class SecurityConfig {
                         )
                         .permitAll()
 
-                        .anyRequest().authenticated()
+                        .anyRequest()
+                        .authenticated()
                 )
                 .build();
     }

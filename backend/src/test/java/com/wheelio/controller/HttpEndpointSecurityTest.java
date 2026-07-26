@@ -17,6 +17,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -53,55 +54,24 @@ class HttpEndpointSecurityTest {
     private RentalService rentalService;
 
     @Test
-    void vehicleEndpointsAllowDocumentedRequests() throws Exception {
+    void vehicleReadEndpointsArePublic() throws Exception {
         Vehicle vehicle = vehicle();
 
-        when(vehicleService.getAllVehicles()).thenReturn(List.of(vehicle));
-        when(vehicleService.getVehicleById(1L)).thenReturn(vehicle);
-        when(vehicleService.createVehicle(any(Vehicle.class))).thenReturn(vehicle);
-        when(vehicleService.updateVehicle(eq(1L), any(Vehicle.class))).thenReturn(vehicle);
+        when(vehicleService.getAllVehicles())
+                .thenReturn(List.of(vehicle));
+
+        when(vehicleService.getVehicleById(1L))
+                .thenReturn(vehicle);
 
         mockMvc.perform(get("/api/vehicles"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)));
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].licensePlate", is("MAZ2020")));
 
         mockMvc.perform(get("/api/vehicles/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.make", is("Mazda")));
-
-        mockMvc.perform(post("/api/vehicles")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                  "locationId": 1,
-                                  "make": "Mazda",
-                                  "model": "CX-5",
-                                  "year": 2020,
-                                  "licensePlate": "MAZ2020",
-                                  "dailyRate": 75.00,
-                                  "status": "AVAILABLE"
-                                }
-                                """))
-                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.make", is("Mazda")))
                 .andExpect(jsonPath("$.licensePlate", is("MAZ2020")));
-
-        mockMvc.perform(put("/api/vehicles/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                  "locationId": 1,
-                                  "make": "Toyota",
-                                  "model": "Corolla SE",
-                                  "year": 2022,
-                                  "licensePlate": "ABC1234",
-                                  "dailyRate": 65.00,
-                                  "status": "AVAILABLE"
-                                }
-                                """))
-                .andExpect(status().isOk());
-
-        mockMvc.perform(delete("/api/vehicles/5"))
-                .andExpect(status().isOk());
     }
 
     @Test
@@ -205,6 +175,50 @@ class HttpEndpointSecurityTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void adminCanModifyVehicles() throws Exception {
+        Vehicle vehicle = vehicle();
+
+        when(vehicleService.createVehicle(any(Vehicle.class)))
+                .thenReturn(vehicle);
+
+        when(vehicleService.updateVehicle(
+                eq(1L),
+                any(Vehicle.class)
+        )).thenReturn(vehicle);
+
+        mockMvc.perform(post("/api/vehicles")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(vehicleJson()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.licensePlate", is("MAZ2020")));
+
+        mockMvc.perform(put("/api/vehicles/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(vehicleUpdateJson()))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(delete("/api/vehicles/5"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void anonymousUsersCannotModifyVehicles() throws Exception {
+        mockMvc.perform(post("/api/vehicles")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(vehicleJson()))
+                .andExpect(status().isUnauthorized());
+
+        mockMvc.perform(put("/api/vehicles/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(vehicleUpdateJson()))
+                .andExpect(status().isUnauthorized());
+
+        mockMvc.perform(delete("/api/vehicles/5"))
+                .andExpect(status().isUnauthorized());
+    }
+
     private Vehicle vehicle() {
         Vehicle vehicle = new Vehicle();
         vehicle.setVehicleId(1L);
@@ -244,5 +258,33 @@ class HttpEndpointSecurityTest {
                 new BigDecimal("300.00"),
                 OffsetDateTime.parse("2026-07-01T08:00:00-04:00")
         );
+    }
+
+    private String vehicleJson() {
+        return """
+            {
+              "locationId": 1,
+              "make": "Mazda",
+              "model": "CX-5",
+              "year": 2020,
+              "licensePlate": "MAZ2020",
+              "dailyRate": 75.00,
+              "status": "AVAILABLE"
+            }
+            """;
+    }
+
+    private String vehicleUpdateJson() {
+        return """
+                {
+                  "locationId": 1,
+                  "make": "Toyota",
+                  "model": "Corolla SE",
+                  "year": 2022,
+                  "licensePlate": "ABC1234",
+                  "dailyRate": 65.00,
+                  "status": "AVAILABLE"
+                }
+                """;
     }
 }
