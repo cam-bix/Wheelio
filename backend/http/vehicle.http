@@ -8,7 +8,6 @@ GET http://localhost:8080/api/health
 
 ### Get vehicle by id
 GET http://localhost:8080/api/vehicles/1
-
 ###
 
 ### Create vehicle

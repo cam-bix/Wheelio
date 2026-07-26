@@ -6,16 +6,8 @@
 
 BEGIN;
 
--- Safety check statements
-DROP TABLE IF EXISTS rental CASCADE;
-DROP TABLE IF EXISTS employee CASCADE;
-DROP TABLE IF EXISTS vehicle CASCADE;
-DROP TABLE IF EXISTS location CASCADE;
-DROP TABLE IF EXISTS email_2fa_codes CASCADE;
-DROP TABLE IF EXISTS app_user CASCADE;
-
 -- Users Table
-CREATE TABLE app_user (
+CREATE TABLE IF NOT EXISTS app_user (
     user_id BIGSERIAL PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
@@ -34,8 +26,9 @@ CREATE TABLE app_user (
 
     CONSTRAINT chk_user_email_format
         CHECK (
-        email = LOWER(TRIM(email))
-        AND email ~ '^[^[:space:]@]+@[^[:space:]@]+\.[^[:space:]@]+$'),
+            email = LOWER(TRIM(email))
+            AND email ~ '^[^[:space:]@]+@[^[:space:]@]+\.[^[:space:]@]+$'
+        ),
 
     CONSTRAINT chk_user_password_hash_not_blank
         CHECK (TRIM(password_hash) <> ''),
@@ -48,7 +41,7 @@ CREATE TABLE app_user (
 );
 
 -- Locations Table
-CREATE TABLE location (
+CREATE TABLE IF NOT EXISTS location (
     location_id BIGSERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     address_line VARCHAR(150) NOT NULL,
@@ -75,8 +68,9 @@ CREATE TABLE location (
 
     CONSTRAINT chk_location_postal_code_format
         CHECK (
-        postal_code = UPPER(TRIM(postal_code))
-        AND postal_code ~ '^[A-Z][0-9][A-Z][ -]?[0-9][A-Z][0-9]$'),
+            postal_code = UPPER(TRIM(postal_code))
+            AND postal_code ~ '^[A-Z][0-9][A-Z][ -]?[0-9][A-Z][0-9]$'
+        ),
 
     CONSTRAINT chk_location_phone_format
         CHECK (
@@ -86,14 +80,27 @@ CREATE TABLE location (
 );
 
 -- Employees Table
-CREATE TABLE employee (
+CREATE TABLE IF NOT EXISTS employee (
     employee_id BIGSERIAL PRIMARY KEY,
     user_id BIGINT UNIQUE NOT NULL,
     location_id BIGINT NOT NULL,
     position VARCHAR(50) NOT NULL
-        CHECK (position IN ('MANAGER', 'CUSTOMER_SERVICE', 'MECHANIC', 'ADMIN_STAFF')),
+        CHECK (
+            position IN (
+                'MANAGER',
+                'CUSTOMER_SERVICE',
+                'MECHANIC',
+                'ADMIN_STAFF'
+            )
+        ),
     employment_status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE'
-        CHECK (employment_status IN ('ACTIVE', 'ON_LEAVE', 'TERMINATED')),
+        CHECK (
+            employment_status IN (
+                'ACTIVE',
+                'ON_LEAVE',
+                'TERMINATED'
+            )
+        ),
     hire_date DATE NOT NULL DEFAULT CURRENT_DATE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -109,17 +116,26 @@ CREATE TABLE employee (
 );
 
 -- Vehicles Table
-CREATE TABLE vehicle (
+CREATE TABLE IF NOT EXISTS vehicle (
     vehicle_id BIGSERIAL PRIMARY KEY,
     location_id BIGINT NOT NULL,
     make VARCHAR(50) NOT NULL,
     model VARCHAR(50) NOT NULL,
-    year SMALLINT NOT NULL CHECK (year BETWEEN 1900 AND 2035),
+    year SMALLINT NOT NULL
+        CHECK (year BETWEEN 1900 AND 2035),
     image_key VARCHAR(500),
     license_plate VARCHAR(15) NOT NULL UNIQUE,
-    daily_rate NUMERIC(10,2) NOT NULL CHECK (daily_rate > 0),
+    daily_rate NUMERIC(10,2) NOT NULL
+        CHECK (daily_rate > 0),
     status VARCHAR(50) NOT NULL DEFAULT 'AVAILABLE'
-    CHECK (status IN ('AVAILABLE', 'RENTED', 'MAINTENANCE', 'OUT_OF_SERVICE')),
+        CHECK (
+            status IN (
+                'AVAILABLE',
+                'RENTED',
+                'MAINTENANCE',
+                'OUT_OF_SERVICE'
+            )
+        ),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_vehicle_location
@@ -149,8 +165,60 @@ CREATE TABLE vehicle (
         )
 );
 
+-- Add image_key when vehicle already existed before image support
+ALTER TABLE vehicle
+ADD COLUMN IF NOT EXISTS image_key VARCHAR(500);
+
+-- Add the image key constraint when the table already existed
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM pg_constraint
+        WHERE conname = 'chk_vehicle_image_key_valid'
+          AND conrelid = 'vehicle'::regclass
+    ) THEN
+        ALTER TABLE vehicle
+        ADD CONSTRAINT chk_vehicle_image_key_valid
+        CHECK (
+            image_key IS NULL
+            OR (
+                image_key = TRIM(image_key)
+                AND image_key LIKE 'vehicles/%'
+            )
+        )
+        NOT VALID;
+    END IF;
+END
+$$;
+
+-- Validate the image key constraint only when current data is valid
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM pg_constraint
+        WHERE conname = 'chk_vehicle_image_key_valid'
+          AND conrelid = 'vehicle'::regclass
+          AND NOT convalidated
+    )
+    AND NOT EXISTS (
+        SELECT 1
+        FROM vehicle
+        WHERE image_key IS NOT NULL
+          AND (
+              image_key <> TRIM(image_key)
+              OR image_key NOT LIKE 'vehicles/%'
+          )
+    ) THEN
+        ALTER TABLE vehicle
+        VALIDATE CONSTRAINT chk_vehicle_image_key_valid;
+    END IF;
+END
+$$;
+
 -- Rentals Table
-CREATE TABLE rental (
+CREATE TABLE IF NOT EXISTS rental (
     rental_id BIGSERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL,
     vehicle_id BIGINT NOT NULL,
@@ -160,8 +228,16 @@ CREATE TABLE rental (
     pickup_date TIMESTAMPTZ NOT NULL,
     return_date TIMESTAMPTZ NOT NULL,
     status VARCHAR(50) NOT NULL DEFAULT 'BOOKED'
-        CHECK (status IN ('BOOKED', 'ACTIVE', 'COMPLETED', 'CANCELLED')),
-    total_cost NUMERIC(10,2) NOT NULL CHECK (total_cost >= 0),
+        CHECK (
+            status IN (
+                'BOOKED',
+                'ACTIVE',
+                'COMPLETED',
+                'CANCELLED'
+            )
+        ),
+    total_cost NUMERIC(10,2) NOT NULL
+        CHECK (total_cost >= 0),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     -- Constraints & Foreign Keys
@@ -195,7 +271,7 @@ CREATE TABLE rental (
 );
 
 -- 2FA Table
-CREATE TABLE email_2fa_codes (
+CREATE TABLE IF NOT EXISTS email_2fa_codes (
     id BIGSERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL,
     code_hash VARCHAR(255) NOT NULL,
@@ -220,18 +296,43 @@ CREATE TABLE email_2fa_codes (
 );
 
 -- Indexes for faster searching/filtering
-CREATE INDEX idx_vehicle_status ON vehicle(status);
-CREATE INDEX idx_rental_user_id ON rental(user_id);
-CREATE INDEX idx_rental_vehicle_id ON rental(vehicle_id);
-CREATE INDEX idx_rental_employee_id ON rental(employee_id);
-CREATE INDEX idx_rental_status ON rental(status);
-CREATE INDEX idx_employee_position ON employee(position);
-CREATE INDEX idx_employee_status ON employee(employment_status);
-CREATE INDEX idx_vehicle_location_id ON vehicle(location_id);
-CREATE INDEX idx_rental_pickup_location_id ON rental(pickup_location_id);
-CREATE INDEX idx_rental_return_location_id ON rental(return_location_id);
-CREATE INDEX idx_email_2fa_codes_user_valid ON email_2fa_codes(user_id, used, expires_at);
-CREATE INDEX idx_rental_vehicle_dates ON rental(vehicle_id, pickup_date, return_date);
-CREATE INDEX idx_email_2fa_codes_expires_at ON email_2fa_codes(expires_at);
+CREATE INDEX IF NOT EXISTS idx_vehicle_status
+    ON vehicle(status);
+
+CREATE INDEX IF NOT EXISTS idx_rental_user_id
+    ON rental(user_id);
+
+CREATE INDEX IF NOT EXISTS idx_rental_vehicle_id
+    ON rental(vehicle_id);
+
+CREATE INDEX IF NOT EXISTS idx_rental_employee_id
+    ON rental(employee_id);
+
+CREATE INDEX IF NOT EXISTS idx_rental_status
+    ON rental(status);
+
+CREATE INDEX IF NOT EXISTS idx_employee_position
+    ON employee(position);
+
+CREATE INDEX IF NOT EXISTS idx_employee_status
+    ON employee(employment_status);
+
+CREATE INDEX IF NOT EXISTS idx_vehicle_location_id
+    ON vehicle(location_id);
+
+CREATE INDEX IF NOT EXISTS idx_rental_pickup_location_id
+    ON rental(pickup_location_id);
+
+CREATE INDEX IF NOT EXISTS idx_rental_return_location_id
+    ON rental(return_location_id);
+
+CREATE INDEX IF NOT EXISTS idx_email_2fa_codes_user_valid
+    ON email_2fa_codes(user_id, used, expires_at);
+
+CREATE INDEX IF NOT EXISTS idx_rental_vehicle_dates
+    ON rental(vehicle_id, pickup_date, return_date);
+
+CREATE INDEX IF NOT EXISTS idx_email_2fa_codes_expires_at
+    ON email_2fa_codes(expires_at);
 
 COMMIT;
