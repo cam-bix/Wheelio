@@ -60,7 +60,7 @@ function Home() {
       const vehicles = await getVehicles()
       const featuredInventory = vehicles
         .filter((vehicle) => vehicle.status === 'AVAILABLE')
-        .slice(0, 3)
+        .slice(0, 8)
 
       setInventory(featuredInventory)
     } catch (err) {
@@ -189,7 +189,6 @@ function Home() {
                   </div>
 
                   <div className="inventory-details">
-                    <p><span>Vehicle ID</span>{vehicle.vehicleId}</p>
                     <p><span>Daily Rate</span>${vehicle.dailyRate}</p>
                     <p><span>Status</span>{vehicle.status}</p>
                   </div>

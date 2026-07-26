@@ -32,3 +32,13 @@ export async function cancelRental(rentalId) {
 
   return parseResponse(response, 'Failed to cancel rental.')
 }
+
+export async function updateRentalDates(rentalId, payload) {
+  const response = await fetch(`${API_BASE_URL}/api/rentals/${rentalId}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+
+  return parseResponse(response, 'Failed to update rental.')
+}

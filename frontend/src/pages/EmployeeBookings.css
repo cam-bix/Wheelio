@@ -120,6 +120,49 @@
   color: #777;
 }
 
+
+/* Search bar + calendar button */
+
+.bookings-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.calendar-button {
+  width: 44px;
+  height: 44px;
+  border: 1.5px solid #d0d0d0;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #0f0f0f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.1s ease,
+    box-shadow 0.15s ease;
+}
+
+.calendar-button:hover {
+  border-color: #0f0f0f;
+  background: #f8f8f8;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
+}
+
+.calendar-button:active {
+  transform: translateY(0);
+}
+
+.calendar-button svg {
+  width: 22px;
+  height: 22px;
+}
+
 .bookings-search {
   width: 300px;
   max-width: 100%;
@@ -322,8 +365,12 @@
     align-items: stretch;
   }
 
-  .bookings-search {
+  .bookings-header-actions {
     width: 100%;
+  }
+
+  .bookings-search {
+    flex: 1;
   }
 
   .navbar {

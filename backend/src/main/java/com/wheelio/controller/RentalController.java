@@ -2,6 +2,7 @@ package com.wheelio.controller;
 
 import com.wheelio.dto.CreateRentalRequest;
 import com.wheelio.dto.RentalResponse;
+import com.wheelio.dto.UpdateRentalDatesRequest;
 import com.wheelio.service.RentalService;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,5 +41,13 @@ public class RentalController {
     @PatchMapping("/{id}/cancel")
     public RentalResponse cancelRental(@PathVariable Long id) {
         return rentalService.cancelRental(id);
+    }
+
+    @PatchMapping("/{id}")
+    public RentalResponse updateRentalDates(
+            @PathVariable Long id,
+            @RequestBody UpdateRentalDatesRequest request
+    ) {
+        return rentalService.updateRentalDates(id, request);
     }
 }

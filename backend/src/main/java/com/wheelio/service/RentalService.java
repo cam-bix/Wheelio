@@ -2,6 +2,7 @@ package com.wheelio.service;
 
 import com.wheelio.dto.CreateRentalRequest;
 import com.wheelio.dto.RentalResponse;
+import com.wheelio.dto.UpdateRentalDatesRequest;
 import com.wheelio.entity.*;
 import com.wheelio.repository.AppUserRepository;
 import com.wheelio.repository.RentalRepository;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 
 import java.math.BigDecimal;
 import java.time.Duration;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Service
@@ -52,6 +54,11 @@ public class RentalService {
                 rental.getTotalCost(),
                 rental.getCreatedAt()
         );
+    }
+
+    private BigDecimal calculateTotalCost(Vehicle vehicle, OffsetDateTime pickupDate, OffsetDateTime returnDate) {
+        long days = Math.max(1, Duration.between(pickupDate, returnDate).toDays());
+        return vehicle.getDailyRate().multiply(BigDecimal.valueOf(days));
     }
 
     public List<RentalResponse> getAllRentals() {
@@ -96,13 +103,11 @@ public class RentalService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Return date must be after pickup date");
         }
 
-        long days = Math.max(1, Duration.between(
+        BigDecimal totalCost = calculateTotalCost(
+                vehicle,
                 request.getPickupDate(),
                 request.getReturnDate()
-        ).toDays());
-
-        BigDecimal totalCost = vehicle.getDailyRate()
-                .multiply(BigDecimal.valueOf(days));
+        );
 
         Rental rental = new Rental();
         rental.setUser(user);
@@ -116,6 +121,40 @@ public class RentalService {
 
         vehicle.setStatus(VehicleStatus.RENTED);
         vehicleRepository.save(vehicle);
+
+        Rental savedRental = rentalRepository.save(rental);
+        return toResponse(savedRental);
+    }
+
+    @Transactional
+    public RentalResponse updateRentalDates(Long id, UpdateRentalDatesRequest request) {
+        Rental rental = getRentalEntityById(id);
+
+        if (request.getPickupDate() == null || request.getReturnDate() == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Pickup and return dates are required"
+            );
+        }
+
+        if (rental.getStatus() != RentalStatus.BOOKED || !OffsetDateTime.now().isBefore(rental.getPickupDate())) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "This booking can no longer be modified because pickup has already started"
+            );
+        }
+
+        if (!request.getReturnDate().isAfter(request.getPickupDate())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Return date must be after pickup date");
+        }
+
+        rental.setPickupDate(request.getPickupDate());
+        rental.setReturnDate(request.getReturnDate());
+        rental.setTotalCost(calculateTotalCost(
+                rental.getVehicle(),
+                request.getPickupDate(),
+                request.getReturnDate()
+        ));
 
         Rental savedRental = rentalRepository.save(rental);
         return toResponse(savedRental);
