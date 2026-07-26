@@ -37,8 +37,8 @@ function Signup() {
     setLoading(true)
 
     try {
-      const user = await registerUser(form)
-      localStorage.setItem('wheelioUser', JSON.stringify(user))
+      await registerUser(form)
+      localStorage.removeItem('wheelioUser')
       setSuccess('Account created. You can log in now.')
       setForm({
         firstName: '',

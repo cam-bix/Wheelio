@@ -1,5 +1,6 @@
 package com.wheelio.controller;
 
+import com.wheelio.dto.AuthResponse;
 import com.wheelio.dto.RentalResponse;
 import com.wheelio.entity.AppUser;
 import com.wheelio.entity.RentalStatus;
@@ -7,6 +8,7 @@ import com.wheelio.entity.UserRole;
 import com.wheelio.entity.Vehicle;
 import com.wheelio.entity.VehicleStatus;
 import com.wheelio.service.AppUserService;
+import com.wheelio.service.AuthService;
 import com.wheelio.service.RentalService;
 import com.wheelio.service.VehicleService;
 import org.junit.jupiter.api.Test;
@@ -52,6 +54,82 @@ class HttpEndpointSecurityTest {
 
     @MockBean
     private RentalService rentalService;
+
+    @MockBean
+    private AuthService authService;
+
+    @Test
+    void authEndpointsArePublic() throws Exception {
+        when(authService.register(any()))
+                .thenReturn(new AuthResponse(
+                        42L,
+                        "Jayden",
+                        "Hunt",
+                        "jayden@example.com",
+                        "5195551234",
+                        UserRole.CUSTOMER,
+                        "Registration successful"
+                ));
+
+        when(authService.login(any()))
+                .thenReturn(new AuthResponse(
+                        null,
+                        null,
+                        null,
+                        "jayden@example.com",
+                        null,
+                        null,
+                        "Verification code sent",
+                        true
+                ));
+
+        when(authService.verifyTwoFactorLogin(any()))
+                .thenReturn(new AuthResponse(
+                        42L,
+                        "Jayden",
+                        "Hunt",
+                        "jayden@example.com",
+                        "5195551234",
+                        UserRole.CUSTOMER,
+                        "Login successful"
+                ));
+
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "firstName": "Jayden",
+                                  "lastName": "Hunt",
+                                  "email": "jayden@example.com",
+                                  "phone": "5195551234",
+                                  "password": "password123"
+                                }
+                                """))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.firstName", is("Jayden")));
+
+        mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "email": "jayden@example.com",
+                                  "password": "password123"
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.twoFactorRequired", is(true)));
+
+        mockMvc.perform(post("/api/auth/verify-2fa")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "email": "jayden@example.com",
+                                  "code": "123456"
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message", is("Login successful")));
+    }
 
     @Test
     void vehicleReadEndpointsArePublic() throws Exception {
