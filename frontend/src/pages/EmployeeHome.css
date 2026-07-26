@@ -19,25 +19,10 @@
   border-bottom: 4px solid #e5212a;
 }
 
-.navbar-logo .logo-badge {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.speed-lines {
-  margin-right: -2px;
-}
-
-.logo-text {
-  color: #ffffff;
-  font-size: 1.25rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-}
-
-.logo-accent {
-  color: #e5212a;
+.navbar-logo-image {
+  height: 34px;
+  width: auto;
+  display: block;
 }
 
 .navbar-links {
@@ -121,20 +106,41 @@
 .tickets-column {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
 
 .tickets-title {
   font-size: 1.1rem;
   font-weight: 700;
-  color: #0f0f0f;
   margin: 0 0 4px 0;
 }
 
+.tickets-title a {
+  color: #0f0f0f;
+  text-decoration: none;
+}
+
+.tickets-title a:hover {
+  color: #e5212a;
+}
+
+/* Each outstanding ticket is now a full bordered card (previously
+   just the description box had a border) so it reads as a distinct
+   unit — number/priority on top, subject, description, then a
+   status/customer meta row and the Resolve action. */
 .ticket-card {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+  border: 1.5px solid #0f0f0f;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.ticket-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .ticket-number {
@@ -144,14 +150,33 @@
   margin: 0;
 }
 
+.ticket-subject {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f0f0f;
+}
+
 .ticket-box {
-  border: 1.5px solid #0f0f0f;
-  border-radius: 10px;
-  padding: 16px;
-  min-height: 96px;
-  font-size: 0.88rem;
+  border: 1.5px solid #ececec;
+  border-radius: 8px;
+  background-color: #fafafa;
+  padding: 14px;
+  min-height: 72px;
+  font-size: 0.85rem;
   color: #444;
   line-height: 1.4;
+}
+
+.ticket-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ticket-meta-text {
+  font-size: 0.78rem;
+  color: #6c757d;
 }
 
 .resolve-btn {
@@ -183,6 +208,58 @@
   color: #909090;
   font-size: 0.85rem;
   margin: 8px 0 0 0;
+}
+
+/* ─── Ticket Status + Priority Badges ────────────────────────── */
+/* Matches the badge palette used on the Customer Support page's
+   ticket list — add a new .ticket-status-<value>/.priority-<value>
+   rule here if a new status or priority value gets added later. */
+
+.ticket-status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.ticket-status-open {
+  color: #c0000a;
+  background-color: #fdeaea;
+}
+
+.ticket-status-in-progress {
+  color: #93690a;
+  background-color: #fdf3df;
+}
+
+.ticket-status-closed {
+  color: #17652b;
+  background-color: #e8f7ec;
+}
+
+.ticket-priority-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.ticket-priority-high {
+  color: #c0000a;
+  background-color: #fdeaea;
+}
+
+.ticket-priority-medium {
+  color: #93690a;
+  background-color: #fdf3df;
+}
+
+.ticket-priority-low {
+  color: #2559c9;
+  background-color: #e6eefc;
 }
 
 /* ─── Right Column ────────────────────────────────────────────── */
@@ -323,21 +400,11 @@
 
 /* ─── Bookings preview ───────────────────────────────────────── */
 
-.home-bookings-list { 
-  display: flex; 
+.home-bookings-list {
+  display: flex;
   flex-direction: column;
-  gap: 16px; 
-} 
-
-.home-booking-card { display: flex; 
-  align-items: center; 
-  gap: 20px; 
-  border: 1.5px solid #0f0f0f; 
-  border-radius: 10px; 
-  padding: 16px 22px; 
-  transition: box-shadow 0.15s ease, transform 0.1s ease; 
+  gap: 16px;
 }
-
 
 .home-booking-card {
   display: grid;
@@ -398,7 +465,7 @@
   align-items: flex-start;
 }
 
-/*---------- Status badge ------------*/
+/*---------- Booking status badge ------------*/
 
 .booking-status-badge {
   display: inline-block;
@@ -467,6 +534,4 @@
     flex-direction: column;
     align-items: flex-start;
   }
-
-  
 }
