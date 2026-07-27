@@ -48,7 +48,7 @@ function Book() {
     }
 
     const msPerDay = 1000 * 60 * 60 * 24
-    const days = Math.max(1, Math.ceil((end - start) / msPerDay))
+    const days = Math.max(1, Math.ceil((new Date(returnDate) - new Date(pickupDate)) / msPerDay))
 
     return Number(vehicle.dailyRate) * days
   }
@@ -88,8 +88,12 @@ function Book() {
         pickupDate: new Date(pickupDate).toISOString(),
         returnDate: new Date(returnDate).toISOString(),
       })
+      const msPerDay = 1000 * 60 * 60 * 24
+      const days = Math.max(1, Math.ceil((new Date(returnDate) - new Date(pickupDate)) / msPerDay))
 
-      navigate('/')
+      const session = await createCheckoutSession(vehicle.vehicleId, days)
+      window.location.href = session.url
+      
     } catch (err) {
       setBookingError(err.message || 'Could not complete booking.')
     } finally {
@@ -146,10 +150,29 @@ function Book() {
 
         <section className="dashboard-panel dashboard-panel--right">
           <div className="inventory-details">
-            <h2>Car Details</h2>
-            <p><span>Daily Rate</span>${vehicle.dailyRate}</p>
-            <p><span>Status</span>{vehicle.status}</p>
-            <p><span>Plate</span>{vehicle.licensePlate}</p>
+              <h2>Car Details</h2>
+              <p><span>Daily Rate</span>${vehicle.dailyRate}</p>
+              <p><span>Status</span>{vehicle.status}</p>
+              <p><span>Plate</span>{vehicle.licensePlate}</p>
+              <p>
+                  <span>Pickup Location</span>
+                  {(() => {
+                      const savedId = localStorage.getItem('wheelioLocation')
+                      const locations = [
+                          { id: 1, name: 'Waterloo Airport' },
+                          { id: 2, name: 'Toronto Pearson Airport' },
+                          { id: 3, name: 'Kitchener City Hall' },
+                          { id: 4, name: 'Waterloo Town Square' },
+                      ]
+                      const found = locations.find(l => l.id === Number(savedId))
+                      return found ? found.name : 'No Location Selected'
+                  })()}
+              </p>
+              {!localStorage.getItem('wheelioLocation') && (
+                  <p className="booking-error">
+                      ⚠️ Please <Link to="/change-location">select a pickup location</Link> before booking.
+                  </p>
+              )}
           </div>
 
           <form className="booking-form" onSubmit={handleBook}>

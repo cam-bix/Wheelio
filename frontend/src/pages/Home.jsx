@@ -161,9 +161,19 @@ function Home() {
 
         <section className="dashboard-panel dashboard-panel--right">
           <h2>Featured Available Inventory</h2>
-          <p className="panel-subtitle">
-            Inventory for "Location" <span><Link to="/change-location">Change Location</Link></span>
-          </p>
+        <p className="panel-subtitle">
+            Inventory for "{(() => {
+                const savedId = localStorage.getItem('wheelioLocation')
+                const locations = [
+                    { id: 1, name: 'Waterloo Airport' },
+                    { id: 2, name: 'Toronto Pearson Airport' },
+                    { id: 3, name: 'Kitchener City Hall' },
+                    { id: 4, name: 'Waterloo Town Square' },
+                ]
+                const found = locations.find(l => l.id === Number(savedId))
+                return found ? found.name : 'No Location Selected'
+            })()}" <span><Link to="/change-location">Change Location</Link></span>
+        </p>
 
           {inventoryLoading && <p className="empty-text">Loading available inventory...</p>}
 
