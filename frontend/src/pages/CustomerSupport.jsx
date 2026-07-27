@@ -1,8 +1,12 @@
 import { useState, useEffect, useMemo } from 'react'
 import logo from '../assets/Wheelio_logo.png'
 import { Link } from 'react-router-dom'
+import {
+  getTickets,
+  createTicket,
+  updateTicketStatus,
+} from '../api/tickets'
 import './CustomerSupport.css'
-
 
 // ─── Ticket table schema (from schema.sql) ────────────────────────
 // ticket_id                 int, primary key
@@ -60,11 +64,11 @@ const MOCK_TICKETS = [
 
 // Every value the `status` column can hold, in the order they should
 // appear in the status dropdown/filter.
-const STATUS_OPTIONS = ['OPEN', 'IN_PROGRESS', 'CLOSED']
+const STATUS_OPTIONS = ['OPEN', 'IN_PROGRESS', 'RESOLVED', 'CLOSED']
 
 // Every value the `priority` column can hold, in the order they
 // should appear in the "New Ticket" form's priority select.
-const PRIORITY_OPTIONS = ['HIGH', 'MEDIUM', 'LOW']
+const PRIORITY_OPTIONS = ['URGENT', 'HIGH', 'NORMAL', 'LOW']
 
 // TODO: replace with the actual logged-in employee's id once auth
 // exists (e.g. from a session/context), instead of hardcoding it.
@@ -75,7 +79,7 @@ const EMPTY_TICKET_FORM = {
   description: '',
   customer_id: '',
   rental_id: '',
-  priority: 'MEDIUM',
+  priority: 'LOW',
 }
 
 // Turns a status value into the label shown on screen, e.g.
@@ -127,7 +131,7 @@ function CustomerSupport() {
       try {
         // TODO: replace with a real API call once the tickets
         // endpoint exists, e.g. const data = await getTickets()
-        const data = MOCK_TICKETS
+        const data = await getTickets()
         setTickets(data)
         setActiveTicketId(data[0]?.ticket_id ?? null)
       } catch (err) {
@@ -163,12 +167,25 @@ function CustomerSupport() {
   // Updates a ticket's status locally (e.g. via the dropdown, or the
   // one-click "Resolve" button in the detail panel).
   // TODO: replace with a real API call, e.g. await updateTicketStatus(ticketId, status)
-  const handleStatusChange = (ticketId, newStatus) => {
-    setTickets((prev) =>
-      prev.map((ticket) =>
-        ticket.ticket_id === ticketId ? { ...ticket, status: newStatus } : ticket
+  const handleStatusChange = async (ticketId, newStatus) => {
+    setError('')
+
+    try {
+      const updatedTicket = await updateTicketStatus(
+        ticketId,
+        newStatus
       )
-    )
+
+      setTickets((prev) =>
+      prev.map((ticket) =>
+      ticket.ticket_id === ticketId
+      ? updatedTicket
+      : ticket
+      )
+      )
+    } catch (err) {
+      setError(err.message || 'Unable to update ticket.')
+    }
   }
 
   const handleNewTicketFieldChange = (field, value) => {
@@ -185,29 +202,38 @@ function CustomerSupport() {
   // TODO: replace with a real API call, e.g. await createTicket(payload) —
   // the backend should assign the real ticket_id and created_at rather
   // than generating them client-side like this placeholder does.
-  const handleCreateTicket = (e) => {
+  const handleCreateTicket = async (e) => {
     e.preventDefault()
+    setFormError('')
 
-    if (!newTicket.subject.trim() || !newTicket.customer_id || !newTicket.rental_id) {
-      setFormError('Subject, Customer ID, and Rental ID are required.')
+    if (
+      !newTicket.subject.trim() ||
+      !newTicket.description.trim() ||
+      !newTicket.customer_id ||
+      !newTicket.rental_id
+    ) {
+      setFormError(
+        'Subject, description, Customer ID, and Rental ID are required.'
+      )
       return
     }
 
-    const ticket = {
-      ticket_id: Math.max(0, ...tickets.map((t) => t.ticket_id)) + 1,
-      created_by_employee_id: CURRENT_EMPLOYEE_ID,
-      customer_id: Number(newTicket.customer_id),
-      rental_id: Number(newTicket.rental_id),
-      subject: newTicket.subject.trim(),
-      description: newTicket.description.trim(),
-      status: 'OPEN',
-      priority: newTicket.priority,
-      created_at: new Date().toISOString(),
-    }
+    try {
+      const createdTicket = await createTicket({
+        created_by_employee_id: CURRENT_EMPLOYEE_ID,
+        customer_id: Number(newTicket.customer_id),
+                                               rental_id: Number(newTicket.rental_id),
+                                               subject: newTicket.subject.trim(),
+                                               description: newTicket.description.trim(),
+                                               priority: newTicket.priority,
+      })
 
-    setTickets((prev) => [ticket, ...prev])
-    setActiveTicketId(ticket.ticket_id)
-    resetNewTicketForm()
+      setTickets((prev) => [createdTicket, ...prev])
+      setActiveTicketId(createdTicket.ticket_id)
+      resetNewTicketForm()
+    } catch (err) {
+      setFormError(err.message || 'Unable to create ticket.')
+    }
   }
 
   return (
@@ -339,11 +365,12 @@ function CustomerSupport() {
                       {/* One-click resolve, in addition to the dropdown
                           below, so staff don't have to open the select
                           just to close out a finished ticket. */}
-                      {activeTicket.status !== 'CLOSED' && (
+                        {activeTicket.status !== 'RESOLVED' &&
+                         activeTicket.status !== 'CLOSED' && (
                         <button
                           type="button"
                           className="resolve-ticket-btn"
-                          onClick={() => handleStatusChange(activeTicket.ticket_id, 'CLOSED')}
+                          onClick={() => handleStatusChange(activeTicket.ticket_id, 'RESOLVED')}
                         >
                           <IconCheck />
                           Resolve
