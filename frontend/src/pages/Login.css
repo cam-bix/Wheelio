@@ -59,6 +59,11 @@
   color: #ffffff;
 }
 
+.login-logo-img {
+  height: 70px;
+  width: auto;
+}
+
 /* ─── Title ──────────────────────────────────────────────────── */
 
 .login-title {
