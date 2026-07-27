@@ -1,0 +1,737 @@
+/* ─── Page ────────────────────────────────────────────────────── */
+
+.employee-support-page {
+  min-height: 100vh;
+  background-color: #fafafa;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* ─── Top Navigation Bar ─────────────────────────────────────── */
+/* Shared styling with the home/bookings/statistics/inventory navbar
+   for a consistent header across employee pages. */
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #0f0f0f;
+  padding: 14px 32px;
+  border-bottom: 4px solid #e5212a;
+}
+
+.navbar-logo-image {
+  height: 34px;
+  width: auto;
+  display: block;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.navbar-links a {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding-bottom: 4px;
+  transition: color 0.15s ease;
+}
+
+.navbar-links a:hover {
+  color: #e5212a;
+}
+
+.navbar-links a.nav-active {
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: #e5212a;
+  text-underline-offset: 5px;
+}
+
+.navbar-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.username {
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+/* ─── Page Content ───────────────────────────────────────────── */
+
+.support-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 32px 80px;
+}
+
+.support-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.support-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #0f0f0f;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.new-ticket-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  border-radius: 999px;
+  background-color: #e5212a;
+  color: #ffffff;
+  padding: 12px 22px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.new-ticket-btn:hover {
+  background-color: #c81922;
+}
+
+.new-ticket-btn:active {
+  transform: scale(0.98);
+}
+
+.support-loading {
+  color: #555;
+  font-size: 1rem;
+}
+
+.support-error {
+  background: #fff0f0;
+  border: 1px solid #ffbcbc;
+  color: #c0000a;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.875rem;
+  margin-bottom: 20px;
+}
+
+/* ─── Two-Panel Layout ───────────────────────────────────────── */
+/* Fixed height so both panels line up like the mockup instead of
+   growing to fit content — the ticket list and detail panel scroll
+   internally within that height. Panels use a soft gray border +
+   shadow instead of a heavy black outline for a cleaner look. */
+
+.support-panels {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 24px;
+  height: 680px;
+}
+
+/* ─── Left Panel: Ticket List ─────────────────────────────────── */
+
+.tickets-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  border: 1px solid #e6e6e6;
+  border-radius: 14px;
+  padding: 18px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 10px rgba(15, 15, 15, 0.04);
+  overflow: hidden;
+}
+
+.tickets-search-wrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.tickets-search {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 40px 10px 14px;
+  border: 1px solid #dcdcdc;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  color: #0f0f0f;
+  background: #ffffff;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.tickets-search:focus {
+  border-color: #0f0f0f;
+}
+
+.tickets-search::placeholder {
+  color: #a3a3a3;
+}
+
+.tickets-search-icon {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+/* Status filter tabs — All / Open / In Progress / Closed */
+
+.ticket-filter-tabs {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+  overflow-x: auto;
+}
+
+.ticket-filter-tab {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #6c757d;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+  white-space: nowrap;
+}
+
+.ticket-filter-tab:hover {
+  border-color: #0f0f0f;
+  color: #0f0f0f;
+}
+
+.ticket-filter-tab-active {
+  border-color: #0f0f0f;
+  background-color: #0f0f0f;
+  color: #ffffff;
+}
+
+.tickets-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+}
+
+.ticket-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  border: 1px solid #e6e6e6;
+  border-radius: 10px;
+  padding: 12px;
+  background: #ffffff;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ticket-item:hover {
+  border-color: #cfcfcf;
+  background-color: #fbfbfb;
+}
+
+/* Brand-red highlight for whichever ticket is currently open, so
+   staff can tell at a glance which one they're viewing. */
+.ticket-item-active {
+  border-color: #e5212a;
+  background-color: #fdecec;
+  box-shadow: 0 0 0 1px #e5212a inset;
+}
+
+.ticket-item-active:hover {
+  background-color: #fce0e0;
+}
+
+.ticket-item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ticket-item-number {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #6c757d;
+}
+
+.ticket-item-subject {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #0f0f0f;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ticket-item-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 2px;
+}
+
+.ticket-item-customer {
+  font-size: 0.78rem;
+  color: #6c757d;
+}
+
+.tickets-empty {
+  text-align: center;
+  color: #909090;
+  font-size: 0.85rem;
+  margin: 12px 0 0;
+}
+
+/* ─── Right Panel: Ticket Detail ─────────────────────────────── */
+
+.ticket-detail-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  border: 1px solid #e6e6e6;
+  border-radius: 14px;
+  padding: 28px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 10px rgba(15, 15, 15, 0.04);
+  overflow-y: auto;
+}
+
+.ticket-detail-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #ececec;
+}
+
+.ticket-detail-number {
+  margin: 0 0 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #6c757d;
+}
+
+.ticket-detail-subject {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #0f0f0f;
+  letter-spacing: -0.01em;
+}
+
+.ticket-detail-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* One-click resolve button — sits next to the status dropdown so
+   staff can close out a ticket without opening the select. Hidden
+   entirely once a ticket is already CLOSED (see the JSX). */
+.resolve-ticket-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #17652b;
+  border-radius: 999px;
+  background-color: #e8f7ec;
+  color: #17652b;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.resolve-ticket-btn:hover {
+  background-color: #d5f0dd;
+}
+
+/* Status dropdown in the detail header. Color reflects the
+   currently selected status, same palette as the status badges. */
+.ticket-status-select {
+  flex-shrink: 0;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ticket-status-select-open {
+  background-color: #fdeaea;
+  color: #c0000a;
+  border-color: #f5b8b8;
+}
+
+.ticket-status-select-in-progress {
+  background-color: #fdf3df;
+  color: #93690a;
+  border-color: #f0d894;
+}
+
+.ticket-status-select-closed {
+  background-color: #e8f7ec;
+  color: #17652b;
+  border-color: #a9dcb8;
+}
+
+/* Meta field grid — Priority / Customer ID / Rental ID / Opened By / Created */
+
+.ticket-detail-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 20px;
+}
+
+.meta-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.meta-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #909090;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.meta-value {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #0f0f0f;
+}
+
+.ticket-detail-description {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ticket-detail-description p {
+  margin: 0;
+  padding: 16px;
+  border: 1px solid #ececec;
+  border-radius: 10px;
+  background-color: #fafafa;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: #333;
+}
+
+.ticket-empty-panel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #909090;
+  font-size: 0.9rem;
+}
+
+/* ─── Status + Priority Badges ───────────────────────────────── */
+/* Namespaced with a "ticket-" prefix so these never collide with
+   similarly-named badge classes on other pages (e.g. Inventory's
+   .status-badge, which is absolutely positioned over a vehicle
+   photo — reusing that generic name here was what caused a badge
+   to jump to the top-left of this page before). Add a new
+   .ticket-status-<value>/.ticket-priority-<value> rule here if a
+   new status or priority value gets added to the schema later. */
+
+.ticket-status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.ticket-status-open {
+  color: #c0000a;
+  background-color: #fdeaea;
+}
+
+.ticket-status-in-progress {
+  color: #93690a;
+  background-color: #fdf3df;
+}
+
+.ticket-status-closed {
+  color: #17652b;
+  background-color: #e8f7ec;
+}
+
+.ticket-priority-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.ticket-priority-high {
+  color: #c0000a;
+  background-color: #fdeaea;
+}
+
+.ticket-priority-medium {
+  color: #93690a;
+  background-color: #fdf3df;
+}
+
+.ticket-priority-low {
+  color: #2559c9;
+  background-color: #e6eefc;
+}
+
+/* ─── New Ticket Modal ───────────────────────────────────────── */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background-color: rgba(15, 15, 15, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 540px;
+  max-height: 90vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 20px 50px rgba(15, 15, 15, 0.25);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #0f0f0f;
+}
+
+.modal-close-btn {
+  border: none;
+  background: none;
+  padding: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+}
+
+.modal-close-btn:hover {
+  background-color: #f0f0f0;
+}
+
+/* ─── Ticket Form ─────────────────────────────────────────────── */
+
+.ticket-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #0f0f0f;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #0f0f0f;
+  background: #ffffff;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.15s ease;
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+  border-color: #0f0f0f;
+}
+
+/* Customer ID / Rental ID are entered manually — hide the native
+   number spinner arrows so they don't invite click-to-increment. */
+.form-field input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+.form-field input[type='number']::-webkit-outer-spin-button,
+.form-field input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Fixed height, no user resizing — keeps the modal's overall size
+   predictable instead of growing/shrinking as staff drag the handle. */
+.form-field textarea {
+  resize: none;
+  height: 110px;
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.form-row .form-field {
+  flex: 1 1 140px;
+  min-width: 0;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.form-cancel-btn {
+  border: 1px solid #dcdcdc;
+  border-radius: 999px;
+  background-color: #ffffff;
+  color: #0f0f0f;
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.form-cancel-btn:hover {
+  background-color: #f5f5f5;
+}
+
+.form-submit-btn {
+  border: none;
+  border-radius: 999px;
+  background-color: #e5212a;
+  color: #ffffff;
+  padding: 10px 22px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.form-submit-btn:hover {
+  background-color: #c81922;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  .support-panels {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .tickets-panel {
+    max-height: 320px;
+  }
+
+  .ticket-detail-panel {
+    height: 480px;
+  }
+
+  .form-row {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 600px) {
+  .navbar {
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 14px 20px;
+  }
+
+  .navbar-links {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .support-content {
+    padding: 24px 20px 60px;
+  }
+
+  .support-page-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ticket-detail-header {
+    flex-direction: column;
+  }
+
+  .ticket-detail-header-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
