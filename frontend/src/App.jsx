@@ -1,5 +1,4 @@
-
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
@@ -13,29 +12,38 @@ import ReserveVehicles from './pages/ReserveVehicles'
 import Book from './pages/Book'
 import ChangeLocation from './pages/Changelocation'
 import ModifyBooking from './pages/ModifyBooking'
+import RoleRoute, { RoleHomeRedirect } from './auth/RoleRoute'
 import CustomerSupport from './pages/CustomerSupport'
 import EmployeeCalendar from './pages/EmployeeCalendar'
 
 function App() {
+  const customerRoute = (element) => (
+    <RoleRoute allow="customer">{element}</RoleRoute>
+  )
+
+  const employeeRoute = (element) => (
+    <RoleRoute allow="employee">{element}</RoleRoute>
+  )
+
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/home" element={<Home />} />
+        <Route path="/" element={<RoleHomeRedirect />} />
+        <Route path="/home" element={customerRoute(<Home />)} />
         <Route path="/login" element={<Login />} />
         <Route path="/verify-2fa" element={<VerifyTwoFactor />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/book" element={<ReserveVehicles />} />
-        <Route path="/book/:vehicleId" element={<Book />} />
-        <Route path="/change-location" element={<ChangeLocation />} />
-        <Route path="/modify-booking" element={<ModifyBooking />} />
-        <Route path="/employee-bookings" element={<EmployeeBookings />} />
-        <Route path="/employee-stats" element={<EmployeeStatistics />} />
-        <Route path="/employee-inventory" element={<EmployeeInventory />} />
-        <Route path="/employee-home" element={<EmployeeHome />} />
-        <Route path="/customer-support" element={<CustomerSupport />} /> 
-        <Route path="/employee-calendar" element={<EmployeeCalendar />} /> 
+        <Route path="/settings" element={customerRoute(<Settings />)} />
+        <Route path="/book" element={customerRoute(<ReserveVehicles />)} />
+        <Route path="/book/:vehicleId" element={customerRoute(<Book />)} />
+        <Route path="/change-location" element={customerRoute(<ChangeLocation />)} />
+        <Route path="/modify-booking" element={customerRoute(<ModifyBooking />)} />
+        <Route path="/employee-bookings" element={employeeRoute(<EmployeeBookings />)} />
+        <Route path="/employee-stats" element={employeeRoute(<EmployeeStatistics />)} />
+        <Route path="/employee-inventory" element={employeeRoute(<EmployeeInventory />)} />
+        <Route path="/employee-home" element={employeeRoute(<EmployeeHome />)} />
+        <Route path="/customer-support" element={employeeRoute(<CustomerSupport />)} />
+        <Route path="/employee-calendar" element={employeeRoute(<EmployeeCalendar />)} />
       </Routes>
     </BrowserRouter>
   )

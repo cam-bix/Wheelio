@@ -14,6 +14,7 @@ function ReserveVehicles() {
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem('wheelioUser') || 'null')
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCurrentUser(storedUser)
 
     async function loadVehicles() {

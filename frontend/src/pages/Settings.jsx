@@ -51,7 +51,7 @@ function Settings() {
         fetchUser()
 
         //***LocalStorage way, in case the fetchUser() does not work:
-        
+
         // const storedUser = JSON.parse(localStorage.getItem('wheelioUser') || '{}')
         // setFirstName(storedUser?.firstName || '')
         // setLastName(storedUser?.lastName || '')

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { verifyTwoFactorLogin } from '../api/auth'
+import { getRoleHomePath, storeUser } from '../auth/session'
 import './Login.css'
 
 function VerifyTwoFactor() {
@@ -28,8 +29,8 @@ function VerifyTwoFactor() {
 
     try {
       const user = await verifyTwoFactorLogin({ email, code })
-      localStorage.setItem('wheelioUser', JSON.stringify(user))
-      navigate(user.role === 'EMPLOYEE' || user.role === 'ADMIN' ? '/employee-home' : '/home')
+      storeUser(user)
+      navigate(getRoleHomePath(user))
     } catch (err) {
       setError(err.message || 'Invalid or expired verification code.')
     } finally {

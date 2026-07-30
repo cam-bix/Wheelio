@@ -5,7 +5,6 @@ import { createRental } from '../api/rentals'
 import './Book.css'
 import carPlaceholder from '../assets/placeholder_image.jpg'
 import wheelioLogo from '../assets/Wheelio_logo.png'
-import { createCheckoutSession } from '../api/checkout'
 
 function Book() {
   const { vehicleId } = useParams()
@@ -93,7 +92,7 @@ function Book() {
 
       const session = await createCheckoutSession(vehicle.vehicleId, days)
       window.location.href = session.url
-      
+
     } catch (err) {
       setBookingError(err.message || 'Could not complete booking.')
     } finally {
