@@ -1,5 +1,13 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
 
+export function getVehicleImageUrl(vehicleId) {
+  if (!vehicleId) {
+    return null
+  }
+
+  return `${API_BASE_URL}/api/public/vehicle-images/${vehicleId}`
+}
+
 export async function getVehicles() {
   const response = await fetch(`${API_BASE_URL}/api/vehicles`)
 

@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { getVehicleById } from '../api/vehicles'
 import { createRental } from '../api/rentals'
+import { createCheckoutSession } from '../api/checkout'
 import './Book.css'
-import carPlaceholder from '../assets/placeholder_image.jpg'
 import wheelioLogo from '../assets/Wheelio_logo.png'
 import { getStoredUser } from '../utils/userSession'
+import VehicleImage from '../components/VehicleImage'
 
 function formatDateInputValue(date) {
   const year = date.getFullYear()
@@ -158,7 +159,11 @@ function Book() {
 
       <main className="dashboard-layout">
         <section className="dashboard-panel dashboard-panel--left">
-          <img className="vehicle-image" src={carPlaceholder} alt="Vehicle" />
+          <VehicleImage
+            className="book-vehicle-image"
+            vehicleId={vehicle.vehicleId}
+            alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+          />
           <h1 className="vehicle-title">
             {vehicle.year} {vehicle.make} {vehicle.model}
           </h1>

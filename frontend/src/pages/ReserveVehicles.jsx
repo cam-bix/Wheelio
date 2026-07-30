@@ -1,11 +1,11 @@
 import './ReserveVehicles.css'
-import carPlaceholder from '../assets/placeholder_image.jpg'
 import wheelioLogo from '../assets/Wheelio_logo.png'
 import { Link, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { getVehicles } from '../api/vehicles'
 import { getAllRentals } from '../api/rentals'
 import { getStoredUser, getUserLocation, getUserLocationLabel } from '../utils/userSession'
+import VehicleImage from '../components/VehicleImage'
 
 function formatDateInputValue(date) {
   const year = date.getFullYear()
@@ -188,9 +188,9 @@ function ReserveVehicles() {
           <section className="reserve-grid">
             {filteredVehicles.map((vehicle) => (
               <article className="reserve-card" key={vehicle.vehicleId}>
-                <img
+                <VehicleImage
                   className="reserve-image"
-                  src={carPlaceholder}
+                  vehicleId={vehicle.vehicleId}
                   alt={`${vehicle.make} ${vehicle.model}`}
                 />
 

@@ -1,21 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import carPlaceholder from '../assets/placeholder_image.jpg'
 import wheelioLogo from '../assets/Wheelio_logo.png'
 import { getActiveRentalsForUser, cancelRental } from '../api/rentals'
 import { getVehicles } from '../api/vehicles'
 import { getStoredUser, getUserLocationLabel, getUserLocation } from '../utils/userSession'
+import VehicleImage from '../components/VehicleImage'
 import './Home.css'
-
-function PlaceholderImage() {
-  return (
-    <img
-      className="vehicle-image"
-      src={carPlaceholder}
-      alt="Vehicle"
-    />
-  )
-}
 
 function formatDate(dateString) {
   return new Date(dateString).toLocaleString()
@@ -130,7 +120,11 @@ function Home() {
           {!rentalsLoading && !rentalsError && rentals.length > 0 && (
             rentals.map((rental) => (
               <article className="booking-card" key={rental.rentalId}>
-                <PlaceholderImage />
+                <VehicleImage
+                  className="vehicle-image"
+                  vehicleId={rental.vehicleId}
+                  alt={rental.vehicleName}
+                />
 
                 <div className="card-copy">
                   <span className="card-eyebrow">Current Rental</span>
@@ -184,7 +178,11 @@ function Home() {
             <div className="inventory-grid">
               {featuredInventory.map((vehicle) => (
                 <article className="inventory-card" key={vehicle.vehicleId}>
-                  <PlaceholderImage />
+                  <VehicleImage
+                    className="vehicle-image"
+                    vehicleId={vehicle.vehicleId}
+                    alt={`${vehicle.make} ${vehicle.model}`}
+                  />
 
                   <div className="card-copy">
                     <span className="card-eyebrow">Available Now</span>
