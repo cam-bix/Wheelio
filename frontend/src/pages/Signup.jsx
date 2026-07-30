@@ -1,11 +1,9 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useState } from 'react'
 import { registerUser } from '../api/auth'
-import { getRoleHomePath, storeUser } from '../auth/session'
 import './Login.css'
 
 function Signup() {
-  const navigate = useNavigate()
   const [form, setForm] = useState({
     firstName: '',
     lastName: '',
@@ -39,9 +37,9 @@ function Signup() {
     setLoading(true)
 
     try {
-      const user = await registerUser(form)
-      storeUser(user)
-      setSuccess('Account created.')
+      await registerUser(form)
+      localStorage.removeItem('wheelioUser')
+      setSuccess('Account created. You can log in now.')
       setForm({
         firstName: '',
         lastName: '',
@@ -49,7 +47,6 @@ function Signup() {
         phone: '',
         password: '',
       })
-      navigate(getRoleHomePath(user))
     } catch (err) {
       setError(err.message || 'Signup failed. Please try again.')
     } finally {

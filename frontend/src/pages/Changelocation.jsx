@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import wheelioLogo from '../assets/Wheelio_logo.png'
 import './Home.css'
 import './Settings.css'
@@ -10,34 +10,43 @@ const locations = [
         id: 1,
         name: 'Region of Waterloo International Airport',
         address: '1-4881 Fountain Street North, Breslau, Ontario, N0B 1M0',
-        icon: '✈️'
     },
     {
         id: 2,
         name: 'Toronto Pearson Airport',
         address: '6301 Silver Dart Dr, Mississauga, Ontario, L5P 1B2',
-        icon: '✈️'
     },
     {
         id: 3,
         name: 'Kitchener City Hall',
         address: '200 King St W, Kitchener, Ontario, N2G 4V6',
-        icon: '🏛️'
     },
     {
         id: 4,
         name: 'Waterloo Town Square',
         address: '75 King St S, Waterloo, Ontario, N2J 1P2',
-        icon: '🏙️'
     },
 ]
 
 function ChangeLocation() {
     const [selectedLocation, setSelectedLocation] = useState(null)
     const [locationSaved, setLocationSaved] = useState(false)
+    const [currentUser, setCurrentUser] = useState(null)
+
+    useEffect(() => {
+        const storedUser = JSON.parse(localStorage.getItem('wheelioUser') || '{}')
+        setCurrentUser(storedUser)
+
+        // Load previously saved location
+        const savedLocationId = localStorage.getItem('wheelioLocation')
+        if (savedLocationId) {
+            setSelectedLocation(Number(savedLocationId))
+        }
+    }, [])
 
     const handleSaveLocation = () => {
         if (!selectedLocation) return
+        localStorage.setItem('wheelioLocation', selectedLocation)
         setLocationSaved(true)
         setTimeout(() => setLocationSaved(false), 3000)
     }
@@ -60,10 +69,9 @@ function ChangeLocation() {
 
                 <div className="dashboard-user">
                     <div className="dashboard-user__icon"></div>
-                    <span>Username</span>
+                    <span>{currentUser?.firstName || 'User'}</span>
                 </div>
             </header>
-
 
 
             {/* ── Page Content ── */}
@@ -71,10 +79,9 @@ function ChangeLocation() {
             {/* ── Current Selection ── */}
                 {selectedLocation && (
                     <section className="settings-section">
-                        <h2 className="settings-section-title">📌 Your Selected Location</h2>
+                        <h2 className="settings-section-title">Your Selected Location</h2>
                         <div className="location-selected-display">
                             <p className="location-selected-name">
-                                {locations.find(l => l.id === selectedLocation)?.icon}{' '}
                                 {locations.find(l => l.id === selectedLocation)?.name}
                             </p>
                             <p className="location-selected-address">
@@ -103,14 +110,23 @@ function ChangeLocation() {
                                     <p className="location-card__address">{loc.address}</p>
                                 </div>
                                 <div className="location-card__check">
-                                    {selectedLocation === loc.id ? '✅' : ''}
+                                    {selectedLocation === loc.id ? (
+                                        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <rect width="22" height="22" rx="4" fill="#111111"/>
+                                            <path d="M5 11.5L9 15.5L17 7" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+                                        </svg>
+                                    ) : (
+                                        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <rect x="1" y="1" width="20" height="20" rx="3" stroke="#cccccc" strokeWidth="1.5" fill="white"/>
+                                        </svg>
+                                    )}
                                 </div>
                             </div>
                         ))}
                     </div>
 
                     {locationSaved && (
-                        <p className="settings-success">✅ Your pickup location has been saved!</p>
+                        <p className="settings-success">Your pickup location has been saved!</p>
                     )}
 
                     <button
