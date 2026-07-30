@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { loginUser } from '../api/auth'
 import './Login.css'
+import wheelioLogo from '../assets/Wheelio_logo.png'
 
 
 //The following is the login in page, the first thing the user sees wheen going on to Wheelio.
@@ -49,30 +50,7 @@ function Login() {
 
         {/* Logo */}
         <div className="login-logo">
-          <div className="logo-badge">
-            {/* Wheel icon (inline SVG) */}
-            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
-              <circle cx="14" cy="14" r="13" stroke="white" strokeWidth="2" />
-              <circle cx="14" cy="14" r="4" fill="white" />
-              <line x1="14" y1="1" x2="14" y2="9" stroke="white" strokeWidth="2" />
-              <line x1="14" y1="19" x2="14" y2="27" stroke="white" strokeWidth="2" />
-              <line x1="1" y1="14" x2="9" y2="14" stroke="white" strokeWidth="2" />
-              <line x1="19" y1="14" x2="27" y2="14" stroke="white" strokeWidth="2" />
-              <line x1="4" y1="4" x2="9.9" y2="9.9" stroke="white" strokeWidth="2" />
-              <line x1="18.1" y1="18.1" x2="24" y2="24" stroke="white" strokeWidth="2" />
-              <line x1="24" y1="4" x2="18.1" y2="9.9" stroke="white" strokeWidth="2" />
-              <line x1="9.9" y1="18.1" x2="4" y2="24" stroke="white" strokeWidth="2" />
-            </svg>
-            {/* Speed lines */}
-            <svg className="speed-lines" width="20" height="14" viewBox="0 0 20 14" fill="none" aria-hidden="true">
-              <path d="M0 3 H14" stroke="#e5212a" strokeWidth="2.5" strokeLinecap="round"/>
-              <path d="M0 7 H18" stroke="#e5212a" strokeWidth="2.5" strokeLinecap="round"/>
-              <path d="M0 11 H12" stroke="#e5212a" strokeWidth="2.5" strokeLinecap="round"/>
-            </svg>
-            <span className="logo-text">
-              Wheel<span className="logo-accent">io</span>
-            </span>
-          </div>
+          <img src={wheelioLogo} alt="Wheelio logo" className="login-logo-img" />
         </div>
 
         <h1 className="login-title">Log in</h1>
