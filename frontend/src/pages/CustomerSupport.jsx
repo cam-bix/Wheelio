@@ -129,8 +129,6 @@ function CustomerSupport() {
       setLoading(true)
       setError('')
       try {
-        // TODO: replace with a real API call once the tickets
-        // endpoint exists, e.g. const data = await getTickets()
         const data = await getTickets()
         setTickets(data)
         setActiveTicketId(data[0]?.ticket_id ?? null)
@@ -164,9 +162,6 @@ function CustomerSupport() {
 
   const activeTicket = tickets.find((t) => t.ticket_id === activeTicketId) ?? null
 
-  // Updates a ticket's status locally (e.g. via the dropdown, or the
-  // one-click "Resolve" button in the detail panel).
-  // TODO: replace with a real API call, e.g. await updateTicketStatus(ticketId, status)
   const handleStatusChange = async (ticketId, newStatus) => {
     setError('')
 
