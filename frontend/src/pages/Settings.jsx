@@ -2,9 +2,13 @@ import { useState, useEffect } from 'react'
 import wheelioLogo from '../assets/Wheelio_logo.png'
 import './Home.css'
 import './Settings.css'
-import { Link } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
+import { createCustomerTicket } from '../api/tickets'
+import { getStoredUser } from '../utils/userSession'
 
 function Settings() {
+    const [currentUser] = useState(() => getStoredUser())
+
     // Personal Info
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
@@ -20,10 +24,18 @@ function Settings() {
     const [confirmPassword, setConfirmPassword] = useState('')
     const [passwordMessage, setPasswordMessage] = useState('')
 
+    // Customer Support
+    const [ticketSubject, setTicketSubject] = useState('')
+    const [ticketDescription, setTicketDescription] = useState('')
+    const [ticketPriority, setTicketPriority] = useState('NORMAL')
+    const [ticketRentalId, setTicketRentalId] = useState('')
+    const [ticketSubmitting, setTicketSubmitting] = useState(false)
+    const [ticketError, setTicketError] = useState('')
+    const [ticketSuccess, setTicketSuccess] = useState('')
+
     // ── Fetch user info on page load ──
     useEffect(() => {
-        const storedUser = JSON.parse(localStorage.getItem('wheelioUser') || '{}')
-        const userId = storedUser?.userId
+        const userId = currentUser?.userId
 
         if (!userId) {
             setLoading(false)
@@ -59,12 +71,11 @@ function Settings() {
         // setPhone(storedUser?.phone || '')
         // setLoading(false)
 
-    }, [])
+    }, [currentUser])
 
     // ── Save Personal Info ──
     const handleSaveInfo = async () => {
-        const storedUser = JSON.parse(localStorage.getItem('wheelioUser') || '{}')
-        const userId = storedUser?.userId
+        const userId = currentUser?.userId
         setInfoError('')
         setInfoSaved(false)
 
@@ -88,7 +99,7 @@ function Settings() {
 
             // Update localStorage with new info
             localStorage.setItem('wheelioUser', JSON.stringify({
-                ...storedUser,
+                ...currentUser,
                 ...updatedUser,
             }))
 
@@ -122,6 +133,60 @@ function Settings() {
         setNewPassword('')
         setConfirmPassword('')
         setTimeout(() => setPasswordMessage(''), 3000)
+    }
+
+    const handleCreateTicket = async (event) => {
+        event.preventDefault()
+        setTicketError('')
+        setTicketSuccess('')
+
+        if (!currentUser?.userId) {
+            setTicketError('You must be signed in to submit a support ticket.')
+            return
+        }
+
+        if (!ticketSubject.trim() || !ticketDescription.trim()) {
+            setTicketError('Please enter a subject and description.')
+            return
+        }
+
+        const rentalId = ticketRentalId.trim()
+            ? Number(ticketRentalId)
+            : null
+
+        if (rentalId !== null && (!Number.isInteger(rentalId) || rentalId <= 0)) {
+            setTicketError('Booking ID must be a positive number.')
+            return
+        }
+
+        try {
+            setTicketSubmitting(true)
+
+            const ticket = await createCustomerTicket({
+                rental_id: rentalId,
+                subject: ticketSubject.trim(),
+                description: ticketDescription.trim(),
+                priority: ticketPriority,
+            })
+
+            setTicketSubject('')
+            setTicketDescription('')
+            setTicketPriority('NORMAL')
+            setTicketRentalId('')
+            setTicketSuccess(
+                `Ticket #${ticket.ticket_id} was submitted successfully.`
+            )
+        } catch (err) {
+            setTicketError(
+                err.message || 'Unable to submit your support ticket.'
+            )
+        } finally {
+            setTicketSubmitting(false)
+        }
+    }
+
+    if (!currentUser?.userId) {
+        return <Navigate to="/login" replace />
     }
 
     if (loading) {
@@ -159,7 +224,7 @@ function Settings() {
 
                 <div className="dashboard-user">
                     <div className="dashboard-user__icon"></div>
-                    <span>{firstName || JSON.parse(localStorage.getItem('wheelioUser') || '{}')?.firstName || 'User'}</span>
+                    <span>{firstName || currentUser.firstName || 'User'}</span>
                 </div>
             </header>
 
@@ -261,7 +326,86 @@ function Settings() {
                     </button>
                 </section>
 
-                
+                <section className="settings-section">
+                    <h2 className="settings-section-title">Customer Support</h2>
+                    <p className="settings-section-desc">
+                        Submit a support ticket using your signed-in Wheelio account.
+                    </p>
+
+                    <p className="settings-account-context">
+                        Submitting as <strong>{currentUser.firstName} {currentUser.lastName}</strong>
+                        {' '}({currentUser.email})
+                    </p>
+
+                    <form onSubmit={handleCreateTicket}>
+                        <div className="settings-form-grid">
+                            <div className="settings-field settings-field--full">
+                                <label htmlFor="ticket-subject">Subject</label>
+                                <input
+                                    id="ticket-subject"
+                                    type="text"
+                                    maxLength="150"
+                                    value={ticketSubject}
+                                    onChange={(event) => setTicketSubject(event.target.value)}
+                                    placeholder="Briefly describe the issue"
+                                    required
+                                />
+                            </div>
+
+                            <div className="settings-field">
+                                <label htmlFor="ticket-rental">Booking ID (optional)</label>
+                                <input
+                                    id="ticket-rental"
+                                    type="number"
+                                    min="1"
+                                    value={ticketRentalId}
+                                    onChange={(event) => setTicketRentalId(event.target.value)}
+                                    placeholder="Example: 14"
+                                />
+                            </div>
+
+                            <div className="settings-field">
+                                <label htmlFor="ticket-priority">Priority</label>
+                                <select
+                                    id="ticket-priority"
+                                    value={ticketPriority}
+                                    onChange={(event) => setTicketPriority(event.target.value)}
+                                >
+                                    <option value="LOW">Low</option>
+                                    <option value="NORMAL">Normal</option>
+                                    <option value="HIGH">High</option>
+                                    <option value="URGENT">Urgent</option>
+                                </select>
+                            </div>
+
+                            <div className="settings-field settings-field--full">
+                                <label htmlFor="ticket-description">Description</label>
+                                <textarea
+                                    id="ticket-description"
+                                    value={ticketDescription}
+                                    onChange={(event) => setTicketDescription(event.target.value)}
+                                    placeholder="Tell us what happened and how we can help"
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        {ticketError && (
+                            <p className="settings-error" role="alert">{ticketError}</p>
+                        )}
+                        {ticketSuccess && (
+                            <p className="settings-success" role="status">{ticketSuccess}</p>
+                        )}
+
+                        <button
+                            className="settings-btn"
+                            type="submit"
+                            disabled={ticketSubmitting}
+                        >
+                            {ticketSubmitting ? 'Submitting...' : 'Submit Ticket'}
+                        </button>
+                    </form>
+                </section>
 
             </main>
         </div>

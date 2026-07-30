@@ -176,6 +176,8 @@ public class SecurityConfig {
                 "Content-Type"
         ));
 
+        configuration.setAllowCredentials(true);
+
         UrlBasedCorsConfigurationSource source =
                 new UrlBasedCorsConfigurationSource();
 
