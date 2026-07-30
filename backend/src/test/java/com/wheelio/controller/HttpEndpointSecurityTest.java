@@ -10,6 +10,7 @@ import com.wheelio.entity.VehicleStatus;
 import com.wheelio.service.AppUserService;
 import com.wheelio.service.AuthService;
 import com.wheelio.service.RentalService;
+import com.wheelio.service.VehicleImageService;
 import com.wheelio.service.VehicleService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -48,6 +50,9 @@ class HttpEndpointSecurityTest {
 
     @MockBean
     private VehicleService vehicleService;
+
+    @MockBean
+    private VehicleImageService vehicleImageService;
 
     @MockBean
     private AppUserService appUserService;
@@ -150,6 +155,34 @@ class HttpEndpointSecurityTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.make", is("Mazda")))
                 .andExpect(jsonPath("$.licensePlate", is("MAZ2020")));
+    }
+
+    @Test
+    void vehicleImageEndpointIsPublic() throws Exception {
+        when(vehicleImageService.getImage(1L))
+                .thenReturn(new VehicleImageService.StoredImage(
+                        new byte[]{1, 2, 3},
+                        MediaType.IMAGE_JPEG_VALUE
+                ));
+
+        mockMvc.perform(get("/api/vehicles/1/image"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.IMAGE_JPEG))
+                .andExpect(content().bytes(new byte[]{1, 2, 3}));
+    }
+
+    @Test
+    void publicVehicleImageEndpointIsPublic() throws Exception {
+        when(vehicleImageService.getImage(1L))
+                .thenReturn(new VehicleImageService.StoredImage(
+                        new byte[]{4, 5, 6},
+                        MediaType.IMAGE_JPEG_VALUE
+                ));
+
+        mockMvc.perform(get("/api/public/vehicle-images/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.IMAGE_JPEG))
+                .andExpect(content().bytes(new byte[]{4, 5, 6}));
     }
 
     @Test

@@ -2,6 +2,8 @@ package com.wheelio.service;
 
 import com.wheelio.entity.Vehicle;
 import com.wheelio.repository.VehicleRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,9 @@ import java.util.Set;
 
 @Service
 public class VehicleImageService {
+
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(VehicleImageService.class);
 
     private static final long MAX_IMAGE_SIZE = 5L * 1024 * 1024;
 
@@ -122,6 +127,21 @@ public class VehicleImageService {
                     exception
             );
         } catch (S3Exception exception) {
+            String errorCode = exception.awsErrorDetails() == null
+                    ? "unknown"
+                    : exception.awsErrorDetails().errorCode();
+
+            LOGGER.error(
+                    "Could not retrieve vehicle {} image from S3 bucket '{}' "
+                            + "with key '{}': status={}, code={}, requestId={}",
+                    vehicleId,
+                    bucketName,
+                    imageKey,
+                    exception.statusCode(),
+                    errorCode,
+                    exception.requestId()
+            );
+
             throw new ResponseStatusException(
                     HttpStatus.BAD_GATEWAY,
                     "The image could not be retrieved from S3.",
