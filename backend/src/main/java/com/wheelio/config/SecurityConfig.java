@@ -98,6 +98,8 @@ public class SecurityConfig {
                                 "/api/users/**",
                                 "/api/rentals",
                                 "/api/rentals/**",
+                                "/api/tickets",
+                                "/api/tickets/**",
                                 "/api/checkout/**"
                         )
                         .permitAll()

@@ -47,7 +47,7 @@ function Book() {
     }
 
     const msPerDay = 1000 * 60 * 60 * 24
-    const days = Math.max(1, Math.ceil((end - start) / msPerDay))
+    const days = Math.max(1, Math.ceil((new Date(returnDate) - new Date(pickupDate)) / msPerDay))
 
     return Number(vehicle.dailyRate) * days
   }
@@ -87,8 +87,12 @@ function Book() {
         pickupDate: new Date(pickupDate).toISOString(),
         returnDate: new Date(returnDate).toISOString(),
       })
+      const msPerDay = 1000 * 60 * 60 * 24
+      const days = Math.max(1, Math.ceil((new Date(returnDate) - new Date(pickupDate)) / msPerDay))
 
-      navigate('/')
+      const session = await createCheckoutSession(vehicle.vehicleId, days)
+      window.location.href = session.url
+
     } catch (err) {
       setBookingError(err.message || 'Could not complete booking.')
     } finally {

@@ -13,6 +13,8 @@ import Book from './pages/Book'
 import ChangeLocation from './pages/Changelocation'
 import ModifyBooking from './pages/ModifyBooking'
 import RoleRoute, { RoleHomeRedirect } from './auth/RoleRoute'
+import CustomerSupport from './pages/CustomerSupport'
+import EmployeeCalendar from './pages/EmployeeCalendar'
 
 function App() {
   const customerRoute = (element) => (
@@ -40,6 +42,8 @@ function App() {
         <Route path="/employee-stats" element={employeeRoute(<EmployeeStatistics />)} />
         <Route path="/employee-inventory" element={employeeRoute(<EmployeeInventory />)} />
         <Route path="/employee-home" element={employeeRoute(<EmployeeHome />)} />
+        <Route path="/customer-support" element={employeeRoute(<CustomerSupport />)} />
+        <Route path="/employee-calendar" element={employeeRoute(<EmployeeCalendar />)} />
       </Routes>
     </BrowserRouter>
   )

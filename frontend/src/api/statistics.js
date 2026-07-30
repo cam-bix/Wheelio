@@ -1,13 +1,63 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
+const API_BASE_URL =
+import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
 
 const getMonthLabel = (dateString) =>
-new Date(dateString).toLocaleString('en-US', { month: 'short' })
+new Date(dateString).toLocaleString('en-US', {
+    month: 'short',
+})
 
 const statusColor = (status) => {
     if (status === 'COMPLETED') return '#17652b'
         if (status === 'BOOKED') return '#b8860b'
             if (status === 'CANCELLED') return '#c0000a'
+
                 return '#0f0f0f'
+}
+
+export async function getStatisticsData() {
+    const [rentalsResponse, vehiclesResponse] = await Promise.all([
+        fetch(`${API_BASE_URL}/api/rentals`),
+        fetch(`${API_BASE_URL}/api/vehicles`),
+    ])
+
+    const rentalsData = await rentalsResponse.json().catch(() => [])
+    const vehiclesData = await vehiclesResponse.json().catch(() => [])
+
+    if (!rentalsResponse.ok) {
+        throw new Error(
+            rentalsData.message ||
+            rentalsData.error ||
+            'Unable to load rentals.'
+        )
+    }
+
+    if (!vehiclesResponse.ok) {
+        throw new Error(
+            vehiclesData.message ||
+            vehiclesData.error ||
+            'Unable to load vehicles.'
+        )
+    }
+
+    const rentals = rentalsData
+    .filter((rental) => rental.status === 'COMPLETED')
+    .map((rental) => ({
+        vehicle_id: rental.vehicleId,
+        pickup_date: rental.pickupDate?.slice(0, 10),
+                      total_cost: Number(rental.totalCost || 0),
+    }))
+    .filter((rental) => rental.pickup_date)
+
+    const vehicles = vehiclesData.map((vehicle) => ({
+        vehicle_id: vehicle.vehicleId,
+        name: `${vehicle.make} ${vehicle.model}`,
+        status: vehicle.status,
+    }))
+
+    return {
+        rentals,
+        vehicles,
+    }
 }
 
 export async function getStatistics() {
@@ -27,37 +77,66 @@ export async function getStatistics() {
     const rentals = await rentalsResponse.json()
     const vehicles = await vehiclesResponse.json()
 
-    const completedRentals = rentals.filter((rental) => rental.status === 'COMPLETED')
+    const completedRentals = rentals.filter(
+        (rental) => rental.status === 'COMPLETED'
+    )
 
-    const months = [...new Set(completedRentals.map((rental) => getMonthLabel(rental.pickupDate)))]
+    const months = [
+        ...new Set(
+            completedRentals.map((rental) =>
+            getMonthLabel(rental.pickupDate)
+            )
+        ),
+    ]
 
-    const bookingsOverTime = months.map((month) =>
-    completedRentals.filter((rental) => getMonthLabel(rental.pickupDate) === month).length
+    const bookingsOverTime = months.map(
+        (month) =>
+        completedRentals.filter(
+            (rental) =>
+            getMonthLabel(rental.pickupDate) === month
+        ).length
     )
 
     const revenueOverview = months.map((month) =>
     completedRentals
-    .filter((rental) => getMonthLabel(rental.pickupDate) === month)
-    .reduce((sum, rental) => sum + Number(rental.totalCost || 0), 0)
+    .filter(
+        (rental) =>
+        getMonthLabel(rental.pickupDate) === month
+    )
+    .reduce(
+        (sum, rental) =>
+        sum + Number(rental.totalCost || 0),
+            0
+    )
     )
 
     const vehicleCounts = {}
 
     completedRentals.forEach((rental) => {
-        vehicleCounts[rental.vehicleName] = (vehicleCounts[rental.vehicleName] || 0) + 1
+        const vehicleName =
+        rental.vehicleName || `Vehicle ${rental.vehicleId}`
+
+        vehicleCounts[vehicleName] =
+        (vehicleCounts[vehicleName] || 0) + 1
     })
 
     const statusCounts = {}
 
     rentals.forEach((rental) => {
-        statusCounts[rental.status] = (statusCounts[rental.status] || 0) + 1
+        const status = rental.status || 'UNKNOWN'
+
+        statusCounts[status] =
+        (statusCounts[status] || 0) + 1
     })
 
     return {
         vehiclesRented: {
-            value: vehicles.filter((vehicle) => vehicle.status === 'RENTED').length,
+            value: vehicles.filter(
+                (vehicle) => vehicle.status === 'RENTED'
+            ).length,
             trendPct: 0,
         },
+
         vehicleIncidents: {
             value: vehicles.filter(
                 (vehicle) =>
@@ -66,17 +145,24 @@ export async function getStatistics() {
             ).length,
             trendPct: 0,
         },
+
         months,
         bookingsOverTime,
         revenueOverview,
-        mostRentedVehicles: Object.entries(vehicleCounts).map(([label, value]) => ({
-            label,
-            value,
-        })),
-        bookingsByStatus: Object.entries(statusCounts).map(([label, value]) => ({
-            label,
-            value,
-            color: statusColor(label),
-        })),
+
+        mostRentedVehicles: Object.entries(vehicleCounts).map(
+            ([label, value]) => ({
+                label,
+                value,
+            })
+        ),
+
+        bookingsByStatus: Object.entries(statusCounts).map(
+            ([label, value]) => ({
+                label,
+                value,
+                color: statusColor(label),
+            })
+        ),
     }
 }

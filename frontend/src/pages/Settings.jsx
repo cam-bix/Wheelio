@@ -20,15 +20,11 @@ function Settings() {
     const [confirmPassword, setConfirmPassword] = useState('')
     const [passwordMessage, setPasswordMessage] = useState('')
 
-    // Notifications
-
-
-    // Get logged in user from localStorage
-const storedUser = JSON.parse(localStorage.getItem('wheelioUser') || '{}')
-const userId = storedUser?.userId
-
     // ── Fetch user info on page load ──
     useEffect(() => {
+        const storedUser = JSON.parse(localStorage.getItem('wheelioUser') || '{}')
+        const userId = storedUser?.userId
+
         if (!userId) {
             setLoading(false)
             return
@@ -54,7 +50,8 @@ const userId = storedUser?.userId
 
         fetchUser()
 
-        //LocalStorage way:
+        //***LocalStorage way, in case the fetchUser() does not work:
+
         // const storedUser = JSON.parse(localStorage.getItem('wheelioUser') || '{}')
         // setFirstName(storedUser?.firstName || '')
         // setLastName(storedUser?.lastName || '')
@@ -62,7 +59,7 @@ const userId = storedUser?.userId
         // setPhone(storedUser?.phone || '')
         // setLoading(false)
 
-    }, [userId])
+    }, [])
 
     // ── Save Personal Info ──
     const handleSaveInfo = async () => {
@@ -162,7 +159,7 @@ const userId = storedUser?.userId
 
                 <div className="dashboard-user">
                     <div className="dashboard-user__icon"></div>
-                    <span>{firstName || storedUser?.firstName || 'User'}</span>
+                    <span>{firstName || JSON.parse(localStorage.getItem('wheelioUser') || '{}')?.firstName || 'User'}</span>
                 </div>
             </header>
 
