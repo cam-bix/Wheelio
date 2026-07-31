@@ -1,20 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import carPlaceholder from '../assets/placeholder_image.jpg'
 import wheelioLogo from '../assets/Wheelio_logo.png'
 import { getActiveRentalsForUser, cancelRental } from '../api/rentals'
 import { getVehicles } from '../api/vehicles'
+import { getStoredUser, getUserLocationLabel, getUserLocation } from '../utils/userSession'
+import VehicleImage from '../components/VehicleImage'
 import './Home.css'
-
-function PlaceholderImage() {
-  return (
-    <img
-      className="vehicle-image"
-      src={carPlaceholder}
-      alt="Vehicle"
-    />
-  )
-}
 
 function formatDate(dateString) {
   return new Date(dateString).toLocaleString()
@@ -58,11 +49,7 @@ function Home() {
       setInventoryLoading(true)
       setInventoryError('')
       const vehicles = await getVehicles()
-      const featuredInventory = vehicles
-        .filter((vehicle) => vehicle.status === 'AVAILABLE')
-        .slice(0, 8)
-
-      setInventory(featuredInventory)
+      setInventory(vehicles)
     } catch (err) {
       setInventoryError(err.message || 'Could not load available inventory.')
     } finally {
@@ -71,8 +58,9 @@ function Home() {
   }
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem('wheelioUser') || 'null')
+    const storedUser = getStoredUser()
     // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCurrentUser(storedUser)
     loadInventory()
 
     if (!storedUser) {
@@ -80,9 +68,15 @@ function Home() {
       return
     }
 
-    setCurrentUser(storedUser)
     loadRentals(storedUser.userId)
   }, [])
+
+  const userLocation = getUserLocation(currentUser)
+  const inventoryLocationLabel = getUserLocationLabel(currentUser, 'Location')
+  const featuredInventory = inventory
+    .filter((vehicle) => vehicle.status === 'AVAILABLE')
+    .filter((vehicle) => !userLocation || vehicle.locationId === userLocation.id)
+    .slice(0, 8)
 
   return (
     <div className="dashboard-page home-page">
@@ -126,7 +120,11 @@ function Home() {
           {!rentalsLoading && !rentalsError && rentals.length > 0 && (
             rentals.map((rental) => (
               <article className="booking-card" key={rental.rentalId}>
-                <PlaceholderImage />
+                <VehicleImage
+                  className="vehicle-image"
+                  vehicleId={rental.vehicleId}
+                  alt={rental.vehicleName}
+                />
 
                 <div className="card-copy">
                   <span className="card-eyebrow">Current Rental</span>
@@ -162,19 +160,9 @@ function Home() {
 
         <section className="dashboard-panel dashboard-panel--right">
           <h2>Featured Available Inventory</h2>
-        <p className="panel-subtitle">
-            Inventory for "{(() => {
-                const savedId = localStorage.getItem('wheelioLocation')
-                const locations = [
-                    { id: 1, name: 'Waterloo Airport' },
-                    { id: 2, name: 'Toronto Pearson Airport' },
-                    { id: 3, name: 'Kitchener City Hall' },
-                    { id: 4, name: 'Waterloo Town Square' },
-                ]
-                const found = locations.find(l => l.id === Number(savedId))
-                return found ? found.name : 'No Location Selected'
-            })()}" <span><Link to="/change-location">Change Location</Link></span>
-        </p>
+          <p className="panel-subtitle">
+            Inventory for "{inventoryLocationLabel}" <span><Link to="/change-location">Change Location</Link></span>
+          </p>
 
           {inventoryLoading && <p className="empty-text">Loading available inventory...</p>}
 
@@ -182,15 +170,19 @@ function Home() {
             <p className="empty-text">{inventoryError}</p>
           )}
 
-          {!inventoryLoading && !inventoryError && inventory.length === 0 && (
+          {!inventoryLoading && !inventoryError && featuredInventory.length === 0 && (
             <p className="empty-text">No available vehicles are showing right now.</p>
           )}
 
-          {!inventoryLoading && !inventoryError && inventory.length > 0 && (
+          {!inventoryLoading && !inventoryError && featuredInventory.length > 0 && (
             <div className="inventory-grid">
-              {inventory.map((vehicle) => (
+              {featuredInventory.map((vehicle) => (
                 <article className="inventory-card" key={vehicle.vehicleId}>
-                  <PlaceholderImage />
+                  <VehicleImage
+                    className="vehicle-image"
+                    vehicleId={vehicle.vehicleId}
+                    alt={`${vehicle.make} ${vehicle.model}`}
+                  />
 
                   <div className="card-copy">
                     <span className="card-eyebrow">Available Now</span>

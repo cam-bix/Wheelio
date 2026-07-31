@@ -274,6 +274,6 @@ SELECT setval(pg_get_serial_sequence('employee', 'employee_id'), (SELECT MAX(emp
 SELECT setval(pg_get_serial_sequence('vehicle', 'vehicle_id'), (SELECT MAX(vehicle_id) FROM vehicle));
 SELECT setval(pg_get_serial_sequence('rental', 'rental_id'), (SELECT MAX(rental_id) FROM rental));
 SELECT setval(pg_get_serial_sequence('email_2fa_codes', 'id'), (SELECT MAX(id) FROM email_2fa_codes));
-SELECT setval(pg_get_serial_sequence('ticket', 'ticket_id'), (SELECT MAX(ticket_id) FROM ticket));'' ||
-                                                                                                  '' ||
+SELECT setval(pg_get_serial_sequence('ticket', 'ticket_id'), (SELECT MAX(ticket_id) FROM ticket));
+
 COMMIT;

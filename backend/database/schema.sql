@@ -270,6 +270,56 @@ CREATE TABLE IF NOT EXISTS rental (
         CHECK (return_date > pickup_date)
 );
 
+-- Customer Support Tickets Table
+CREATE TABLE IF NOT EXISTS ticket (
+    ticket_id BIGSERIAL PRIMARY KEY,
+    created_by_employee_id BIGINT,
+    customer_id BIGINT NOT NULL,
+    rental_id BIGINT,
+    subject VARCHAR(150) NOT NULL,
+    description TEXT NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'OPEN'
+        CHECK (
+            status IN (
+                'OPEN',
+                'IN_PROGRESS',
+                'RESOLVED',
+                'CLOSED'
+            )
+        ),
+    priority VARCHAR(20) NOT NULL DEFAULT 'NORMAL'
+        CHECK (
+            priority IN (
+                'LOW',
+                'NORMAL',
+                'HIGH',
+                'URGENT'
+            )
+        ),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_ticket_employee
+        FOREIGN KEY (created_by_employee_id)
+        REFERENCES employee(employee_id)
+        ON DELETE SET NULL,
+
+    CONSTRAINT fk_ticket_customer
+        FOREIGN KEY (customer_id)
+        REFERENCES app_user(user_id)
+        ON DELETE RESTRICT,
+
+    CONSTRAINT fk_ticket_rental
+        FOREIGN KEY (rental_id)
+        REFERENCES rental(rental_id)
+        ON DELETE SET NULL,
+
+    CONSTRAINT chk_ticket_subject_not_blank
+        CHECK (TRIM(subject) <> ''),
+
+    CONSTRAINT chk_ticket_description_not_blank
+        CHECK (TRIM(description) <> '')
+);
+
 -- 2FA Table
 CREATE TABLE IF NOT EXISTS email_2fa_codes (
     id BIGSERIAL PRIMARY KEY,
@@ -334,5 +384,11 @@ CREATE INDEX IF NOT EXISTS idx_rental_vehicle_dates
 
 CREATE INDEX IF NOT EXISTS idx_email_2fa_codes_expires_at
     ON email_2fa_codes(expires_at);
+
+CREATE INDEX IF NOT EXISTS idx_ticket_customer_created
+    ON ticket(customer_id, created_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_ticket_status
+    ON ticket(status);
 
 COMMIT;

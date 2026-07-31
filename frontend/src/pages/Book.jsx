@@ -2,14 +2,31 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { getVehicleById } from '../api/vehicles'
 import { createRental } from '../api/rentals'
+import { createCheckoutSession } from '../api/checkout'
 import './Book.css'
-import carPlaceholder from '../assets/placeholder_image.jpg'
 import wheelioLogo from '../assets/Wheelio_logo.png'
+import { getStoredUser } from '../utils/userSession'
+import VehicleImage from '../components/VehicleImage'
+
+function formatDateInputValue(date) {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+function parseSelectedDate(dateString) {
+  return new Date(`${dateString}T12:00:00`)
+}
+
+function toNoonIsoString(dateString) {
+  return parseSelectedDate(dateString).toISOString()
+}
 
 function Book() {
   const { vehicleId } = useParams()
   const navigate = useNavigate()
-  const currentUser = JSON.parse(localStorage.getItem('wheelioUser') || 'null')
+  const currentUser = getStoredUser()
 
   const [vehicle, setVehicle] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -18,6 +35,7 @@ function Book() {
   const [returnDate, setReturnDate] = useState('')
   const [bookingLoading, setBookingLoading] = useState(false)
   const [bookingError, setBookingError] = useState('')
+  const today = formatDateInputValue(new Date())
 
   useEffect(() => {
     async function loadVehicle() {
@@ -39,8 +57,8 @@ function Book() {
   function calculateEstimatedTotal() {
     if (!vehicle || !pickupDate || !returnDate) return null
 
-    const start = new Date(pickupDate)
-    const end = new Date(returnDate)
+    const start = parseSelectedDate(pickupDate)
+    const end = parseSelectedDate(returnDate)
 
     if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || end <= start) {
       return null
@@ -65,7 +83,7 @@ function Book() {
       return
     }
 
-    if (new Date(returnDate) <= new Date(pickupDate)) {
+    if (parseSelectedDate(returnDate) <= parseSelectedDate(pickupDate)) {
       setBookingError('Return date must be after pickup date.')
       return
     }
@@ -84,8 +102,8 @@ function Book() {
         vehicleId: vehicle.vehicleId,
         pickupLocationId: vehicle.locationId,
         returnLocationId: vehicle.locationId,
-        pickupDate: new Date(pickupDate).toISOString(),
-        returnDate: new Date(returnDate).toISOString(),
+        pickupDate: toNoonIsoString(pickupDate),
+        returnDate: toNoonIsoString(returnDate),
       })
       const msPerDay = 1000 * 60 * 60 * 24
       const days = Math.max(1, Math.ceil((new Date(returnDate) - new Date(pickupDate)) / msPerDay))
@@ -141,7 +159,11 @@ function Book() {
 
       <main className="dashboard-layout">
         <section className="dashboard-panel dashboard-panel--left">
-          <img className="vehicle-image" src={carPlaceholder} alt="Vehicle" />
+          <VehicleImage
+            className="book-vehicle-image"
+            vehicleId={vehicle.vehicleId}
+            alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+          />
           <h1 className="vehicle-title">
             {vehicle.year} {vehicle.make} {vehicle.model}
           </h1>
@@ -178,7 +200,8 @@ function Book() {
             <label>
               Pickup Date
               <input
-                type="datetime-local"
+                type="date"
+                min={today}
                 value={pickupDate}
                 onChange={(e) => setPickupDate(e.target.value)}
               />
@@ -187,11 +210,16 @@ function Book() {
             <label>
               Return Date
               <input
-                type="datetime-local"
+                type="date"
+                min={pickupDate || today}
                 value={returnDate}
                 onChange={(e) => setReturnDate(e.target.value)}
               />
             </label>
+
+            <p className="booking-note">
+              See location hours for pickup and drop off times
+            </p>
 
             {estimatedTotal !== null && (
               <p className="booking-estimate">

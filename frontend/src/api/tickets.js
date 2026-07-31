@@ -47,6 +47,7 @@ export async function createTicket(payload) {
         headers: {
             'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({
             createdByEmployeeId: payload.created_by_employee_id,
             customerId: payload.customer_id,
@@ -60,6 +61,36 @@ export async function createTicket(payload) {
     const ticket = await parseResponse(
         response,
         'Unable to create ticket.'
+    )
+
+    return mapTicket(ticket)
+}
+
+export async function createCustomerTicket(payload) {
+    const response = await fetch(
+        `${API_BASE_URL}/api/tickets/customer`,
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+                rentalId: payload.rental_id,
+                subject: payload.subject,
+                description: payload.description,
+                priority: payload.priority,
+            }),
+        }
+    )
+
+    if (response.status === 401) {
+        throw new Error('Your login expired. Please sign in again.')
+    }
+
+    const ticket = await parseResponse(
+        response,
+        'Unable to create your support ticket.'
     )
 
     return mapTicket(ticket)

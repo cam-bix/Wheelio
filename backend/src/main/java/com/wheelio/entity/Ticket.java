@@ -13,10 +13,10 @@ public class Ticket {
     @Column(name = "ticket_id")
     private Long ticketId;
 
-    @Column(name = "created_by_employee_id", nullable = false)
+    @Column(name = "created_by_employee_id")
     private Long createdByEmployeeId;
 
-    @Column(name = "customer_id")
+    @Column(name = "customer_id", nullable = false)
     private Long customerId;
 
     @Column(name = "rental_id")

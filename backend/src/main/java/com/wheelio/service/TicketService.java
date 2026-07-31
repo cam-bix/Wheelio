@@ -1,10 +1,14 @@
 package com.wheelio.service;
 
 import com.wheelio.dto.CreateTicketRequest;
+import com.wheelio.dto.CreateCustomerTicketRequest;
 import com.wheelio.dto.UpdateTicketStatusRequest;
+import com.wheelio.entity.Rental;
 import com.wheelio.entity.Ticket;
 import com.wheelio.entity.TicketPriority;
 import com.wheelio.entity.TicketStatus;
+import com.wheelio.repository.AppUserRepository;
+import com.wheelio.repository.RentalRepository;
 import com.wheelio.repository.TicketRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
@@ -18,9 +22,17 @@ import java.util.List;
 public class TicketService {
 
     private final TicketRepository ticketRepository;
+    private final AppUserRepository appUserRepository;
+    private final RentalRepository rentalRepository;
 
-    public TicketService(TicketRepository ticketRepository) {
+    public TicketService(
+            TicketRepository ticketRepository,
+            AppUserRepository appUserRepository,
+            RentalRepository rentalRepository
+    ) {
         this.ticketRepository = ticketRepository;
+        this.appUserRepository = appUserRepository;
+        this.rentalRepository = rentalRepository;
     }
 
     public List<Ticket> getAllTickets() {
@@ -37,12 +49,17 @@ public class TicketService {
 
     @Transactional
     public Ticket createTicket(CreateTicketRequest request) {
-        if (request.getCreatedByEmployeeId() == null) {
+        if (request.getCustomerId() == null) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "Employee ID is required"
+                    "Customer ID is required"
             );
         }
+
+        validateCustomerAndRental(
+                request.getCustomerId(),
+                request.getRentalId()
+        );
 
         if (request.getSubject() == null || request.getSubject().isBlank()) {
             throw new ResponseStatusException(
@@ -84,6 +101,27 @@ public class TicketService {
     }
 
     @Transactional
+    public Ticket createCustomerTicket(
+            Long customerId,
+            CreateCustomerTicketRequest request
+    ) {
+        Long employeeId = ticketRepository.findRandomActiveEmployeeId()
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.SERVICE_UNAVAILABLE,
+                        "No active employee is available to receive this ticket"
+                ));
+
+        CreateTicketRequest ticketRequest = new CreateTicketRequest();
+        ticketRequest.setCreatedByEmployeeId(employeeId);
+        ticketRequest.setCustomerId(customerId);
+        ticketRequest.setRentalId(request.getRentalId());
+        ticketRequest.setSubject(request.getSubject());
+        ticketRequest.setDescription(request.getDescription());
+        ticketRequest.setPriority(request.getPriority());
+        return createTicket(ticketRequest);
+    }
+
+    @Transactional
     public Ticket updateTicketStatus(
             Long id,
             UpdateTicketStatusRequest request
@@ -99,5 +137,34 @@ public class TicketService {
         ticket.setStatus(request.getStatus());
 
         return ticketRepository.save(ticket);
+    }
+
+    private void validateCustomerAndRental(
+            Long customerId,
+            Long rentalId
+    ) {
+        if (!appUserRepository.existsById(customerId)) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Customer not found"
+            );
+        }
+
+        if (rentalId == null) {
+            return;
+        }
+
+        Rental rental = rentalRepository.findById(rentalId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Rental not found"
+                ));
+
+        if (!rental.getUser().getUserId().equals(customerId)) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Rental does not belong to this customer"
+            );
+        }
     }
 }

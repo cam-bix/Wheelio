@@ -4,12 +4,17 @@ import com.wheelio.dto.AuthResponse;
 import com.wheelio.dto.RentalResponse;
 import com.wheelio.entity.AppUser;
 import com.wheelio.entity.RentalStatus;
+import com.wheelio.entity.Ticket;
+import com.wheelio.entity.TicketPriority;
+import com.wheelio.entity.TicketStatus;
 import com.wheelio.entity.UserRole;
 import com.wheelio.entity.Vehicle;
 import com.wheelio.entity.VehicleStatus;
 import com.wheelio.service.AppUserService;
 import com.wheelio.service.AuthService;
 import com.wheelio.service.RentalService;
+import com.wheelio.service.TicketService;
+import com.wheelio.service.VehicleImageService;
 import com.wheelio.service.VehicleService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +24,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import java.math.BigDecimal;
@@ -35,7 +41,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -50,6 +58,9 @@ class HttpEndpointSecurityTest {
     private VehicleService vehicleService;
 
     @MockBean
+    private VehicleImageService vehicleImageService;
+
+    @MockBean
     private AppUserService appUserService;
 
     @MockBean
@@ -57,6 +68,9 @@ class HttpEndpointSecurityTest {
 
     @MockBean
     private AuthService authService;
+
+    @MockBean
+    private TicketService ticketService;
 
     @Test
     void authEndpointsArePublic() throws Exception {
@@ -128,7 +142,109 @@ class HttpEndpointSecurityTest {
                                 }
                                 """))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message", is("Login successful")));
+                .andExpect(jsonPath("$.message", is("Login successful")))
+                .andExpect(request().sessionAttribute(
+                        AuthController.AUTHENTICATED_USER_ID,
+                        42L
+                ))
+                .andExpect(request().sessionAttribute(
+                        AuthController.AUTHENTICATED_USER_ROLE,
+                        UserRole.CUSTOMER
+                ));
+    }
+
+    @Test
+    void customerTicketRequiresAuthenticatedSession() throws Exception {
+        String requestBody = """
+                {
+                  "subject": "Billing question",
+                  "description": "Please review my latest charge.",
+                  "priority": "NORMAL"
+                }
+                """;
+
+        mockMvc.perform(post("/api/tickets/customer")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isUnauthorized());
+
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute(
+                AuthController.AUTHENTICATED_USER_ID,
+                42L
+        );
+        session.setAttribute(
+                AuthController.AUTHENTICATED_USER_ROLE,
+                UserRole.CUSTOMER
+        );
+
+        Ticket ticket = new Ticket();
+        ticket.setTicketId(10L);
+        ticket.setCustomerId(42L);
+        ticket.setSubject("Billing question");
+        ticket.setDescription("Please review my latest charge.");
+        ticket.setStatus(TicketStatus.OPEN);
+        ticket.setPriority(TicketPriority.NORMAL);
+        ticket.setCreatedAt(OffsetDateTime.now());
+
+        when(ticketService.createCustomerTicket(eq(42L), any()))
+                .thenReturn(ticket);
+
+        mockMvc.perform(post("/api/tickets/customer")
+                        .session(session)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.customerId", is(42)))
+                .andExpect(jsonPath("$.status", is("OPEN")));
+    }
+
+    @Test
+    void employeeTicketRequiresStaffSession() throws Exception {
+        String requestBody = """
+                {
+                  "createdByEmployeeId": 4,
+                  "customerId": 42,
+                  "subject": "Customer called",
+                  "description": "Customer needs help with a booking.",
+                  "priority": "NORMAL"
+                }
+                """;
+
+        mockMvc.perform(post("/api/tickets")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isUnauthorized());
+
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute(
+                AuthController.AUTHENTICATED_USER_ID,
+                8L
+        );
+        session.setAttribute(
+                AuthController.AUTHENTICATED_USER_ROLE,
+                UserRole.EMPLOYEE
+        );
+
+        Ticket ticket = new Ticket();
+        ticket.setTicketId(11L);
+        ticket.setCreatedByEmployeeId(4L);
+        ticket.setCustomerId(42L);
+        ticket.setSubject("Customer called");
+        ticket.setDescription("Customer needs help with a booking.");
+        ticket.setStatus(TicketStatus.OPEN);
+        ticket.setPriority(TicketPriority.NORMAL);
+        ticket.setCreatedAt(OffsetDateTime.now());
+
+        when(ticketService.createTicket(any())).thenReturn(ticket);
+
+        mockMvc.perform(post("/api/tickets")
+                        .session(session)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.createdByEmployeeId", is(4)))
+                .andExpect(jsonPath("$.customerId", is(42)));
     }
 
     @Test
@@ -150,6 +266,34 @@ class HttpEndpointSecurityTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.make", is("Mazda")))
                 .andExpect(jsonPath("$.licensePlate", is("MAZ2020")));
+    }
+
+    @Test
+    void vehicleImageEndpointIsPublic() throws Exception {
+        when(vehicleImageService.getImage(1L))
+                .thenReturn(new VehicleImageService.StoredImage(
+                        new byte[]{1, 2, 3},
+                        MediaType.IMAGE_JPEG_VALUE
+                ));
+
+        mockMvc.perform(get("/api/vehicles/1/image"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.IMAGE_JPEG))
+                .andExpect(content().bytes(new byte[]{1, 2, 3}));
+    }
+
+    @Test
+    void publicVehicleImageEndpointIsPublic() throws Exception {
+        when(vehicleImageService.getImage(1L))
+                .thenReturn(new VehicleImageService.StoredImage(
+                        new byte[]{4, 5, 6},
+                        MediaType.IMAGE_JPEG_VALUE
+                ));
+
+        mockMvc.perform(get("/api/public/vehicle-images/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.IMAGE_JPEG))
+                .andExpect(content().bytes(new byte[]{4, 5, 6}));
     }
 
     @Test

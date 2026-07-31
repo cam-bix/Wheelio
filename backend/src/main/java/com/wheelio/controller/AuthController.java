@@ -5,6 +5,7 @@ import com.wheelio.dto.LoginRequest;
 import com.wheelio.dto.RegisterRequest;
 import com.wheelio.dto.VerifyTwoFactorRequest;
 import com.wheelio.service.AuthService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+
+    public static final String AUTHENTICATED_USER_ID =
+            "wheelioAuthenticatedUserId";
+    public static final String AUTHENTICATED_USER_ROLE =
+            "wheelioAuthenticatedUserRole";
 
     private final AuthService authService;
 
@@ -29,12 +35,37 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public AuthResponse login(@Valid @RequestBody LoginRequest request) {
-        return authService.login(request);
+    public AuthResponse login(
+            @Valid @RequestBody LoginRequest request,
+            HttpSession session
+    ) {
+        session.removeAttribute(AUTHENTICATED_USER_ID);
+        session.removeAttribute(AUTHENTICATED_USER_ROLE);
+
+        AuthResponse response = authService.login(request);
+
+        if (!response.isTwoFactorRequired() && response.getUserId() != null) {
+            authenticateSession(session, response);
+        }
+
+        return response;
     }
 
     @PostMapping("/verify-2fa")
-    public AuthResponse verifyTwoFactorLogin(@Valid @RequestBody VerifyTwoFactorRequest request) {
-        return authService.verifyTwoFactorLogin(request);
+    public AuthResponse verifyTwoFactorLogin(
+            @Valid @RequestBody VerifyTwoFactorRequest request,
+            HttpSession session
+    ) {
+        AuthResponse response = authService.verifyTwoFactorLogin(request);
+        authenticateSession(session, response);
+        return response;
+    }
+
+    private void authenticateSession(
+            HttpSession session,
+            AuthResponse response
+    ) {
+        session.setAttribute(AUTHENTICATED_USER_ID, response.getUserId());
+        session.setAttribute(AUTHENTICATED_USER_ROLE, response.getRole());
     }
 }

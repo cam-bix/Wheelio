@@ -8,6 +8,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -25,6 +26,16 @@ import java.util.List;
 public class SecurityConfig {
 
     @Bean
+    WebSecurityCustomizer webSecurityCustomizer() {
+        return web -> web.ignoring().requestMatchers(
+                new AntPathRequestMatcher("/api/vehicles", HttpMethod.GET.name()),
+                new AntPathRequestMatcher("/api/vehicles/*", HttpMethod.GET.name()),
+                new AntPathRequestMatcher("/api/vehicles/*/image", HttpMethod.GET.name()),
+                new AntPathRequestMatcher("/public/**")
+        );
+    }
+
+    @Bean
     @Order(1)
     SecurityFilterChain authSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
@@ -40,12 +51,34 @@ public class SecurityConfig {
 
     @Bean
     @Order(2)
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain publicSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
+                .securityMatcher(new AntPathRequestMatcher("/public/**"))
                 .csrf(csrf -> csrf.disable())
                 .cors(Customizer.withDefaults())
-                .httpBasic(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
+                        .anyRequest()
+                        .permitAll()
+                )
+                .build();
+    }
+
+    @Bean
+    @Order(3)
+    SecurityFilterChain vehicleSecurityFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .securityMatcher(new AntPathRequestMatcher("/api/vehicles/**"))
+                .csrf(csrf -> csrf.disable())
+                .cors(Customizer.withDefaults())
+                .authorizeHttpRequests(auth -> auth
+
+                        // Vehicle information and images must be public for customer pages
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/vehicles",
+                                "/api/vehicles/**"
+                        )
+                        .permitAll()
 
                         // Only employees and admins can upload vehicle images
                         .requestMatchers(
@@ -82,18 +115,28 @@ public class SecurityConfig {
                         )
                         .hasAnyRole("ADMIN", "EMPLOYEE")
 
-                        // Vehicle information and images can be viewed publicly
-                        .requestMatchers(
-                                HttpMethod.GET,
-                                "/api/vehicles",
-                                "/api/vehicles/**"
-                        )
-                        .permitAll()
+                        .anyRequest()
+                        .authenticated()
+                )
+                .httpBasic(Customizer.withDefaults())
+                .build();
+    }
+
+    @Bean
+    @Order(4)
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .csrf(csrf -> csrf.disable())
+                .cors(Customizer.withDefaults())
+                .httpBasic(Customizer.withDefaults())
+                .authorizeHttpRequests(auth -> auth
 
                         // Existing public endpoints
                         .requestMatchers(
+                                "/error",
                                 "/api/health",
                                 "/actuator/health",
+                                "/api/public/**",
                                 "/api/users",
                                 "/api/users/**",
                                 "/api/rentals",
@@ -132,6 +175,8 @@ public class SecurityConfig {
                 "Authorization",
                 "Content-Type"
         ));
+
+        configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source =
                 new UrlBasedCorsConfigurationSource();

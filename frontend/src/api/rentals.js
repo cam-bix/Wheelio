@@ -10,6 +10,11 @@ async function parseResponse(response, fallbackMessage) {
   return data
 }
 
+export async function getAllRentals() {
+  const response = await fetch(`${API_BASE_URL}/api/rentals`)
+  return parseResponse(response, 'Failed to load rentals.')
+}
+
 export async function getActiveRentalsForUser(userId) {
   const response = await fetch(`${API_BASE_URL}/api/users/${userId}/rentals/active`)
   return parseResponse(response, 'Failed to load rentals.')
