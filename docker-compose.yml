@@ -1,0 +1,48 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SERVER_PORT: 8080
+      DB_HOST: ${DB_HOST:-wheelio-db.cxiysoa26mk6.ca-central-1.rds.amazonaws.com}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: ${DB_NAME:-wheelio}
+      DB_USERNAME: ${DB_USERNAME:?Set DB_USERNAME in .env}
+      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+      DEV_SECURITY_USERNAME: ${DEV_SECURITY_USERNAME:-wheelio-admin}
+      DEV_SECURITY_PASSWORD: ${DEV_SECURITY_PASSWORD:-wheelio-admin-password}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-sk_test_placeholder}
+      MAIL_HOST: mailpit
+      MAIL_PORT: 1025
+      MAIL_USERNAME: ""
+      MAIL_PASSWORD: ""
+      MAIL_SMTP_AUTH: false
+      MAIL_SMTP_STARTTLS: false
+      EMAIL_2FA_FROM: ${EMAIL_2FA_FROM:-no-reply@wheelio.local}
+      EMAIL_2FA_EXPIRATION_MINUTES: ${EMAIL_2FA_EXPIRATION_MINUTES:-10}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-dummy}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-dummy}
+      AWS_REGION: ${AWS_REGION:-ca-central-1}
+      AWS_S3_BUCKET: ${AWS_S3_BUCKET:-wheelio-local-placeholder}
+      AWS_EC2_METADATA_DISABLED: true
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mailpit
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8080}
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+  mailpit:
+    image: axllent/mailpit:v1.20
+    ports:
+      - "1025:1025"
+      - "8025:8025"
