@@ -4,6 +4,7 @@ import carPlaceholder from '../assets/placeholder_image.jpg'
 import './Home.css'
 import './ModifyBooking.css'
 import { Link } from 'react-router-dom'
+import AuthStatus from '../components/AuthStatus'
 import {
   cancelRental,
   getActiveRentalsForUser,
@@ -152,14 +153,7 @@ function ModifyBooking() {
           <Link to="/settings">Settings</Link>
         </nav>
 
-        <div className="dashboard-user">
-          <div className="dashboard-user__icon"></div>
-          {currentUser ? (
-            <span>{currentUser.firstName}</span>
-          ) : (
-            <Link to="/login" className="dashboard-user__link">Sign In</Link>
-          )}
-        </div>
+        <AuthStatus user={currentUser} />
       </header>
 
       <main className="modify-main">

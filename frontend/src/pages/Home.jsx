@@ -5,6 +5,7 @@ import { getActiveRentalsForUser, cancelRental } from '../api/rentals'
 import { getVehicles } from '../api/vehicles'
 import { getStoredUser, getUserLocationLabel, getUserLocation } from '../utils/userSession'
 import VehicleImage from '../components/VehicleImage'
+import AuthStatus from '../components/AuthStatus'
 import './Home.css'
 
 function formatDate(dateString) {
@@ -93,14 +94,7 @@ function Home() {
           <Link to="/settings">Settings</Link>
         </nav>
 
-        <div className="dashboard-user">
-          <div className="dashboard-user__icon"></div>
-          {currentUser ? (
-            <span>{currentUser.firstName}</span>
-          ) : (
-            <Link to="/login" className="dashboard-user__link">Sign In</Link>
-          )}
-        </div>
+        <AuthStatus user={currentUser} />
       </header>
 
       <main className="dashboard-layout">

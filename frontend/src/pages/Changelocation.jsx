@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import wheelioLogo from '../assets/Wheelio_logo.png'
 import './Home.css'
 import './Settings.css'
 import './Changelocation.css'
 import { Link } from 'react-router-dom'
+import AuthStatus from '../components/AuthStatus'
 
 const locations = [
     {
@@ -29,20 +30,18 @@ const locations = [
 ]
 
 function ChangeLocation() {
-    const [selectedLocation, setSelectedLocation] = useState(null)
-    const [locationSaved, setLocationSaved] = useState(false)
-    const [currentUser, setCurrentUser] = useState(null)
-
-    useEffect(() => {
-        const storedUser = JSON.parse(localStorage.getItem('wheelioUser') || '{}')
-        setCurrentUser(storedUser)
-
-        // Load previously saved location
+    const [selectedLocation, setSelectedLocation] = useState(() => {
         const savedLocationId = localStorage.getItem('wheelioLocation')
-        if (savedLocationId) {
-            setSelectedLocation(Number(savedLocationId))
+        return savedLocationId ? Number(savedLocationId) : null
+    })
+    const [locationSaved, setLocationSaved] = useState(false)
+    const [currentUser] = useState(() => {
+        try {
+            return JSON.parse(localStorage.getItem('wheelioUser') || 'null')
+        } catch {
+            return null
         }
-    }, [])
+    })
 
     const handleSaveLocation = () => {
         if (!selectedLocation) return
@@ -67,10 +66,7 @@ function ChangeLocation() {
                     <Link to="/settings">Settings</Link>
                 </nav>
 
-                <div className="dashboard-user">
-                    <div className="dashboard-user__icon"></div>
-                    <span>{currentUser?.firstName || 'User'}</span>
-                </div>
+                <AuthStatus user={currentUser?.userId ? currentUser : null} />
             </header>
 
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import carPlaceholder from '../assets/placeholder_image.jpg'
 import { getVehicleImageUrl } from '../api/vehicles'
 
@@ -8,11 +8,13 @@ function VehicleImage({
   alt,
   tryImage = true,
 }) {
-  const [hasImageError, setHasImageError] = useState(false)
+  const [imageError, setImageError] = useState({
+    vehicleId,
+    hasError: false,
+  })
 
-  useEffect(() => {
-    setHasImageError(false)
-  }, [vehicleId])
+  const hasImageError =
+    imageError.vehicleId === vehicleId && imageError.hasError
 
   const imageUrl =
     tryImage && !hasImageError ? getVehicleImageUrl(vehicleId) : carPlaceholder
@@ -22,7 +24,7 @@ function VehicleImage({
       className={className}
       src={imageUrl}
       alt={alt}
-      onError={() => setHasImageError(true)}
+      onError={() => setImageError({ vehicleId, hasError: true })}
     />
   )
 }

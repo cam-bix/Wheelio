@@ -7,6 +7,7 @@ import {
   updateTicketStatus,
 } from '../api/tickets'
 import './CustomerSupport.css'
+import AuthStatus from '../components/AuthStatus'
 
 // ─── Ticket table schema (from schema.sql) ────────────────────────
 // ticket_id                 int, primary key
@@ -25,6 +26,7 @@ import './CustomerSupport.css'
 // Placeholder ticket data, shaped to match that table exactly. Swap
 // this out for a real API call (e.g. import { getTickets } from
 // '../api/tickets') once the tickets endpoint is ready.
+// eslint-disable-next-line no-unused-vars
 const MOCK_TICKETS = [
   {
     ticket_id: 1,
@@ -258,15 +260,7 @@ function CustomerSupport() {
         </Link>
         </div>
 
-        <div className="navbar-user">
-          <div className="user-icon" aria-hidden="true">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <circle cx="12" cy="8" r="4" stroke="#0f0f0f" strokeWidth="1.6" />
-              <path d="M4 20c1.5-4 5-6 8-6s6.5 2 8 6" stroke="#0f0f0f" strokeWidth="1.6" strokeLinecap="round" />
-            </svg>
-          </div>
-          <span className="username">Username</span>
-        </div>
+        <AuthStatus variant="navbar" />
       </nav>
 
       {/* ─── Page Content ───────────────────────────────────── */}

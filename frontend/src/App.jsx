@@ -29,14 +29,14 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<RoleHomeRedirect />} />
-        <Route path="/home" element={customerRoute(<Home />)} />
+        <Route path="/home" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/verify-2fa" element={<VerifyTwoFactor />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/settings" element={customerRoute(<Settings />)} />
-        <Route path="/book" element={customerRoute(<ReserveVehicles />)} />
-        <Route path="/book/:vehicleId" element={customerRoute(<Book />)} />
-        <Route path="/change-location" element={customerRoute(<ChangeLocation />)} />
+        <Route path="/book" element={<ReserveVehicles />} />
+        <Route path="/book/:vehicleId" element={<Book />} />
+        <Route path="/change-location" element={<ChangeLocation />} />
         <Route path="/modify-booking" element={customerRoute(<ModifyBooking />)} />
         <Route path="/employee-bookings" element={employeeRoute(<EmployeeBookings />)} />
         <Route path="/employee-stats" element={employeeRoute(<EmployeeStatistics />)} />

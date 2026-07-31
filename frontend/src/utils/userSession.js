@@ -78,6 +78,10 @@ export function storeAuthenticatedUser(user) {
   return hydratedUser
 }
 
+export function clearStoredUser() {
+  localStorage.removeItem(USER_STORAGE_KEY)
+}
+
 export function saveUserLocation(user, location) {
   if (!user?.userId || !location) {
     return user

@@ -23,7 +23,7 @@ function RoleRoute({ children, allow }) {
 
 export function RoleHomeRedirect() {
   const user = getStoredUser()
-  return <Navigate to={user ? getRoleHomePath(user) : '/login'} replace />
+  return <Navigate to={user ? getRoleHomePath(user) : '/home'} replace />
 }
 
 export default RoleRoute
