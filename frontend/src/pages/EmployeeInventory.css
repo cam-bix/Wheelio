@@ -2,6 +2,8 @@
 
 .employee-inventory-page {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   background-color: #ffffff;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
@@ -95,9 +97,12 @@
 /* ─── Page Content ───────────────────────────────────────────── */
 
 .inventory-content {
-  max-width: 1080px;
+  width: 100%;
+  max-width: 1440px;
+  flex: 1;
   margin: 0 auto;
   padding: 40px 32px 80px;
+  box-sizing: border-box;
 }
 
 .inventory-page-header {
@@ -372,9 +377,13 @@
 
 .inventory-grid {
   display: grid;
-  /* Maximum of 3 columns, auto-shrinking gracefully down on smaller layouts */
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 28px 24px;
+  align-items: stretch;
+}
+
+.inventory-grid .vehicle-card {
+  min-width: 0;
 }
 
 /* Outer Card Layout */
@@ -491,6 +500,12 @@
 }
 
 /* ─── Responsive ─────────────────────────────────────────────── */
+
+@media (max-width: 1200px) {
+  .inventory-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
 
 @media (max-width: 900px) {
   .inventory-grid {

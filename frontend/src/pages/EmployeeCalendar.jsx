@@ -215,14 +215,14 @@ function EmployeeCalendar() {
         </div>
 
         <div className="navbar-links">
-        <Link to="/employee-home">Home</Link>
-        <Link to="/employee-inventory">Check Inventory</Link>
-        <Link to="/employee-bookings">Bookings</Link>
-        <Link to="/employee-calendar" className="nav-active">
-        Calendar
-        </Link>
-        <Link to="/employee-stats">Statistics</Link>
-        <Link to="/customer-support">Customer Support</Link>
+          <Link to="/employee-home">Home</Link>
+          <Link to="/employee-inventory">Check Inventory</Link>
+          <Link to="/employee-bookings">Bookings</Link>
+          <Link to="/employee-calendar" className="nav-active">
+            Calendar
+          </Link>
+          <Link to="/employee-stats">Statistics</Link>
+          <Link to="/customer-support">Customer Support</Link>
         </div>
 
         <div className="navbar-user">
@@ -254,9 +254,8 @@ function EmployeeCalendar() {
               <p className="calendar-subtitle">
                 {monthBookingCount === 0
                   ? `No active bookings during ${monthLabel}`
-                  : `${monthBookingCount} active booking${
-                      monthBookingCount === 1 ? '' : 's'
-                    } during ${monthLabel}`}
+                  : `${monthBookingCount} active booking${monthBookingCount === 1 ? '' : 's'
+                  } during ${monthLabel}`}
               </p>
             )}
           </div>
@@ -339,16 +338,16 @@ function EmployeeCalendar() {
                     'calendar-cell',
                     !inCurrentMonth && 'calendar-cell-muted',
                     hasActiveBookings &&
-                      inCurrentMonth &&
-                      'calendar-cell-booked',
+                    inCurrentMonth &&
+                    'calendar-cell-booked',
                     hasOnlyCancelled &&
-                      inCurrentMonth &&
-                      'calendar-cell-cancelled-only',
+                    inCurrentMonth &&
+                    'calendar-cell-cancelled-only',
                     dateString === selectedDate &&
-                      'calendar-cell-selected',
+                    'calendar-cell-selected',
                     dateString === todayString &&
-                      dateString !== selectedDate &&
-                      'calendar-cell-today',
+                    dateString !== selectedDate &&
+                    'calendar-cell-today',
                   ]
                     .filter(Boolean)
                     .join(' ')
@@ -362,9 +361,8 @@ function EmployeeCalendar() {
                       aria-label={`${formatDate(
                         dateString,
                         true
-                      )}, ${activeBookings.length} active, ${
-                        cancelledBookings.length
-                      } cancelled`}
+                      )}, ${activeBookings.length} active, ${cancelledBookings.length
+                        } cancelled`}
                     >
                       <span className="calendar-cell-top">
                         <span className="calendar-cell-date">
@@ -408,6 +406,7 @@ function EmployeeCalendar() {
                 <Legend status="pending" label="Pending" />
                 <Legend status="booked" label="Booked" />
                 <Legend status="cancelled" label="Cancelled" />
+                <Legend status="completed" label="Completed" />
               </div>
             </section>
 
@@ -446,11 +445,10 @@ function EmployeeCalendar() {
                 <div className="day-bookings-list">
                   {selectedBookings.map((booking) => (
                     <article
-                      className={`day-booking-card ${
-                        isCancelled(booking)
+                      className={`day-booking-card ${isCancelled(booking)
                           ? 'day-booking-card-cancelled'
                           : ''
-                      }`}
+                        }`}
                       key={booking.id}
                     >
                       <div className="day-booking-image">

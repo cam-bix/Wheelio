@@ -5,25 +5,8 @@ import { Link } from 'react-router-dom'
 import './EmployeeInventory.css'
 import { getVehicles } from '../api/vehicles'
 
-/*
-//Mock vehicle data for use in testing. Use this if you cannot connect to the backend.
-const MOCK_VEHICLES = [
-  { id: '2201', make: 'Toyota', model: 'Corolla', year: '2024', status: 'Available', location: 'Waterloo', image: '', plate: 'CXBT 882', fuel: 92, type: 'Gas', odometer: 14500 },
-  { id: '2202', make: 'Honda', model: 'CR-V', year: '2023', status: 'Rented', location: 'Waterloo', image: '', plate: 'BVLL 401', fuel: 45, type: 'Gas', odometer: 32120 },
-  { id: '2203', make: 'Ford', model: 'Mustang', year: '2025', status: 'Available', location: 'Waterloo', image: '', plate: 'FAST 995', fuel: 100, type: 'Gas', odometer: 1200 },
-  { id: '2204', make: 'Chevrolet', model: 'Malibu', year: '2022', status: 'Maintenance', location: 'Waterloo', image: '', plate: 'AXXA 223', fuel: 15, type: 'Gas', odometer: 68400 },
-  { id: '2205', make: 'Nissan', model: 'Rogue', year: '2024', status: 'Available', location: 'Waterloo', image: '', plate: 'CKKK 771', fuel: 87, type: 'Gas', odometer: 22800 },
-  { id: '2206', make: 'Subaru', model: 'Outback', year: '2023', status: 'Rented', location: 'Waterloo', image: '', plate: 'BMRK 559', fuel: 60, type: 'Gas', odometer: 41300 },
-  { id: '2207', make: 'Tesla', model: 'Model 3', year: '2024', status: 'Available', location: 'Waterloo', image: '', plate: 'ELEV 112', fuel: 88, type: 'Electric', odometer: 8900 },
-  { id: '2208', make: 'Hyundai', model: 'Tucson', year: '2023', status: 'Available', location: 'Waterloo', image: '', plate: 'CHRM 334', fuel: 70, type: 'Gas', odometer: 19400 },
-  { id: '2209', make: 'Kia', model: 'Sportage', year: '2024', status: 'Rented', location: 'Waterloo', image: '', plate: 'BKLP 990', fuel: 55, type: 'Gas', odometer: 11200 },
-  { id: '2210', make: 'BMW', model: '3 Series', year: '2023', status: 'Maintenance', location: 'Waterloo', image: '', plate: 'BMMW 330', fuel: 100, type: 'Gas', odometer: 35000 },
-  { id: '2211', make: 'Audi', model: 'Q5', year: '2024', status: 'Available', location: 'Waterloo', image: '', plate: 'AUUD 441', fuel: 95, type: 'Gas', odometer: 8100 }
-]
-*/
-
 const STATUS_OPTIONS = ['Available', 'Rented', 'Maintenance']
-const ITEMS_PER_PAGE = 10
+const ITEMS_PER_PAGE = 20
 
 function formatVehicleStatus(status) {
   const statusLabels = {

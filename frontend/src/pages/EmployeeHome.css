@@ -92,7 +92,7 @@
 }
 
 .home-content {
-  max-width: 1200px;
+  max-width: 1320px;
   margin: 0 auto;
   padding: 32px;
   display: grid;
@@ -317,85 +317,96 @@
 }
 
 /* ─── Statistics preview ─────────────────────────────────────── */
-/* Matches the .summary-card KPI cards on the Statistics page
-   (icon top-left, trend badge top-right, big value, label below)
-   so the home preview and full stats page look like the same
-   component. Keep these in sync with EmployeeStatistics.css if
-   that card style changes. */
 
 .home-stats-row {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
 }
 
 .home-stat-card {
+  min-width: 0;
+  min-height: 190px;
   display: flex;
   flex-direction: column;
-  border: 1.5px solid #0f0f0f;
-  border-radius: 10px;
-  padding: 18px 20px;
+  padding: 22px;
+  border: 1px solid #e7e7ea;
+  border-radius: 15px;
+  background-color: #ffffff;
+  color: #0f0f0f;
   text-decoration: none;
-  transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+  box-shadow: 0 3px 10px rgba(15, 15, 15, 0.04);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
 }
 
 .home-stat-card:hover {
-  background-color: #f8f8f8;
-  box-shadow: 0 6px 18px rgba(15, 15, 15, 0.08);
-  transform: translateY(-1px);
+  border-color: #cccccf;
+  box-shadow: 0 8px 20px rgba(15, 15, 15, 0.08);
+  transform: translateY(-2px);
 }
 
 .home-stat-card-top {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  min-height: 38px;
   margin-bottom: 14px;
 }
 
 .home-stat-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Trend badge — green when the change is in the "good" direction
-   for that stat, red when it isn't. goodDirection is set per-card
-   in MOCK_SUMMARY (e.g. incidents going down is good, so it uses
-   goodDirection: 'down' instead of 'up'). */
-.trend-badge {
+  width: 38px;
+  height: 38px;
   display: inline-flex;
   align-items: center;
-  gap: 3px;
-  padding: 3px 8px;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 700;
+  justify-content: center;
+  border-radius: 10px;
 }
 
-.trend-good {
-  color: #17652b;
-  background-color: #e8f7ec;
+.summary-icon-bookings {
+  color: #b91c1c;
+  background-color: #fee2e2;
 }
 
-.trend-bad {
-  color: #c0000a;
-  background-color: #fdeaea;
+.summary-icon-vehicles {
+  color: #1d4ed8;
+  background-color: #dbeafe;
+}
+
+.summary-icon-revenue {
+  color: #166534;
+  background-color: #dcfce7;
+}
+
+.summary-icon-maintenance {
+  color: #92400e;
+  background-color: #fef3c7;
 }
 
 .home-stat-value {
-  font-size: 1.6rem;
-  font-weight: 700;
   color: #0f0f0f;
-  line-height: 1.1;
-  text-align: left;
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
 }
 
 .home-stat-label {
-  margin-top: 4px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #6c757d;
-  text-align: left;
+  margin-top: 7px;
+  color: #0f0f0f;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.home-stat-sublabel {
+  margin-top: auto;
+  padding-top: 20px;
+  color: #a0a0a6;
+  font-size: 0.82rem;
+  font-weight: 500;
+  line-height: 1.4;
 }
 
 /* ─── Bookings preview ───────────────────────────────────────── */
@@ -414,7 +425,20 @@
   border: 1.5px solid #0f0f0f;
   border-radius: 10px;
   padding: 18px 22px;
+  color: #0f0f0f;
+  text-decoration: none;
   transition: box-shadow 0.15s ease, transform 0.1s ease;
+}
+
+.home-booking-card:hover {
+  box-shadow: 0 6px 18px rgba(15, 15, 15, 0.08);
+  transform: translateY(-1px);
+}
+
+.home-bookings-empty {
+  margin: 0;
+  color: #777;
+  font-size: 0.9rem;
 }
 
 .home-booking-details {
@@ -430,10 +454,16 @@
 }
 
 .home-booking-fields {
+  min-width: 0;
   display: grid;
-  grid-template-columns: 1.25fr 1.15fr 1fr 1fr 0.9fr;
+  grid-template-columns:
+    minmax(135px, 1.05fr)
+    minmax(190px, 1.4fr)
+    minmax(115px, 0.9fr)
+    minmax(115px, 0.9fr)
+    minmax(95px, 0.75fr);
   align-items: center;
-  gap: 18px;
+  column-gap: 20px;
 }
 
 .home-booking-field {
@@ -453,10 +483,22 @@
 
 .field-value {
   display: block;
+  min-width: 0;
   font-size: 0.9rem;
   font-weight: 600;
   color: #0f0f0f;
+  line-height: 1.3;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Vehicle names are given extra room and may wrap instead of running
+   into the pickup-date column. */
+.home-booking-field:nth-child(2) .field-value {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
 }
 
 .status-field {
@@ -465,32 +507,78 @@
   align-items: flex-start;
 }
 
-/*---------- Booking status badge ------------*/
+/* ─── Booking status badges ──────────────────────────────────── */
 
 .booking-status-badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
   padding: 4px 12px;
   border-radius: 999px;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 700;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
-.booking-status-confirmed {
-  color: #17652b;
-  background-color: #e8f7ec;
+.booking-status-active,
+.booking-status-in-progress,
+.booking-status-picked-up {
+  color: #166534;
+  background-color: #dcfce7;
 }
 
 .booking-status-pending {
-  color: #93690a;
-  background-color: #fdf3df;
+  color: #92400e;
+  background-color: #fef3c7;
 }
 
-.booking-status-cancelled {
-  color: #c0000a;
-  background-color: #fdeaea;
+.booking-status-booked,
+.booking-status-confirmed,
+.booking-status-reserved {
+  color: #1d4ed8;
+  background-color: #dbeafe;
+}
+
+.booking-status-cancelled,
+.booking-status-canceled {
+  color: #b91c1c;
+  background-color: #fee2e2;
+}
+
+.booking-status-completed,
+.booking-status-complete,
+.booking-status-returned {
+  color: #5f6368;
+  background-color: #eeeeee;
 }
 
 /* ─── Responsive ─────────────────────────────────────────────── */
+
+/* Keep booking columns readable before switching to the stacked layout. */
+@media (max-width: 1180px) {
+  .home-content {
+    grid-template-columns: 250px minmax(0, 1fr);
+    gap: 24px;
+  }
+
+  .home-booking-card {
+    grid-template-columns: 60px minmax(0, 1fr);
+    gap: 16px;
+    padding: 16px 18px;
+  }
+
+  .home-booking-fields {
+    grid-template-columns:
+      minmax(120px, 1fr)
+      minmax(160px, 1.25fr)
+      minmax(105px, 0.85fr)
+      minmax(105px, 0.85fr)
+      minmax(90px, 0.7fr);
+    column-gap: 14px;
+  }
+}
 
 @media (max-width: 900px) {
   .home-content {
@@ -498,7 +586,11 @@
   }
 
   .home-stats-row {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .home-booking-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -531,7 +623,12 @@
   }
 
   .home-booking-card {
-    flex-direction: column;
+    grid-template-columns: 1fr;
     align-items: flex-start;
+  }
+
+  .home-booking-fields {
+    width: 100%;
+    grid-template-columns: 1fr;
   }
 }

@@ -4,39 +4,6 @@ import { getStatisticsData } from '../api/statistics'
 import logo from '../assets/Wheelio_logo.png'
 import './EmployeeStatistics.css'
 
-/*
-// ─── Temporary Data ──────────────────────────────────────────────
-// Replace these arrays with API data later.
-const RAW_RENTALS = [
-  { vehicle_id: 1, pickup_date: '2026-07-01', total_cost: 165 },
-  { vehicle_id: 2, pickup_date: '2026-07-05', total_cost: 120 },
-  { vehicle_id: 3, pickup_date: '2026-07-15', total_cost: 255 },
-  { vehicle_id: 8, pickup_date: '2026-07-20', total_cost: 270 },
-  { vehicle_id: 6, pickup_date: '2026-07-22', total_cost: 310 },
-  { vehicle_id: 7, pickup_date: '2026-08-01', total_cost: 204 },
-  { vehicle_id: 8, pickup_date: '2026-08-05', total_cost: 450 },
-  { vehicle_id: 9, pickup_date: '2026-08-12', total_cost: 380 },
-  { vehicle_id: 10, pickup_date: '2026-08-18', total_cost: 171 },
-  { vehicle_id: 11, pickup_date: '2026-09-02', total_cost: 352 },
-]
-
-const RAW_VEHICLES = [
-  { vehicle_id: 1, name: 'Toyota Corolla', status: 'AVAILABLE' },
-  { vehicle_id: 2, name: 'Honda Civic', status: 'AVAILABLE' },
-  { vehicle_id: 3, name: 'Ford Escape', status: 'AVAILABLE' },
-  { vehicle_id: 4, name: 'Tesla Model 3', status: 'AVAILABLE' },
-  { vehicle_id: 5, name: 'Hyundai Elantra', status: 'AVAILABLE' },
-  { vehicle_id: 6, name: 'Chevrolet Malibu', status: 'AVAILABLE' },
-  { vehicle_id: 7, name: 'Nissan Altima', status: 'AVAILABLE' },
-  { vehicle_id: 8, name: 'Mazda CX-5', status: 'AVAILABLE' },
-  { vehicle_id: 9, name: 'Subaru Outback', status: 'AVAILABLE' },
-  { vehicle_id: 10, name: 'Volkswagen Jetta', status: 'AVAILABLE' },
-  { vehicle_id: 11, name: 'Kia Sportage', status: 'AVAILABLE' },
-  { vehicle_id: 12, name: 'Jeep Wrangler', status: 'AVAILABLE' },
-  { vehicle_id: 13, name: 'BMW 330i', status: 'MAINTENANCE' },
-  { vehicle_id: 14, name: 'Audi A4', status: 'AVAILABLE' },
-]
-*/
 
 // Every non-All range compares with the immediately preceding period.
 const RANGE_OPTIONS = [
@@ -474,6 +441,7 @@ const computeStatistics = (
       change: stats.changes.bookings,
       icon: 'calendar',
       iconClass: 'summary-icon-bookings',
+      iconColor: '#b91c1c',
     },
     {
       label: 'Vehicles Rented',
@@ -482,6 +450,7 @@ const computeStatistics = (
       change: stats.changes.vehicles,
       icon: 'car',
       iconClass: 'summary-icon-vehicles',
+      iconColor: '#1d4ed8',
     },
     {
       label: 'Total Revenue',
@@ -495,6 +464,7 @@ const computeStatistics = (
       change: stats.changes.revenue,
       icon: 'dollar',
       iconClass: 'summary-icon-revenue',
+      iconColor: '#166534',
     },
     {
       label: 'Vehicles In Maintenance',
@@ -506,6 +476,7 @@ const computeStatistics = (
       change: { kind: 'hidden' },
       icon: 'warning',
       iconClass: 'summary-icon-maintenance',
+      iconColor: '#92400e',
     },
   ]
 
@@ -600,6 +571,7 @@ const computeStatistics = (
               <div className="summary-card-top">
                 <span
                   className={`summary-icon ${card.iconClass}`}
+                  style={{ color: card.iconColor }}
                 >
                   <SummaryIcon type={card.icon} />
                 </span>
@@ -1139,34 +1111,115 @@ function UserIcon() {
 }
 
 function SummaryIcon({ type }) {
-  const paths = {
-    calendar: (
-      <>
-        <rect x="3.5" y="5" width="17" height="15" rx="2.5" />
-        <path d="M3.5 9.5h17M8 3v4M16 3v4M8 14l2.5 2.5L16 11" />
-      </>
-    ),
+  if (type === 'calendar') {
+    return (
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        aria-hidden="true"
+      >
+        <rect
+          x="3.5"
+          y="5"
+          width="17"
+          height="15"
+          rx="2.5"
+          stroke="currentColor"
+          strokeWidth="1.6"
+        />
+        <line
+          x1="3.5"
+          y1="9.5"
+          x2="20.5"
+          y2="9.5"
+          stroke="currentColor"
+          strokeWidth="1.6"
+        />
+        <line
+          x1="8"
+          y1="3"
+          x2="8"
+          y2="7"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+        />
+        <line
+          x1="16"
+          y1="3"
+          x2="16"
+          y2="7"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+        />
+        <path
+          d="M8 14l2.5 2.5L16 11"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    )
+  }
 
-    car: (
-      <>
-        <path d="M4 16l1.5-5.5C6 9 7 8.2 8.6 8.2h6.8c1.6 0 2.6.8 3.1 2.3L20 16" />
-        <rect x="2.8" y="16" width="18.4" height="4" rx="1.4" />
-      </>
-    ),
+  if (type === 'car') {
+    return (
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        aria-hidden="true"
+      >
+        <path
+          d="M4 16l1.5-5.5C6 9 7 8.2 8.6 8.2h6.8c1.6 0 2.6.8 3.1 2.3L20 16"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinejoin="round"
+        />
+        <rect
+          x="2.8"
+          y="16"
+          width="18.4"
+          height="4"
+          rx="1.4"
+          stroke="currentColor"
+          strokeWidth="1.6"
+        />
+        <circle cx="7" cy="20" r="1.6" fill="currentColor" />
+        <circle cx="17" cy="20" r="1.6" fill="currentColor" />
+      </svg>
+    )
+  }
 
-    dollar: (
-      <>
-        <circle cx="12" cy="12" r="9" />
-        <path d="M12 7v10M14.5 9.3c0-1-1-1.8-2.5-1.8s-2.5.8-2.5 1.8c0 2.4 5 1.1 5 3.5 0 1-1 1.8-2.5 1.8s-2.5-.8-2.5-1.8" />
-      </>
-    ),
-
-    warning: (
-      <>
-        <path d="M12 3.5L21.5 20h-19z" />
-        <path d="M12 10v4.5M12 17.2h.01" />
-      </>
-    ),
+  if (type === 'dollar') {
+    return (
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        aria-hidden="true"
+      >
+        <circle
+          cx="12"
+          cy="12"
+          r="9"
+          stroke="currentColor"
+          strokeWidth="1.6"
+        />
+        <path
+          d="M12 6.5v11M14.5 8.8c0-1.1-1-1.8-2.5-1.8s-2.5.7-2.5 1.8c0 2.4 5 1.2 5 3.6 0 1.1-1 1.8-2.5 1.8s-2.5-.7-2.5-1.8"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+        />
+      </svg>
+    )
   }
 
   return (
@@ -1175,13 +1228,24 @@ function SummaryIcon({ type }) {
       height="20"
       viewBox="0 0 24 24"
       fill="none"
-      stroke="#0f0f0f"
-      strokeWidth="1.6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
       aria-hidden="true"
     >
-      {paths[type]}
+      <path
+        d="M12 3.5 21.5 20h-19Z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
+      <line
+        x1="12"
+        y1="10"
+        x2="12"
+        y2="14.5"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+      <circle cx="12" cy="17.2" r="1" fill="currentColor" />
     </svg>
   )
 }

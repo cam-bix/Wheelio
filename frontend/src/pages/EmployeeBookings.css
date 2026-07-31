@@ -107,21 +107,20 @@
 }
 
 .bookings-title {
+  margin: 0;
+  color: #0f0f0f;
   font-size: 2rem;
   font-weight: 700;
-  color: #0f0f0f;
-  margin: 0;
   letter-spacing: -0.02em;
 }
 
 .bookings-count {
-  margin: 4px 0 0 0;
+  margin: 4px 0 0;
+  color: #777777;
   font-size: 0.9rem;
-  color: #777;
 }
 
-
-/* Search bar + calendar button */
+/* ─── Search + Calendar ──────────────────────────────────────── */
 
 .bookings-header-actions {
   display: flex;
@@ -169,9 +168,9 @@
   padding: 10px 18px;
   border: 1.5px solid #d0d0d0;
   border-radius: 999px;
-  font-size: 0.9rem;
-  color: #0f0f0f;
   background: #ffffff;
+  color: #0f0f0f;
+  font-size: 0.9rem;
   outline: none;
   transition: border-color 0.15s ease;
 }
@@ -182,23 +181,21 @@
 
 .bookings-loading,
 .bookings-empty {
-  color: #555;
+  color: #555555;
   font-size: 1rem;
 }
 
 .bookings-error {
-  background: #fff0f0;
-  border: 1px solid #ffbcbc;
-  color: #c0000a;
-  border-radius: 8px;
-  padding: 10px 14px;
-  font-size: 0.875rem;
   margin-bottom: 20px;
+  padding: 10px 14px;
+  border: 1px solid #ffbcbc;
+  border-radius: 8px;
+  background: #fff0f0;
+  color: #c0000a;
+  font-size: 0.875rem;
 }
 
 /* ─── Bookings Table ─────────────────────────────────────────── */
-/* A shared grid template keeps the header and every row's columns
-   perfectly aligned: thumbnail | booking # | 4 data columns | status */
 
 .bookings-table {
   display: flex;
@@ -214,25 +211,25 @@
 }
 
 .bookings-table-header {
+  margin-bottom: 14px;
   padding: 0 24px 10px;
   border-bottom: 1.5px solid #ebebeb;
-  margin-bottom: 14px;
 }
 
 .col-number,
 .col-cell {
+  color: #909090;
   font-size: 0.78rem;
   font-weight: 600;
-  color: #909090;
-  text-transform: uppercase;
   letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .bookings-table-header .col-number {
   padding-left: 2px;
 }
 
-/* ─── Bookings List / Rows ───────────────────────────────────── */
+/* ─── Rows ───────────────────────────────────────────────────── */
 
 .bookings-list {
   display: flex;
@@ -241,11 +238,14 @@
 }
 
 .booking-row {
+  padding: 14px 24px;
   border: 1.5px solid #ebebeb;
   border-radius: 12px;
-  padding: 14px 24px;
   background-color: #ffffff;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.1s ease;
 }
 
 .booking-row:hover {
@@ -254,22 +254,19 @@
   transform: translateY(-1px);
 }
 
-/* Data cells inherit normal weight/color; the header row above
-   overrides them to be small, muted, and uppercase */
 .booking-row .col-number,
 .booking-row .col-cell {
+  color: #0f0f0f;
   font-size: 0.95rem;
   font-weight: 600;
-  color: #0f0f0f;
-  text-transform: none;
   letter-spacing: normal;
+  text-transform: none;
 }
 
 .booking-number {
   color: #0f0f0f;
 }
 
-/* Vehicle thumbnail placeholder */
 .booking-image {
   width: 56px;
   height: 56px;
@@ -288,29 +285,85 @@
   object-fit: cover;
 }
 
-/* ─── Status Badge ───────────────────────────────────────────── */
-
-.booking-status-badge {
-  display: inline-block;
-  padding: 4px 12px;
-  border-radius: 999px;
-  font-size: 0.8rem;
-  font-weight: 700;
+/* Prevent the badge from being stretched across the status column. */
+.status-cell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
 }
 
-.booking-status-confirmed {
+/* ─── Status Badges ──────────────────────────────────────────── */
+
+.booking-status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  min-width: 76px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Upcoming/reserved bookings */
+.booking-status-booked,
+.booking-status-confirmed,
+.booking-status-reserved {
   color: #17652b;
   background-color: #e8f7ec;
 }
 
+/* Booking currently in progress */
+.booking-status-active,
+.booking-status-in-progress,
+.booking-status-picked-up {
+  color: #175fa9;
+  background-color: #e8f2fd;
+}
+
+/* Waiting for approval or another action */
 .booking-status-pending {
   color: #93690a;
   background-color: #fdf3df;
 }
 
-.booking-status-cancelled {
+/* Successfully finished bookings */
+.booking-status-completed,
+.booking-status-complete,
+.booking-status-returned {
+  color: #5d5d61;
+  background-color: #eeeeef;
+}
+
+/* Cancelled bookings. Supports both spellings. */
+.booking-status-cancelled,
+.booking-status-canceled {
   color: #c0000a;
   background-color: #fdeaea;
+}
+
+/* General fallback for an API status that does not yet have a rule. */
+.booking-status-badge:not(
+  .booking-status-booked,
+  .booking-status-confirmed,
+  .booking-status-reserved,
+  .booking-status-active,
+  .booking-status-in-progress,
+  .booking-status-picked-up,
+  .booking-status-pending,
+  .booking-status-completed,
+  .booking-status-complete,
+  .booking-status-returned,
+  .booking-status-cancelled,
+  .booking-status-canceled
+) {
+  color: #666;
+  background-color: #ededed;
 }
 
 /* ─── Responsive ─────────────────────────────────────────────── */
@@ -320,8 +373,6 @@
     display: none;
   }
 
-  /* Drop the grid in favor of flex-wrap: image + number share the
-     first line, then each field wraps onto its own full-width row. */
   .booking-row {
     display: flex;
     flex-wrap: wrap;
@@ -335,11 +386,10 @@
   .booking-number {
     flex: 1;
     align-self: center;
-    font-size: 1.05rem;
     padding-left: 4px;
+    font-size: 1.05rem;
   }
 
-  /* Re-introduce labels since the shared header row is hidden */
   .booking-row .col-cell {
     flex: 0 0 100%;
     display: flex;
@@ -351,11 +401,15 @@
 
   .booking-row .col-cell::before {
     content: attr(data-label);
+    color: #909090;
     font-size: 0.78rem;
     font-weight: 600;
-    color: #909090;
-    text-transform: uppercase;
     letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .booking-row .status-cell {
+    align-items: center;
   }
 }
 
