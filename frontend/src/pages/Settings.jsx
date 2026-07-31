@@ -5,6 +5,7 @@ import './Settings.css'
 import { Link, Navigate } from 'react-router-dom'
 import { createCustomerTicket } from '../api/tickets'
 import { getStoredUser } from '../utils/userSession'
+import AuthStatus from '../components/AuthStatus'
 
 function Settings() {
     const [currentUser] = useState(() => getStoredUser())
@@ -16,7 +17,7 @@ function Settings() {
     const [phone, setPhone] = useState('')
     const [infoSaved, setInfoSaved] = useState(false)
     const [infoError, setInfoError] = useState('')
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(() => Boolean(currentUser?.userId))
 
     // Password
     const [currentPassword, setCurrentPassword] = useState('')
@@ -37,10 +38,7 @@ function Settings() {
     useEffect(() => {
         const userId = currentUser?.userId
 
-        if (!userId) {
-            setLoading(false)
-            return
-        }
+        if (!userId) return
 
         const fetchUser = async () => {
             try {
@@ -53,7 +51,7 @@ function Settings() {
                 setLastName(data.lastName || '')
                 setEmail(data.email || '')
                 setPhone(data.phone || '')
-            } catch (err) {
+            } catch {
                 setInfoError('Could not load your information. Please try again.')
             } finally {
                 setLoading(false)
@@ -105,7 +103,7 @@ function Settings() {
 
             setInfoSaved(true)
             setTimeout(() => setInfoSaved(false), 3000)
-        } catch (err) {
+        } catch {
             setInfoError('❌ Could not save changes. Please try again.')
         }
     }
@@ -222,10 +220,10 @@ function Settings() {
                     <Link to="/settings">Settings</Link>
                 </nav>
 
-                <div className="dashboard-user">
-                    <div className="dashboard-user__icon"></div>
-                    <span>{firstName || currentUser.firstName || 'User'}</span>
-                </div>
+                <AuthStatus
+                    user={currentUser}
+                    displayName={firstName || currentUser.firstName || 'User'}
+                />
             </header>
 
             {/* ── Settings Content ── */}

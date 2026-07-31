@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { getVehicleById } from '../api/vehicles'
 import { createRental } from '../api/rentals'
 import { createCheckoutSession } from '../api/checkout'
@@ -7,6 +7,7 @@ import './Book.css'
 import wheelioLogo from '../assets/Wheelio_logo.png'
 import { getStoredUser } from '../utils/userSession'
 import VehicleImage from '../components/VehicleImage'
+import AuthStatus from '../components/AuthStatus'
 
 function formatDateInputValue(date) {
   const year = date.getFullYear()
@@ -25,7 +26,6 @@ function toNoonIsoString(dateString) {
 
 function Book() {
   const { vehicleId } = useParams()
-  const navigate = useNavigate()
   const currentUser = getStoredUser()
 
   const [vehicle, setVehicle] = useState(null)
@@ -147,14 +147,7 @@ function Book() {
           <Link to="/settings">Settings</Link>
         </nav>
 
-        <div className="dashboard-user">
-          <div className="dashboard-user__icon"></div>
-          {currentUser ? (
-            <span>{currentUser.firstName}</span>
-          ) : (
-            <Link to="/login" className="dashboard-user__link">Sign In</Link>
-          )}
-        </div>
+        <AuthStatus user={currentUser} />
       </header>
 
       <main className="dashboard-layout">
@@ -230,7 +223,11 @@ function Book() {
             {bookingError && <p className="booking-error">{bookingError}</p>}
 
             <button className="outline-button" type="submit" disabled={bookingLoading}>
-              {bookingLoading ? 'Booking...' : 'Book Vehicle'}
+              {bookingLoading
+                ? 'Booking...'
+                : currentUser
+                  ? 'Book Vehicle'
+                  : 'Sign In to Book'}
             </button>
           </form>
         </section>

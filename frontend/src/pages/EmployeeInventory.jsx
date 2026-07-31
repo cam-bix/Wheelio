@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import './EmployeeInventory.css'
 import { getVehicles } from '../api/vehicles'
+import AuthStatus from '../components/AuthStatus'
 
 /*
 //Mock vehicle data for use in testing. Use this if you cannot connect to the backend.
@@ -144,26 +145,7 @@ function EmployeeInventory() {
         <Link to="/customer-support">Customer Support</Link>
         </div>
 
-        <div className="navbar-user">
-          <div className="user-icon" aria-hidden="true">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <circle
-                cx="12"
-                cy="8"
-                r="4"
-                stroke="#0f0f0f"
-                strokeWidth="1.6"
-              />
-              <path
-                d="M4 20c1.5-4 5-6 8-6s6.5 2 8 6"
-                stroke="#0f0f0f"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-              />
-            </svg>
-          </div>
-          <span className="username">Username</span>
-        </div>
+        <AuthStatus variant="navbar" />
       </nav>
 
       {/* ─── Page Content ───────────────────────────────────── */}

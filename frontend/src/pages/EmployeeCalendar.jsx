@@ -4,6 +4,7 @@ import carPlaceholder from '../assets/placeholder_image.jpg'
 import logo from '../assets/Wheelio_logo.png'
 import { getBookings } from '../api/bookings'
 import './EmployeeCalendar.css'
+import AuthStatus from '../components/AuthStatus'
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
@@ -225,13 +226,7 @@ function EmployeeCalendar() {
         <Link to="/customer-support">Customer Support</Link>
         </div>
 
-        <div className="navbar-user">
-          <span className="user-icon" aria-hidden="true">
-            <UserIcon />
-          </span>
-
-          <span className="username">Username</span>
-        </div>
+        <AuthStatus variant="navbar" />
       </nav>
 
       {/* ─── Page Content ───────────────────────────────────── */}
@@ -566,32 +561,6 @@ function CalendarIcon({ size = 20 }) {
         d="M8 3v4M16 3v4M3 10h18"
         stroke="currentColor"
         strokeWidth="1.7"
-        strokeLinecap="round"
-      />
-    </svg>
-  )
-}
-
-function UserIcon() {
-  return (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-    >
-      <circle
-        cx="12"
-        cy="8"
-        r="4"
-        stroke="#0f0f0f"
-        strokeWidth="1.6"
-      />
-
-      <path
-        d="M4 20c1.5-4 5-6 8-6s6.5 2 8 6"
-        stroke="#0f0f0f"
-        strokeWidth="1.6"
         strokeLinecap="round"
       />
     </svg>
